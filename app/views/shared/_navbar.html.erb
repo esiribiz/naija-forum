@@ -1,0 +1,40 @@
+<nav class="bg-white shadow-md">
+  <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+    <!-- Left: Logo -->
+    <div>
+      <%= link_to "Naija Forum", root_path, class: "text-xl font-semibold text-gray-800 hover:text-blue-600" %>
+    </div>
+    <!-- Center: Navigation Links -->
+    <div class="hidden md:flex space-x-6">
+      <%= link_to "Home", root_path, class: "text-gray-600 hover:text-blue-600" %>
+      <%= link_to "Categories", categories_path, class: "text-gray-600 hover:text-blue-600" %>
+      <%= link_to "Posts", posts_path, class: "text-gray-600 hover:text-blue-600" %>
+    </div>
+    <!-- Right: User Authentication/Profile -->
+    <div class="flex items-center space-x-4">
+      <% if user_signed_in? %>
+        <!-- Profile Picture Dropdown -->
+        <div class="relative group">
+          <button class="flex items-center space-x-2 focus:outline-none">
+            <% if current_user.avatar.attached? %>
+              <%= image_tag url_for(current_user.avatar), class: "w-10 h-10 rounded-full border border-gray-300 shadow-sm" %>
+            <% else %>
+              <img src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full border border-gray-300 shadow-sm" alt="Default avatar">
+            <% end %>
+            <span class="text-gray-700 font-medium"><%= current_user.username || "User" %></span>
+          </button>
+          <!-- Dropdown Menu -->
+          <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md opacity-0 group-hover:opacity-100 transition duration-200 z-50">
+            <%= link_to "Profile", user_path(current_user), class: "block px-4 py-2 text-gray-700 hover:bg-gray-100" %>
+            <%= link_to "Settings", edit_user_registration_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100" %>
+            <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "block px-4 py-2 text-red-600 hover:bg-gray-100" %>
+          </div>
+        </div>
+      <% else %>
+        <!-- Login & Signup Buttons -->
+        <%= link_to "Login", new_user_session_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
+        <%= link_to "Sign Up", new_user_registration_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
+      <% end %>
+    </div>
+  </div>
+</nav>

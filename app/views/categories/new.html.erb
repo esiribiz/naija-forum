@@ -1,0 +1,12 @@
+<% content_for :title, "New Category" %>
+<div class="md:w-2/3 w-full mx-auto mt-8 bg-white shadow-lg rounded-lg p-8">
+  <% if user_signed_in? && current_user.admin? %>
+    <h1 class="font-bold text-3xl text-gray-800 mb-6">Create a New Category</h1>
+    <%= render "form", category: @category %>
+    <div class="mt-6">
+      <%= link_to "Back to Categories", categories_path, class: "inline-block px-6 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition font-medium" %>
+    </div>
+  <% else %>
+    <p class="text-red-500 text-lg">You must be an admin to create a new category.</p>
+  <% end %>
+</div>

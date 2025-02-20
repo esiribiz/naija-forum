@@ -1,0 +1,112 @@
+<div class="flex min-h-screen p-6 gap-6">
+
+  <div>
+    <!-- Navigation Menu for Topics -->
+    <div class="mb-6 p-4 bg-white shadow-md border border-gray-200 rounded-lg">
+      <div class="flex space-x-4 justify-start">
+        <%= link_to "Categories", categories_path, class: "px-4 py-2 text-sm text-gray-700 border rounded-md hover:bg-gray-100" %>
+        <%= link_to "Tags", tags_path, class: "px-4 py-2 text-sm text-gray-700 border rounded-md hover:bg-gray-100" %>
+        <%= link_to "Latest", categories_path, class: "px-4 py-2 text-sm text-gray-700 border rounded-md hover:bg-gray-100" %>
+        <%= link_to "Hot", tags_path, class: "px-4 py-2 text-sm text-gray-700 border rounded-md hover:bg-gray-100" %>
+      </div>
+    </div>
+
+    <!-- Posts List -->
+    <table class="w-full table-auto">
+      <!-- Table Headers -->
+      <thead>
+        <tr class="border-b border-gray-200">
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Topics</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Replies</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700">Activity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @posts.each do |post| %>
+          <tr class="border-t border-gray-200">
+            <td class="px-6 py-4 w-2/3">
+              <div class="bg-white p-5 flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-x-6 w-full">
+                
+                <!-- Avatar -->
+                <div class="flex-shrink-0">
+                  <% if post.user&.avatar&.attached? %>
+                    <%= image_tag post.user.avatar, class: "w-12 h-12 rounded-lg bg-gray-200" %>
+                  <% else %>
+                    <div class="w-12 h-12 bg-gray-300 rounded-lg"></div>
+                  <% end %>
+                </div>
+
+                <!-- Post Content -->
+                <div class="flex-1">
+                  <a href="<%= post_path(post) %>" class="text-lg font-semibold text-gray-700 transition duration-200 hover:text-blue-800">
+                    <%= post.title %>
+                  </a>
+
+  <% if post.category || post.tags.any? %>
+  <div class="text-sm font-medium text-gray-500 mt-1 flex items-center space-x-2">
+    <% if post.category %>
+      <a href="<%= category_path(post.category) %>" class="text-gray-600 hover:text-blue-800 flex items-center space-x-2">
+        
+        <!-- Category Image with background color -->
+        <% if post.category.image.attached? %>
+          <div class="w-6 h-6 rounded-full overflow-hidden bg-blue-500">
+            <%= image_tag post.category.image, class: "w-full h-full object-cover" %>
+          </div>
+        <% else %>
+          <!-- If no image, show category name initials in a circle with color -->
+          <span class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold text-white"
+            style="background-color: <%= post.category.color %>;">
+            <%= post.category.name.split.first[0].upcase + (post.category.name.split.second.present? ? post.category.name.split.second[0].upcase : '') %>
+          </span>
+        <% end %>
+
+        <!-- Category Name -->
+        <span><%= post.category.name %></span>
+      </a>
+    <% end %>
+
+    <!-- Tags Section -->
+    <% if post.tags.any? %>
+      <span class="mx-2 italic text-gray-600"></span>
+      <% post.tags.each do |tag| %>
+        <a href="<%= tag_path(tag) %>" class="inline-block text-gray-600 hover:text-blue-800 italic px-2 py-1 rounded-md bg-gray-200 hover:bg-blue-100 transition-all duration-300">
+          <%= tag.name %>
+        </a>
+        <% if tag != post.tags.last %>
+          <span class="mx-1">|</span>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+                  <div class="text-base text-gray-700 mt-2 line-clamp-3">
+                    <a href="<%= post_path(post) %>">
+                      <%= truncate(post.body, length: 250) %>
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </td>
+
+            <!-- Replies Count -->
+            <td class="px-6 py-4 text-center w-1/6">
+              <a href="<%= post_path(post) %>" class="text-blue-600 hover:text-blue-800">
+                💬 <%= post.comments.count %>
+              </a>
+            </td>
+
+            <!-- Post Time Ago -->
+            <td class="px-6 py-4 text-gray-500 text-sm w-1/6">
+              ⏳ <span title="<%= post.created_at.strftime('%b %d, %Y %I:%M %p') %>">
+                <%= time_ago_in_words(post.created_at).gsub("about ", "") %> ago
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+

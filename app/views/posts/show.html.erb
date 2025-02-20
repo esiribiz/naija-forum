@@ -1,0 +1,71 @@
+<% content_for :title, @post.title %>
+<div class=" w-full mx-auto bg-white shadow-sm rounded-lg p-6">
+  <% if notice.present? %>
+    <p class="py-2 px-4 bg-green-100 text-green-700 font-semibold rounded-md mb-5">
+      <%= notice %>
+    </p>
+  <% end %>
+  <!-- Post Header: User Info -->
+  <div class="flex items-center space-x-4 mb-4">
+    <% if @post.user&.avatar&.attached? %>
+      <%= image_tag @post.user.avatar, class: "w-12 h-12 rounded-full" %>
+    <% else %>
+      <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
+    <% end %>
+    <div>
+      <h2 class="text-lg font-semibold text-gray-800"><%= @post.user.username %></h2>
+      <p class="text-sm text-gray-500">Posted <%= time_ago_in_words(@post.created_at) %> ago</p>
+    </div>
+  </div>
+  <!-- Post Title & Content -->
+  <h1 class="font-bold text-3xl text-gray-800 mb-4"><%= @post.title %></h1>
+  <p class="text-gray-700 leading-relaxed"><%= simple_format(@post.body) %></p>
+  <!-- Tag Section -->
+  <% if @post.tags.any? %>
+    <div class="mt-4">
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">Tags:</h3>
+      <div class="flex flex-wrap gap-2">
+        <% @post.tags.each do |tag| %>
+          <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">
+            <%= tag.name %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <!-- Post Actions -->
+  <div class="flex flex-wrap gap-3 mt-6">
+    <% if user_signed_in? && current_user == @post.user %>
+      <%= link_to "Edit Post", edit_post_path(@post), class: "rounded-md px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium transition" %>
+    <% end %>
+    <%= link_to "Back to Posts", posts_path, class: "rounded-md px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition" %>
+  </div>
+  <!-- Comments Section -->
+  <div class="mt-10 border-t pt-6">
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Comments</h2>
+    <% if @post.comments.any? %>
+      <div class="space-y-4">
+        <%= render partial: "comments/comment", collection: @post.comments.where(parent_id: nil), as: :comment %>
+      </div>
+    <% else %>
+      <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+    <% end %>
+    <!-- Add Comment Form -->
+    <% if user_signed_in? %>
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold text-gray-800">Add a Comment</h3>
+        <%= form_with model: [@post, Comment.new], local: true do |f| %>
+          <div class="mt-2">
+            <%= f.text_area :content, class: "w-full p-2 border rounded-md", placeholder: "Write your comment here..." %>
+          </div>
+          <div class="mt-2">
+            <%= f.submit "Post Comment", class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 font-medium transition" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-500 mt-4">You must be logged in to post a comment.</p>
+      <%= link_to "Sign in", new_user_session_path, class: "text-blue-500 hover:underline" %>
+    <% end %>
+  </div>
+</div>

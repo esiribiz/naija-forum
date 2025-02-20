@@ -1,0 +1,50 @@
+<% content_for :title, "Categories" %>
+<div class="max-w-6xl w-full mx-auto mt-12 pb-16">
+  <!-- Notification Section -->
+  <% if notice.present? %>
+    <p class="py-3 px-5 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-lg mb-6" id="notice">
+      <%= notice %>
+    </p>
+  <% end %>
+  <!-- Header Section -->
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-4xl font-extrabold text-gray-900">Categories</h1>
+    <% if user_signed_in? && current_user.admin? %>
+      <%= link_to "New Category", new_category_path, 
+        class: "px-5 py-3 bg-blue-600 text-white text-lg font-medium rounded-lg shadow-md hover:bg-blue-500 transition-transform transform hover:scale-105" %>
+    <% end %>
+  </div>
+  <!-- Categories List Section -->
+  <div id="categories" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if @categories.any? %>
+      <% @categories.each do |category| %>
+        <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-200 hover:shadow-xl hover:bg-gray-50 transition-transform transform hover:scale-105">
+          <!-- Category Color and Image Prefix -->
+          <div class="flex items-center space-x-4 mb-4">
+            <div class="w-12 h-12 flex items-center justify-center rounded-full text-lg font-bold text-white" style="background-color: <%= category.color.presence || '#ccc' %>">
+              <% if category.image.attached? %>
+                <%= image_tag category.image, class: "w-full h-full object-cover rounded-full" %>
+              <% else %>
+                <%= category.name[0..1].upcase %>
+              <% end %>
+            </div>
+            <h2 class="text-2xl font-semibold text-gray-800 hover:text-blue-600 transition">
+              <%= link_to category.name, category_path(category) %>
+            </h2>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            <%= truncate(category.description, length: 150) %>
+          </p>
+          <% if user_signed_in? && current_user.admin? %>
+            <div class="mt-4 flex justify-center">
+              <%= link_to "Edit", edit_category_path(category), 
+                class: "px-4 py-2 bg-yellow-500 text-white font-medium rounded-md hover:bg-yellow-400 transition" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-center text-gray-500 text-lg my-10">No categories found.</p>
+    <% end %>
+  </div>
+</div>

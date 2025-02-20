@@ -1,0 +1,39 @@
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+  <div class="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md">
+    <%= form_with(model: post, class: "space-y-5") do |form| %>
+      <% if post.errors.any? %>
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md">
+          <h2 class="font-semibold"><%= pluralize(post.errors.count, "error") %> prevented this post from being saved:</h2>
+          <ul class="mt-2 list-disc list-inside">
+            <% post.errors.full_messages.each do |error| %>
+              <li><%= error %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div>
+        <%= form.label :title, class: "block text-gray-700 font-semibold" %>
+        <%= form.text_field :title, class: "mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" %>
+      </div>
+      <div>
+        <%= form.label :body, class: "block text-gray-700 font-semibold" %>
+        <%= form.text_area :body, rows: 6, class: "mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" %>
+      </div>
+      <div>
+        <%= form.label :category_id, "Category", class: "block text-gray-700 font-semibold" %>
+        <%= form.collection_select :category_id, Category.all, :id, :name, prompt: "Select a Category", class: "mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" %>
+      </div>
+      <div class="field">
+        <label for="post_tag_list">Tags (comma-separated)</label>
+        <input type="text" name="post[tag_list]" id="post_tag_list" value="<%= @post.tag_list %>" class="border rounded p-2 w-full">
+      </div>
+      <div>
+        <%= form.label :images, class: "block text-gray-700 font-semibold" %>
+        <%= form.file_field :images, multiple: true, class: "mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200" %>
+      </div>
+      <div>
+        <%= form.submit "Create Post", class: "w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-md shadow-sm cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Naija Forum" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <!-- Alert Message with Close Button -->
+    <% if notice || alert %>
+      <div id="alertBox" class="fixed top-0 left-0 right-0 z-50 flex justify-center p-4">
+        <div class="w-full max-w-2xl px-6 py-4 text-white rounded-lg shadow-lg flex justify-between items-center 
+                <% if notice %> bg-green-600 <% else %> bg-orange-600 <% end %>">
+          <p class="font-medium"><%= notice || alert %></p>
+          <button onclick="document.getElementById('alertBox').remove()" class="ml-4 text-white text-xl">&times;</button>
+        </div>
+      </div>
+    <% end %>
+    <!-- Navbar -->
+    <%= render "shared/navbar" %>
+    <%= render "shared/hero_header" %>
+    <!-- Main Layout -->
+    <div class=" mx-auto flex gap-6 min-h-screen">
+      <!-- Sidebar (Hidden on User Profile Pages) -->
+      <% unless controller_name == "users" && action_name == "show" %>
+        <%= render "shared/sidebar" %>
+      <% end %>
+      <!-- Main Content -->
+      <div class="flex-1 p-6 bg-white shadow-md border border-gray-300 rounded-2xl">
+        <%= yield %>
+      </div>
+    </div>
+    <!-- Footer -->
+    <%= render "shared/footer" %>
+  </body>
+</html>

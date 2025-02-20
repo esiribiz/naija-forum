@@ -1,0 +1,36 @@
+<% content_for :title, "Posts Tagged: #{@tag.name}" %>
+
+<div class="max-w-4xl mx-auto px-6 py-12">
+  <h1 class="text-4xl font-extrabold text-gray-800 mb-6 text-center">
+    Posts Tagged: <span class="bg-yellow-300 px-2 py-1 rounded-md"><%= @tag.name %></span>
+  </h1>
+
+  <!-- Link to All Tags -->
+  <div class="text-center mb-6">
+    <%= link_to "All Tags", tags_path, class: "text-blue-600 hover:text-blue-800 font-medium" %>
+  </div>
+
+  <% if @posts.any? %>
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <% @posts.each do |post| %>
+        <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200">
+          <h3 class="text-lg font-semibold text-gray-900">
+            <%= link_to post.title, post_path(post), class: "text-blue-600 hover:text-blue-800" %>
+          </h3>
+          <p class="text-gray-600 mt-2 line-clamp-3">
+            <%= truncate(post.body, length: 150) %>
+          </p>
+          <div class="mt-3 flex justify-between items-center text-sm text-gray-500">
+            <span>🖊 By <%= post.user.username %></span>
+            <span>📅 <%= post.created_at.strftime("%b %d, %Y") %></span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center mt-12">
+      <p class="text-gray-500 text-lg">❌ No posts found under this tag.</p>
+    </div>
+  <% end %>
+</div>
+

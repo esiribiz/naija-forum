@@ -1,0 +1,45 @@
+<%= form_with(model: category, class: "contents", multipart: true) do |form| %>
+  <% if category.errors.any? %>
+    <div id="error_explanation" class="px-3 py-2 mt-3 font-medium text-red-500 rounded-md bg-red-50">
+      <h2><%= pluralize(category.errors.count, "error") %> prohibited this category from being saved:</h2>
+      <ul class="ml-6 list-disc">
+        <% category.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :description %>
+    <%= form.text_area :description, rows: 4, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <!-- ✅ Color Field (Admin sets or system generates) -->
+  <div class="my-5">
+    <%= form.label :color %>
+    <%= form.color_field :color, value: category.color || "#000000", class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full" %>
+  </div>
+
+  <!-- ✅ Image Upload -->
+  <div class="my-5">
+    <%= form.label :image %>
+    <%= form.file_field :image, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full" %>
+    
+    <% if category.persisted? && category.image.attached? %>
+      <div class="mt-4">
+        <p class="text-sm text-gray-600">Current Image:</p>
+        <%= image_tag category.image, class: "mt-2 w-32 h-32 rounded-md shadow" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit "Save Category", class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

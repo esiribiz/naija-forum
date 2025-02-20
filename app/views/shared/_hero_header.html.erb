@@ -1,0 +1,23 @@
+<header class="bg-gradient-to-r from-blue-500 to-blue-400 text-white py-20 px-6 text-center shadow-lg relative">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-5xl font-extrabold tracking-tight leading-tight">Welcome to Naija Forum</h1>
+    <p class="mt-4 text-xl font-light text-gray-200">
+      A vibrant community to discuss, share, and connect with like-minded people.
+    </p>
+
+<!-- Search Form -->
+<div class="mt-8">
+  <%= form_with url: search_path, method: :get, local: true, class: "relative max-w-lg mx-auto" do |f| %>
+    <div class="flex items-center bg-white rounded-lg shadow-md overflow-hidden">
+      <%= f.text_field :query, placeholder: "Search topics, categories, or users...", 
+        class: "w-full px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400" %>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-3">
+        🔍
+      </button>
+    </div>
+  <% end %>
+</div>
+  </div>
+
+  <div class="absolute bottom-0 left-0 w-full h-10 bg-white rounded-t-3xl"></div>
+</header>

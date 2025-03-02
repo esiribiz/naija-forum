@@ -1,25 +1,85 @@
 <% content_for :title, "All Tags" %>
 
-<div class="max-w-5xl mx-auto px-6 py-16 bg-gray-50 min-h-screen">
-  <h1 class="text-5xl font-extrabold text-gray-900 mb-10 text-center tracking-wide">
+<!-- Nigerian-themed header with decorative circles -->
+<div class="relative overflow-hidden mb-6 bg-gradient-to-r from-green-600 to-green-700 py-12 px-6 shadow-lg rounded-lg">
+  <!-- Decorative circles -->
+  <div class="absolute top-0 right-0 w-40 h-40 rounded-full bg-white opacity-10 -mt-10 -mr-10"></div>
+  <div class="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-white opacity-10 -mb-10 -ml-10"></div>
+  <div class="absolute top-1/2 left-1/4 w-24 h-24 rounded-full bg-white opacity-10 transform -translate-y-1/2"></div>
+  
+  <h1 class="text-5xl font-extrabold text-white mb-2 text-center tracking-wide relative z-10">
     🔖 All Tags
   </h1>
+  <p class="text-center text-green-100 text-lg max-w-3xl mx-auto relative z-10">
+    Browse and discover content through our organized tag system
+  </p>
+</div>
+
+<div class="max-w-6xl mx-auto px-6 pb-16 flex-1 bg-gray-50 min-h-screen rounded-xl shadow-sm">
 
   <% if @tags.any? %>
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       <% @tags.sort_by(&:name).each do |tag| %>
-        <div class="relative bg-white p-8 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-200 overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-200 opacity-30"></div>
-          <h3 class="text-2xl font-semibold text-gray-900 mb-2 relative">
-            <%= link_to tag.name, tag_path(tag), class: "text-blue-600 hover:text-blue-800 transition duration-200" %>
-          </h3>
-          <p class="text-gray-700 text-lg relative">📌 Posts: <strong><%= tag.posts.count %></strong></p>
+        <div class="relative bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border-l-4 border-green-500 overflow-hidden transform hover:scale-102 group">
+          <div class="flex justify-between items-start">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2 relative group-hover:text-green-700 transition-colors duration-200">
+              <%= link_to tag_path(tag), class: "inline-block" do %>
+                <span class="inline-block"><%= tag.name %></span>
+                <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-green-500 mt-0.5"></span>
+              <% end %>
+            </h3>
+            
+            <!-- Edit action with icon -->
+            <% if user_signed_in? && current_user.admin? %>
+              <%= link_to edit_tag_path(tag), class: "text-amber-500 hover:text-amber-600 transition duration-200 inline-flex items-center" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+              <% end %>
+            <% end %>
+          </div>
+          
+          <!-- Tag details -->
+          <div class="mt-3 flex items-center text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+            </svg>
+            <span><strong><%= tag.posts.count %></strong> <%= tag.posts.count == 1 ? 'post' : 'posts' %></span>
+          </div>
+          
+          <!-- View button -->
+          <div class="mt-4">
+            <%= link_to tag_path(tag), class: "inline-flex items-center text-green-600 hover:text-green-800 transition-colors duration-200" do %>
+              <span>View tag</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            <% end %>
+          </div>
         </div>
       <% end %>
     </div>
+    
+    <!-- Pagination if it exists -->
+    <% if @tags.respond_to?(:total_pages) %>
+      <div class="mt-10 flex justify-center">
+        <%= paginate @tags, theme: 'tailwind' %>
+      </div>
+    <% end %>
   <% else %>
-    <div class="text-center mt-16">
-      <p class="text-gray-500 text-xl">❌ No tags found.</p>
+    <div class="bg-white rounded-xl shadow-md p-10 text-center mt-8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-gray-500 text-xl mb-4">No tags found yet</p>
+      <% if user_signed_in? && current_user.admin? %>
+        <%= link_to new_tag_path, class: "inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          Create new tag
+        <% end %>
+      <% end %>
     </div>
   <% end %>
 </div>

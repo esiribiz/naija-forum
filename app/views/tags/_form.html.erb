@@ -1,0 +1,23 @@
+<%= form_with(model: tag, class: "contents") do |form| %>
+  <% if tag.errors.any? %>
+    <div id="error_explanation" class="px-3 py-2 mt-3 font-medium text-red-500 rounded-md bg-red-50">
+      <h2><%= pluralize(tag.errors.count, "error") %> prohibited this tag from being saved:</h2>
+      <ul class="ml-6 list-disc">
+        <% tag.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :name %>
+    <%= form.text_field :name, class: "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full" %>
+    <p class="text-xs text-gray-500 mt-1">Enter a unique tag name</p>
+  </div>
+
+  <div class="inline">
+    <%= form.submit "Save Tag", class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
+

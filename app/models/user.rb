@@ -76,9 +76,25 @@ def display_name
     full_name.presence || username
 end
 
-def suspicious_activity?
+def suspicious_activity?(ip_address)
   # Skip suspicious activity checks in development and test environments
   return false if Rails.env.development? || Rails.env.test?
+  
+  # Check if the current IP is from a restricted location or VPN/proxy
+  if ip_address.present?
+    # Check if current IP is from a restricted location
+    if IpGeolocationService.restricted_location?(ip_address)
+      Rails.logger.info("Login from restricted location detected for user #{id} - IP: #{ip_address}")
+      return true
+    end
+    
+    # Check if current IP is from a VPN or proxy
+    vpn_detector = VpnProxyDetectionService.new
+    if vpn_detector.vpn_or_proxy?(ip_address)
+      Rails.logger.info("VPN/proxy detected for user #{id} from IP: #{ip_address}")
+      return true
+    end
+  end
   
   # Get the user's recent login activities
   recent_logins = login_activities.recent.limit(10)

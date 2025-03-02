@@ -1,71 +1,104 @@
 <% content_for :title, @post.title %>
-<div class=" w-full mx-auto bg-white shadow-sm rounded-lg p-6">
+<div class="max-w-4xl w-full mx-auto bg-white shadow-lg rounded-xl p-8 border-t-4 border-naija-green">
   <% if notice.present? %>
-    <p class="py-2 px-4 bg-green-100 text-green-700 font-semibold rounded-md mb-5">
+    <p class="py-3 px-5 bg-naija-green/10 text-naija-green-800 font-semibold rounded-lg mb-6 border-l-4 border-naija-green animate-fadeIn">
       <%= notice %>
     </p>
   <% end %>
+
+  <!-- Back to Posts Button -->
+  <div class="mb-6">
+    <%= link_to '← Back to Posts', posts_path, class: "inline-block px-5 py-2.5 bg-green hover:bg-naija-green-600 text-green font-medium rounded-lg transition duration-300 shadow-sm" %>
+  </div>
+
   <!-- Post Header: User Info -->
-  <div class="flex items-center space-x-4 mb-4">
+  <div class="flex items-center space-x-5 mb-8 bg-gray-50 rounded-xl p-4 border border-gray-100">
     <% if @post.user&.avatar&.attached? %>
-      <%= image_tag @post.user.avatar, class: "w-12 h-12 rounded-full" %>
+      <%= image_tag @post.user.avatar, class: "w-16 h-16 rounded-full border-2 border-naija-green shadow-md object-cover" %>
     <% else %>
-      <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
+      <div class="w-16 h-16 bg-gradient-to-br from-naija-green to-naija-green-600 rounded-full flex items-center justify-center text-white text-lg font-bold shadow-md">
+        <%= @post.user.username.first(2).upcase %>
+      </div>
     <% end %>
     <div>
-      <h2 class="text-lg font-semibold text-gray-800"><%= @post.user.username %></h2>
-      <p class="text-sm text-gray-500">Posted <%= time_ago_in_words(@post.created_at) %> ago</p>
+      <h2 class="text-xl font-semibold text-gray-800"><%= @post.user.username %></h2>
+      <p class="text-sm text-gray-500 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-naija-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Posted <%= time_ago_in_words(@post.created_at) %> ago
+      </p>
     </div>
   </div>
+
   <!-- Post Title & Content -->
-  <h1 class="font-bold text-3xl text-gray-800 mb-4"><%= @post.title %></h1>
-  <p class="text-gray-700 leading-relaxed"><%= simple_format(@post.body) %></p>
+  <div class="bg-white rounded-xl p-6 mb-8">
+    <h1 class="font-bold text-3xl text-gray-800 mb-4 border-b-2 border-naija-green/20 pb-3"><%= @post.title %></h1>
+    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed mt-6">
+      <%= simple_format(@post.body) %>
+    </div>
+  </div>
+
   <!-- Tag Section -->
   <% if @post.tags.any? %>
-    <div class="mt-4">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">Tags:</h3>
+    <div class="mb-8 bg-gray-50 rounded-xl p-5 border border-gray-100">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-naija-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        Tags
+      </h3>
       <div class="flex flex-wrap gap-2">
         <% @post.tags.each do |tag| %>
-          <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm">
+          <span class="px-4 py-1.5 bg-naija-green/10 text-naija-green-700 border border-naija-green/20 rounded-full text-sm font-medium hover:bg-naija-green/20 transition duration-200 cursor-pointer">
             <%= tag.name %>
           </span>
         <% end %>
       </div>
     </div>
   <% end %>
-  <!-- Post Actions -->
-  <div class="flex flex-wrap gap-3 mt-6">
-    <% if user_signed_in? && current_user == @post.user %>
-      <%= link_to "Edit Post", edit_post_path(@post), class: "rounded-md px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium transition" %>
+
+  <!-- Comments Section -->
+  <div class="mt-12 pt-6">
+    <div class="flex items-center mb-6">
+      <div class="w-8 h-8 bg-naija-green rounded-full flex items-center justify-center mr-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-800">Discussion</h2>
+      <div class="ml-3 px-3 py-1 bg-naija-green/10 text-naija-green-700 rounded-full text-sm font-medium">
+        <%= @post.comments.count %> <%= 'Comment'.pluralize(@post.comments.count) %>
+      </div>
+    </div>
+
+    <% if user_signed_in? %>
+      <div id="new_comment" class="mb-8 bg-gray-50 rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Join the conversation</h3>
+        <%= render 'comments/form', comment: Comment.new, post: @post %>
+      </div>
+    <% else %>
+      <div class="bg-gradient-to-r from-naija-green/5 to-naija-amber/10 p-6 rounded-xl text-center mb-8 border border-naija-green/20 shadow-sm">
+        <p class="text-gray-700 mb-3">Sign in to participate in this discussion</p>
+        <%= link_to new_user_session_path, class: "inline-block px-5 py-2.5 bg-naija-green hover:bg-naija-green-600 text-white font-medium rounded-lg transition duration-300 shadow-sm" do %>
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            Sign in
+          </span>
+        <% end %>
+      </div>
     <% end %>
-    <%= link_to "Back to Posts", posts_path, class: "rounded-md px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition" %>
+
+    <div id="comments" class="space-y-6">
+      <% if @post.comments.top_level.any? %>
+        <% @post.comments.top_level.includes(:user, :replies).order(created_at: :desc).each do |comment| %>
+          <%= render partial: 'comments/comment', locals: { comment: comment, post: @post } %>
+        <% end %>
+      <% else %>
+        <p class="text-gray-500 text-sm">No comments yet.</p>
+      <% end %>
+    </div>
   </div>
-<!-- Comments Section -->
-<div class="mt-10 border-t pt-6">
-<h2 class="text-xl font-semibold text-gray-800 mb-4">Comments</h2>
-
-<% if user_signed_in? %>
-    <div id="new_comment" class="mb-8">
-    <%= render 'comments/form', 
-        comment: Comment.new, 
-        post: @post %>
-    </div>
-<% else %>
-    <div class="bg-gray-50 p-4 rounded-lg text-center mb-8">
-    <%= link_to "Sign in", 
-        new_user_session_path, 
-        class: "text-blue-600 hover:text-blue-800" %> to join the discussion.
-    </div>
-<% end %>
-
-<div id="comments" class="space-y-6">
-    <% @post.comments.top_level.includes(:user, :replies).order(created_at: :desc).each do |comment| %>
-    <%= render partial: 'comments/comment', locals: { comment: comment, post: @post } %>
-    <% end %>
-    
-    <% unless @post.comments.top_level.exists? %>
-    <p class="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
-    <% end %>
-</div>
-</div>
 </div>

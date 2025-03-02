@@ -1,44 +1,46 @@
 <%= form_with(
     model: [@post, comment],
-    class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form' : ''}",
+    class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form bg-green-50/50 p-4 rounded-lg' : ''}",
     data: {
     controller: "reset-form",
     action: "turbo:submit-end->reset-form#reset"
     }
 ) do |f| %>
 <% if comment.errors.any? %>
-    <div class="error-messages bg-red-50 text-red-500 p-4 rounded-lg mb-4">
-    <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
-    <ul>
+    <div class="error-messages bg-red-50 text-red-700 p-4 rounded-lg mb-4 border-l-4 border-red-500 shadow-sm">
+    <h2 class="font-semibold"><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+    <ul class="list-disc ml-5 mt-2">
         <% comment.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+        <li class="text-sm"><%= message %></li>
         <% end %>
     </ul>
     </div>
 <% end %>
-
 <div class="relative">
 <%= f.text_area :content, 
     rows: 3,
-    class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+    class: "w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-naija-green focus:border-naija-green transition duration-200",
     placeholder: comment.parent_id.present? ? "Write a reply..." : "Write a comment..." %>
+<div class="absolute bottom-2 right-2 text-xs text-gray-400" data-controller="character-count" data-character-count-target="counter"></div>
 </div>
 
 <% if comment.parent_id.present? %>
 <%= f.hidden_field :parent_id %>
 <% end %>
-
-<div class="flex justify-end space-x-2">
+<div class="flex justify-end space-x-3 mt-3">
 <% if comment.parent_id.present? %>
     <button type="button" 
-            class="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md border border-gray-200 hover:bg-gray-200 transition-all duration-200 shadow-sm flex items-center gap-1 text-sm font-medium"
             data-controller="comments"
             data-action="click->comments#toggleReplyForm"
             data-comment-id="<%= comment.parent_id %>">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
     Cancel
     </button>
 <% end %>
-<%= f.submit comment.parent_id.present? ? "Reply" : "Comment", 
-    class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200" %>
+<%= f.submit comment.parent_id.present? ? "Reply" : "Post Comment", 
+    class: "px-5 py-2 bg-naija-green text-green rounded-md hover:bg-naija-green/90 transition-all duration-200 shadow-sm flex items-center gap-1 text-sm font-medium" %>
 </div>
 <% end %>

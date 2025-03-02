@@ -7,7 +7,6 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
-User.create!(email: "esiribiz@gmail.com", password: "1234567", username: "AdminUser")
-Category.create!(name: "General Discussion", description: "Talk about anything here.")
-Category.create!(name: "Tech", description: "Discuss the latest in technology.")
-Tag.create([ { name: "Ruby" }, { name: "Rails" }, { name: "Flutter" }, { name: "JavaScript" } ])
+User.create!(email: "esiribizz@gmail.com", password: "6319_Destination", username: "TestUser")
+
+

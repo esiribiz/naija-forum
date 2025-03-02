@@ -1,25 +1,28 @@
-<% content_for :title, "Comments" %>
+<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="bg-white rounded-lg shadow-sm p-6">
+    <%= turbo_frame_tag "comments" do %>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="font-bold text-4xl">Comments for <%= @post.title %></h1>
+        <%= link_to "Back to Post", post_path(@post), class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white block font-medium" %>
+    </div>
 
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
+    <div id="post_comments" class="space-y-4">
+        <% if @post.comments.top_level.any? %>
+        <%= render @post.comments.includes(:user).top_level %>
+        <% else %>
+        <p class="text-center text-gray-500 my-10">No comments yet. Be the first to comment!</p>
+        <% end %>
+    </div>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Comments</h1>
-    <%= link_to "New comment", new_comment_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
-  </div>
-
-  <div id="comments" class="min-w-full">
-    <% if @comments.any? %>
-      <% @comments.each do |comment| %>
-        <%= render comment %>
-        <p>
-          <%= link_to "Show this comment", comment, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-        </p>
-      <% end %>
+    <% if user_signed_in? %>
+        <div class="mt-6">
+        <%= render 'comments/form', comment: Comment.new, post: @post %>
+        </div>
     <% else %>
-      <p class="text-center my-10">No comments found.</p>
+        <div class="mt-6 bg-gray-50 p-4 rounded-lg text-center">
+        <%= link_to "Sign in to comment", new_user_session_path, class: "text-blue-600 hover:text-blue-800" %>
+        </div>
     <% end %>
-  </div>
+    <% end %>
+</div>
 </div>

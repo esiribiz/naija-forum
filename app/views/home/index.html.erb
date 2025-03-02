@@ -105,8 +105,11 @@
             </td>
           </tr>
         <% end %>
-      </tbody>
+        </tbody>
     </table>
-  </div>
+    <div class="mt-6">
+        <%= paginate @posts, class: "pagination" %>
+    </div>
+    </div>
 </div>
 

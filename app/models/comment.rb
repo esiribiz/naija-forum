@@ -1,5 +1,6 @@
 class Comment < ApplicationRecord
 include Mentionable
+include HtmlProcessor
 
 belongs_to :user, counter_cache: true
 belongs_to :post, counter_cache: true
@@ -15,6 +16,7 @@ validate :prevent_nested_replies
 
 scope :top_level, -> { where(parent_id: nil) }
 
+before_save :process_html_content
 after_create :notify_post_author
 
 private
@@ -35,5 +37,13 @@ def notify_post_author
     return if user_id == post.user_id # Don't notify if commenter is the post author
     # Implement notification logic here
     # Example: Notification.create(recipient: post.user, actor: user, action: 'commented', notifiable: self)
+end
+
+# Sanitizes HTML content without auto-linking URLs to prevent XSS attacks
+# The HtmlProcessor module provides the process_html method that strips unsafe HTML
+def process_html_content
+    if content.present?
+    self.content = process_html(content)
+    end
 end
 end

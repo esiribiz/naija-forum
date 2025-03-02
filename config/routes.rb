@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users  # Use default Devise controllers
+devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }  # Using custom SessionsController and RegistrationsController
 
   resources :users, only: [ :show, :edit, :update ], path: "profile"
 
@@ -7,9 +7,11 @@ Rails.application.routes.draw do
     resources :posts, only: [ :index ]  # Nest posts under categories
   end
 
-  resources :posts do
-    resources :comments, only: [ :create, :destroy ]
-  end
+resources :posts do
+resources :comments do
+    resources :replies, only: [:create], controller: 'comments'
+end
+end
 
   resources :tags, only: [ :index, :show ]
 
@@ -20,3 +22,4 @@ Rails.application.routes.draw do
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
+

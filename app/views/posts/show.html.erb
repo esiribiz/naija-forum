@@ -40,32 +40,32 @@
     <% end %>
     <%= link_to "Back to Posts", posts_path, class: "rounded-md px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition" %>
   </div>
-  <!-- Comments Section -->
-  <div class="mt-10 border-t pt-6">
-    <h2 class="text-xl font-semibold text-gray-800 mb-4">Comments</h2>
-    <% if @post.comments.any? %>
-      <div class="space-y-4">
-        <%= render partial: "comments/comment", collection: @post.comments.where(parent_id: nil), as: :comment %>
-      </div>
-    <% else %>
-      <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+<!-- Comments Section -->
+<div class="mt-10 border-t pt-6">
+<h2 class="text-xl font-semibold text-gray-800 mb-4">Comments</h2>
+
+<% if user_signed_in? %>
+    <div id="new_comment" class="mb-8">
+    <%= render 'comments/form', 
+        comment: Comment.new, 
+        post: @post %>
+    </div>
+<% else %>
+    <div class="bg-gray-50 p-4 rounded-lg text-center mb-8">
+    <%= link_to "Sign in", 
+        new_user_session_path, 
+        class: "text-blue-600 hover:text-blue-800" %> to join the discussion.
+    </div>
+<% end %>
+
+<div id="comments" class="space-y-6">
+    <% @post.comments.top_level.includes(:user, :replies).order(created_at: :desc).each do |comment| %>
+    <%= render partial: 'comments/comment', locals: { comment: comment, post: @post } %>
     <% end %>
-    <!-- Add Comment Form -->
-    <% if user_signed_in? %>
-      <div class="mt-6">
-        <h3 class="text-lg font-semibold text-gray-800">Add a Comment</h3>
-        <%= form_with model: [@post, Comment.new], local: true do |f| %>
-          <div class="mt-2">
-            <%= f.text_area :content, class: "w-full p-2 border rounded-md", placeholder: "Write your comment here..." %>
-          </div>
-          <div class="mt-2">
-            <%= f.submit "Post Comment", class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-500 font-medium transition" %>
-          </div>
-        <% end %>
-      </div>
-    <% else %>
-      <p class="text-gray-500 mt-4">You must be logged in to post a comment.</p>
-      <%= link_to "Sign in", new_user_session_path, class: "text-blue-500 hover:underline" %>
+    
+    <% unless @post.comments.top_level.exists? %>
+    <p class="text-gray-500 text-center py-4">No comments yet. Be the first to comment!</p>
     <% end %>
-  </div>
+</div>
+</div>
 </div>

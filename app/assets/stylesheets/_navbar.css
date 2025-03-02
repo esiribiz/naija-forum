@@ -1,0 +1,38 @@
+/* Navbar dropdown styles */
+.dropdown-arrow {
+  transform-origin: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+/* Dropdown menu transitions */
+.dropdown-menu {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  visibility: hidden;
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* Mobile menu transitions */
+.mobile-menu {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  visibility: hidden;
+}
+
+.mobile-menu.show {
+  opacity: 1;
+  transform: translateX(0);
+  visibility: visible;
+}
+

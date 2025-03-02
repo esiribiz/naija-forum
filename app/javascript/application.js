@@ -4,7 +4,6 @@ import "controllers"
 // app/javascript/application.js
 import "./controllers/comments"; // If you used a separate comments.js
 
-import "./controllers/alerts";
 
 
 

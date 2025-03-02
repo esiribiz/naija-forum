@@ -1,39 +1,105 @@
-<nav class="bg-white shadow-md">
-  <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-    <!-- Left: Logo -->
-    <div>
-      <%= link_to "Naija Forum", root_path, class: "text-xl font-semibold text-gray-800 hover:text-blue-600" %>
-    </div>
-    <!-- Center: Navigation Links -->
-    <div class="hidden md:flex space-x-6">
-      <%= link_to "Home", root_path, class: "text-gray-600 hover:text-blue-600" %>
-      <%= link_to "Categories", categories_path, class: "text-gray-600 hover:text-blue-600" %>
-      <%= link_to "Posts", posts_path, class: "text-gray-600 hover:text-blue-600" %>
-    </div>
-    <!-- Right: User Authentication/Profile -->
-    <div class="flex items-center space-x-4">
-      <% if user_signed_in? %>
-        <!-- Profile Picture Dropdown -->
-        <div class="relative group">
-          <button class="flex items-center space-x-2 focus:outline-none">
-            <% if current_user.avatar.attached? %>
-              <%= image_tag url_for(current_user.avatar), class: "w-10 h-10 rounded-full border border-gray-300 shadow-sm" %>
-            <% else %>
-              <img src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full border border-gray-300 shadow-sm" alt="Default avatar">
-            <% end %>
-            <span class="text-gray-700 font-medium"><%= current_user.username || "User" %></span>
+<nav class="bg-white shadow-md" data-controller="navbar" data-action="click@window->navbar#closeProfileDropdown">
+  <div class="container mx-auto px-6 py-3">
+    <div class="flex justify-between items-center">
+      <!-- Left side: Logo and Navigation -->
+      <div class="flex items-center">
+        <!-- Logo -->
+        <div class="mr-16">
+          <%= link_to "Naija Forum", root_path, class: "text-xl font-semibold text-gray-800 hover:text-blue-600" %>
+        </div>
+        
+        <!-- Desktop Navigation Links -->
+        <div class="hidden md:flex items-center space-x-8">
+          <%= link_to "Home", root_path, class: "text-gray-600 hover:text-blue-600 transition duration-200" %>
+          <%= link_to "Categories", categories_path, class: "text-gray-600 hover:text-blue-600 transition duration-200" %>
+          <%= link_to "Posts", posts_path, class: "text-gray-600 hover:text-blue-600 transition duration-200" %>
+        </div>
+      </div>
+      
+      <!-- Right side: Mobile menu button and Authentication -->
+      <div class="flex items-center">
+        <!-- Mobile Menu Button -->
+        <div class="flex md:hidden">
+          <button data-action="click->navbar#toggleMobileMenu" data-navbar-target="mobileMenuButton" class="flex items-center px-3 py-2 border rounded text-gray-600 border-gray-600 hover:text-blue-600 hover:border-blue-600" aria-label="Toggle menu">
+            <svg class="fill-current h-4 w-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
+            </svg>
           </button>
-          <!-- Dropdown Menu -->
-          <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md opacity-0 group-hover:opacity-100 transition duration-200 z-50">
-            <%= link_to "Profile", user_path(current_user), class: "block px-4 py-2 text-gray-700 hover:bg-gray-100" %>
-            <%= link_to "Settings", edit_user_registration_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100" %>
-            <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "block px-4 py-2 text-red-600 hover:bg-gray-100" %>
+        </div>
+        
+        <!-- User Profile / Authentication -->
+        <div class="hidden md:block">
+          <% if user_signed_in? %>
+            <div class="relative dropdown-container">
+              <button data-action="click->navbar#toggleProfileDropdown" data-navbar-target="profileButton" class="flex items-center space-x-2 focus:outline-none group cursor-pointer" aria-expanded="false" aria-haspopup="true">
+                <% if current_user.avatar.attached? %>
+                  <%= image_tag url_for(current_user.avatar), class: "w-10 h-10 rounded-full border border-gray-300 shadow-sm" %>
+                <% else %>
+                  <img src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full border border-gray-300 shadow-sm" alt="Default avatar">
+                <% end %>
+                <div class="flex items-center">
+                  <span class="text-gray-700 font-medium"><%= current_user.username || "User" %></span>
+                  <!-- Down Arrow Icon -->
+                  <svg data-navbar-target="dropdownArrow" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500 ml-1 transition-transform duration-200 dropdown-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="transform-origin: center;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
+              
+              <!-- Dropdown Menu (Hidden by Default) -->
+              <div data-navbar-target="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg transition-opacity duration-200 opacity-0 invisible dropdown-menu z-50">
+                <div class="py-1 rounded-md bg-white shadow-xs">
+                  <%= link_to "Profile", user_path(current_user), class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600" %>
+                  <%= link_to "Settings", edit_user_registration_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600" %>
+                  <div class="border-t border-gray-100 my-1"></div>
+                  <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100" %>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <div class="space-x-3">
+              <%= link_to "Login", new_user_session_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
+              <%= link_to "Sign Up", new_user_registration_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu (hidden by default) -->
+    <div data-navbar-target="mobileMenu" class="md:hidden mobile-menu px-2 pt-2 pb-4 space-y-3">
+      <%= link_to "Home", root_path, class: "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50" %>
+      <%= link_to "Categories", categories_path, class: "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50" %>
+      <%= link_to "Posts", posts_path, class: "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50" %>
+      
+      <% if user_signed_in? %>
+        <div class="pt-4 pb-3 border-t border-gray-200">
+          <div class="flex items-center px-5">
+            <div class="flex-shrink-0">
+              <% if current_user.avatar.attached? %>
+                <%= image_tag url_for(current_user.avatar), class: "h-10 w-10 rounded-full" %>
+              <% else %>
+                <img src="https://via.placeholder.com/40" class="h-10 w-10 rounded-full" alt="Default avatar">
+              <% end %>
+            </div>
+            <div class="ml-3">
+              <div class="text-base font-medium text-gray-800"><%= current_user.username || "User" %></div>
+              <div class="text-sm font-medium text-gray-500"><%= current_user.email %></div>
+            </div>
+          </div>
+          <div class="mt-3 space-y-1 px-2">
+            <%= link_to "Profile", user_path(current_user), class: "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50" %>
+            <%= link_to "Settings", edit_user_registration_path, class: "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50" %>
+            <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "w-full text-left px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-gray-50" %>
           </div>
         </div>
       <% else %>
-        <!-- Login & Signup Buttons -->
-        <%= link_to "Login", new_user_session_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
-        <%= link_to "Sign Up", new_user_registration_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
+        <div class="pt-4 pb-3 border-t border-gray-200">
+          <div class="flex flex-col space-y-2 px-5">
+            <%= link_to "Login", new_user_session_path, class: "w-full bg-blue-600 text-center text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
+            <%= link_to "Sign Up", new_user_registration_path, class: "w-full bg-blue-600 text-center text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-500 transition duration-200" %>
+          </div>
+        </div>
       <% end %>
     </div>
   </div>

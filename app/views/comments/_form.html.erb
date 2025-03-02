@@ -1,32 +1,44 @@
-<%= form_with(model: comment, class: "contents") do |form| %>
-  <% if comment.errors.any? %>
-    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-      <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
-
-      <ul class="list-disc ml-6">
-        <% comment.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+<%= form_with(
+    model: [@post, comment],
+    class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form' : ''}",
+    data: {
+    controller: "reset-form",
+    action: "turbo:submit-end->reset-form#reset"
+    }
+) do |f| %>
+<% if comment.errors.any? %>
+    <div class="error-messages bg-red-50 text-red-500 p-4 rounded-lg mb-4">
+    <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+    <ul>
+        <% comment.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
         <% end %>
-      </ul>
+    </ul>
     </div>
-  <% end %>
+<% end %>
 
-  <div class="my-5">
-    <%= form.label :content %>
-    <%= form.textarea :content, rows: 4, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": comment.errors[:content].none?, "border-red-400 focus:outline-red-600": comment.errors[:content].any?}] %>
-  </div>
+<div class="relative">
+<%= f.text_area :content, 
+    rows: 3,
+    class: "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+    placeholder: comment.parent_id.present? ? "Write a reply..." : "Write a comment..." %>
+</div>
 
-  <div class="my-5">
-    <%= form.label :user_id %>
-    <%= form.text_field :user_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": comment.errors[:user_id].none?, "border-red-400 focus:outline-red-600": comment.errors[:user_id].any?}] %>
-  </div>
+<% if comment.parent_id.present? %>
+<%= f.hidden_field :parent_id %>
+<% end %>
 
-  <div class="my-5">
-    <%= form.label :post_id %>
-    <%= form.text_field :post_id, class: ["block shadow-sm rounded-md border outline-hidden px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": comment.errors[:post_id].none?, "border-red-400 focus:outline-red-600": comment.errors[:post_id].any?}] %>
-  </div>
-
-  <div class="inline">
-    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
-  </div>
+<div class="flex justify-end space-x-2">
+<% if comment.parent_id.present? %>
+    <button type="button" 
+            class="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+            data-controller="comments"
+            data-action="click->comments#toggleReplyForm"
+            data-comment-id="<%= comment.parent_id %>">
+    Cancel
+    </button>
+<% end %>
+<%= f.submit comment.parent_id.present? ? "Reply" : "Comment", 
+    class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200" %>
+</div>
 <% end %>

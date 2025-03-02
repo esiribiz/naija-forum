@@ -7,4 +7,19 @@
  * depending on specificity.
  *
  * Consider organizing styles into separate files for maintainability.
- */
+ *
+ *= require _navbar
+*/
+
+/* Flash message transitions */
+[data-controller="flash"] {
+transition: opacity 0.3s ease-in-out;
+}
+
+.opacity-0 {
+opacity: 0;
+}
+
+.opacity-100 {
+opacity: 1;
+}

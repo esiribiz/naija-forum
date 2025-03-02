@@ -41,7 +41,10 @@
             </div>
           </div>
         <% end %>
-      <% end %>
+        <% end %>
     </div>
-  </main>
+    <div class="mt-6">
+        <%= paginate @posts, class: "pagination" %>
+    </div>
+    </main>
 </div>

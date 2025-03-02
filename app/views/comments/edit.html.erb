@@ -1,10 +1,28 @@
-<% content_for :title, "Editing comment" %>
-
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing comment</h1>
-
-  <%= render "form", comment: @comment %>
-
-  <%= link_to "Show this comment", @comment, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to comments", comments_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+<turbo-frame id="comment_<%= @comment.id %>">
+<div class="bg-white p-4 rounded-lg shadow-sm mb-4 border border-gray-100 <%= @comment.parent_id.present? ? 'ml-8' : '' %>">
+    <div class="flex items-start space-x-3">
+    <div class="flex-shrink-0">
+        <% if @comment.user.avatar.attached? %>
+        <%= image_tag @comment.user.avatar, class: "h-10 w-10 rounded-full" %>
+        <% else %>
+        <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+            <span class="text-gray-500 text-sm font-medium">
+            <%= @comment.user.username.first(2).upcase %>
+            </span>
+        </div>
+        <% end %>
+    </div>
+    
+    <div class="flex-grow">
+        <div class="flex items-center mb-1">
+        <span class="font-medium text-gray-900"><%= @comment.user.username %></span>
+        <span class="text-gray-500 text-sm ml-2">
+            <%= time_ago_in_words(@comment.created_at) %> ago
+        </span>
+        </div>
+        
+        <%= render 'comments/edit_form', comment: @comment %>
+    </div>
+    </div>
 </div>
+</turbo-frame>

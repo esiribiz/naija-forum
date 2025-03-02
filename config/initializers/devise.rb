@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'devise-security'
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -268,20 +269,47 @@ Devise.setup do |config|
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
 
-  # ==> OmniAuth
-  # Add a new OmniAuth provider. Check the wiki for more information on setting
-  # up on your models and hooks.
-  # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+  # ==> Security Extension
+  # Configure security extension for devise
 
-  # ==> Warden configuration
-  # If you want to use other strategies, that are not supported by Devise, or
-  # change the failure app, you can configure them inside the config.warden block.
-  #
-  # config.warden do |manager|
-  #   manager.intercept_401 = false
-  #   manager.default_strategies(scope: :user).unshift :some_external_strategy
-  # end
+  # Password expiration period
+  config.expire_password_after = 90.days
 
+  # Password archiving count
+  config.password_archiving_count = 5
+
+  # Deny old password usage
+  config.deny_old_passwords = true
+
+  # ==> Security Questionable Configuration
+  # Configure the security questionable module
+
+  # Number of security questions required
+  # Setting to 0 makes security questions completely optional for users
+  config.security_question_count = 0
+
+  # Minimum age for security questions (after this period, user will be asked security questions again)
+  config.min_security_question_age = 30.days
+
+  # Maximum number of failed security question attempts before locking the account
+  config.max_security_question_attempts = 5
+
+  # Strategy to use when locking an account after too many failed security question attempts
+  config.security_question_lock_strategy = :time
+
+  # Time interval to unlock the account if using :time lock strategy
+  config.security_question_unlock_in = 1.hour
+# ==> OmniAuth
+# Add a new OmniAuth provider. Check the wiki for more information on setting
+# up on your models and hooks.
+# config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+
+# ==> Warden configuration
+# If you want to use other strategies, that are not supported by Devise, or
+# change the failure app, you can configure them inside the config.warden block.
+  config.warden do |manager|
+    manager.default_strategies(scope: :user)
+  end
   # ==> Mountable engine configurations
   # When using Devise inside an engine, let's call it `MyEngine`, and this engine
   # is mountable, there are some extra configurations to be taken into account.

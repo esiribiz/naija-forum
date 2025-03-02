@@ -1,23 +1,25 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [ :show, :edit, :update ]
-  before_action :authenticate_user!
-  before_action :authorize_user, only: [ :edit, :update ]
+before_action :set_user, only: [ :show, :edit, :update ]
+before_action :authenticate_user!
 
-  def show
-    # @user is already set from `set_user`
-  end
+def show
+authorize @user
+# @user is already set from `set_user`
+end
 
-  def edit
-    # Only the owner can access this due to `authorize_user`
-  end
+def edit
+authorize @user
+end
 
-  def update
-    if @user.update(user_params)
-      redirect_to @user, notice: "Profile updated successfully."
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
+def update
+authorize @user
+if @user.update(user_params)
+    redirect_to @user, notice: "Profile updated successfully."
+else
+    flash.now[:alert] = "Failed to update profile: #{@user.errors.full_messages.to_sentence}"
+    render :edit, status: :unprocessable_entity
+end
+end
 
   private
 
@@ -25,11 +27,8 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  def authorize_user
-    redirect_to @user, alert: "You are not authorized to edit this profile." unless current_user == @user
-  end
-
   def user_params
-    params.require(:user).permit(:name, :username, :email, :avatar, :bio, :location, :website, :twitter, :linkedin, :facebook)
+    params.require(:user).permit(:name, :username, :email, :avatar, :bio, :location, :website, :twitter, :linkedin, :facebook, :first_name, :last_name)
   end
+  
 end

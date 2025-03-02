@@ -1,78 +1,93 @@
 class CommentsController < ApplicationController
-  before_action :set_comment, only: %i[ show edit update destroy ]
-  before_action :set_post, only: %i[ create ]
+before_action :authenticate_user!, except: [:index]
+before_action :set_post
+before_action :set_comment, only: [:edit, :update, :destroy]
 
-  # GET /comments or /comments.json
-  def index
-    @comments = Comment.all
-  end
+def index
+    @comments = policy_scope(@post.comments).includes(:user).top_level
+end
 
-  # GET /comments/1 or /comments/1.json
-  def show
-  end
-
-  # GET /comments/new
-  def new
-    @comment = Comment.new
-  end
-
-  # GET /comments/1/edit
-  def edit
-  end
-
-  # POST /comments or /comments.json
-  def create
-    @comment = @post.comments.build(comment_params)
-    @comment.user = current_user
-
+def create
+    @comment = current_user.comments.build(comment_params)
+    @comment.post = @post
+    authorize @comment
+    
     respond_to do |format|
-      if @comment.save
-        format.html { redirect_to @post, notice: "Comment was successfully created." }
-        format.json { render :show, status: :created, location: @comment }
-      else
-        format.html { redirect_to @post, alert: "Failed to add comment." }
-        format.json { render json: @comment.errors, status: :unprocessable_entity }
-      end
+    if @comment.save
+        message = @comment.parent_id.present? ? 'Reply was successfully added.' : 'Comment was successfully created.'
+        format.html { redirect_to post_path(@post), notice: message }
+        format.turbo_stream {
+        if @comment.parent_id.present?
+            render turbo_stream: [
+            turbo_stream.append("comment_#{@comment.parent_id}_replies", 
+                partial: 'comments/comment',
+                locals: { comment: @comment }
+            ),
+            turbo_stream.replace("comment_#{@comment.parent_id}_reply_form",
+                partial: 'comments/form',
+                locals: { comment: Comment.new(parent_id: @comment.parent_id), post: @post }
+            )
+            ]
+        else
+            render turbo_stream: turbo_stream.append("post_comments",
+            partial: 'comments/comment',
+            locals: { comment: @comment }
+            )
+        end
+        }
+    else
+        format.html { redirect_to post_path(@post), alert: 'Error creating comment.' }
+        format.turbo_stream {
+        render turbo_stream: turbo_stream.replace(
+            @comment.parent_id.present? ? "comment_#{@comment.parent_id}_reply_form" : "new_comment",
+            partial: "comments/form",
+            locals: { comment: @comment, post: @post }
+        )
+        }
     end
-  end
-
-  # PATCH/PUT /comments/1 or /comments/1.json
-  def update
-    respond_to do |format|
-      if @comment.update(comment_params)
-        format.html { redirect_to @comment.post, notice: "Comment was successfully updated." }
-        format.json { render :show, status: :ok, location: @comment }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @comment.errors, status: :unprocessable_entity }
-      end
     end
-  end
+end
 
-  # DELETE /comments/1 or /comments/1.json
-  def destroy
-    post = @comment.post
+def edit
+    @post = @comment.post
+    authorize @comment
+end
+
+def update
+    authorize @comment
+    if @comment.update(comment_params)
+    redirect_to @comment.post, notice: 'Comment was successfully updated.'
+    else
+    render :edit
+    end
+end
+
+def destroy
+    authorize @comment
+    @post = @comment.post
+    comment_id = @comment.id
+
     @comment.destroy!
 
     respond_to do |format|
-      format.html { redirect_to post, notice: "Comment was successfully deleted.", status: :see_other }
-      format.json { head :no_content }
+    format.html { redirect_to post_path(@post), notice: 'Comment was successfully deleted.' }
+    format.turbo_stream { 
+        render turbo_stream: turbo_stream.remove("comment_#{comment_id}")
+    }
     end
-  end
+end
 
-  private
+private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_comment
-    @comment = Comment.find(params.require(:id))
-  end
+def set_post
+    @post = Post.find(params[:post_id])
+end
 
-  def set_post
-    @post = Post.find(params.require(:post_id))
-  end
+def set_comment
+    @comment = Comment.find(params[:id])
+end
 
-  # Only allow a list of trusted parameters through.
-  def comment_params
-    params.require(:comment).permit(:content)
-  end
+def comment_params
+    params.require(:comment).permit(:content, :parent_id)
+end
 end

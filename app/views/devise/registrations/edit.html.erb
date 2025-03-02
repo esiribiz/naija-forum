@@ -18,6 +18,14 @@
         Currently waiting confirmation for: <strong><%= resource.unconfirmed_email %></strong>
       </div>
     <% end %>
+    
+    <!-- Security Questions -->
+    <div class="border-t pt-4 mt-4">
+      <h3 class="text-lg font-medium text-gray-700 mb-3">Security Questions</h3>
+      <p class="text-sm text-gray-600 mb-4">Please set up or update your security questions. These questions help secure your account.</p>
+      <%= render "devise/shared/security_questions", f: f %>
+    </div>
+    
     <!-- Password Field -->
     <div>
       <%= f.label :password, class: "block text-sm font-medium text-gray-700" %>

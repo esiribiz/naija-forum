@@ -10,7 +10,25 @@ export default class extends Controller {
 
   toggleMobileMenu() {
     console.log("Toggling mobile menu")
-    this.mobileMenuTarget.classList.toggle("hidden")
+    
+    // Check if the menu is currently hidden
+    const isHidden = this.mobileMenuTarget.classList.contains("hidden") || 
+                     this.mobileMenuTarget.classList.contains("opacity-0") ||
+                     this.mobileMenuTarget.classList.contains("invisible");
+    
+    if (isHidden) {
+      // Show mobile menu
+      this.mobileMenuTarget.classList.remove("hidden", "opacity-0", "invisible")
+      this.mobileMenuTarget.classList.add("show")
+    } else {
+      // Hide mobile menu
+      this.mobileMenuTarget.classList.add("opacity-0", "invisible")
+      // Add hidden class after transition completes
+      setTimeout(() => {
+        this.mobileMenuTarget.classList.add("hidden")
+      }, 300) // Match this to your CSS transition duration
+      this.mobileMenuTarget.classList.remove("show")
+    }
     
     // Optionally add an active state to the mobile menu button
     if (this.hasMobileMenuButtonTarget) {
@@ -23,8 +41,23 @@ export default class extends Controller {
     console.log("Toggling profile dropdown")
 
     if (this.hasProfileDropdownTarget) {
-      this.profileDropdownTarget.classList.toggle("opacity-0")
-      this.profileDropdownTarget.classList.toggle("invisible")
+      const isHidden = this.profileDropdownTarget.classList.contains("hidden") || 
+                       this.profileDropdownTarget.classList.contains("opacity-0") ||
+                       this.profileDropdownTarget.classList.contains("invisible");
+      
+      if (isHidden) {
+        // Show dropdown
+        this.profileDropdownTarget.classList.remove("hidden", "opacity-0", "invisible")
+        this.profileDropdownTarget.classList.add("show")
+      } else {
+        // Hide dropdown
+        this.profileDropdownTarget.classList.add("opacity-0", "invisible")
+        // Add hidden class after transition completes
+        setTimeout(() => {
+          this.profileDropdownTarget.classList.add("hidden")
+        }, 300) // Match this to your CSS transition duration
+        this.profileDropdownTarget.classList.remove("show")
+      }
     }
     
     this.rotateDropdownArrow()
@@ -37,6 +70,10 @@ export default class extends Controller {
       !event.target.closest('[data-action="click->navbar#toggleProfileDropdown"]')
     ) {
       this.profileDropdownTarget.classList.add("opacity-0", "invisible")
+      setTimeout(() => {
+        this.profileDropdownTarget.classList.add("hidden")
+      }, 300) // Match this to your CSS transition duration
+      this.profileDropdownTarget.classList.remove("show")
       this.rotateDropdownArrow(false)
     }
   }
@@ -46,10 +83,15 @@ export default class extends Controller {
     
     if (showDropdown === null) {
       // Toggle rotation based on dropdown visibility
-      if (this.profileDropdownTarget.classList.contains("opacity-0")) {
-        this.dropdownArrowTarget.classList.remove("rotate-180")
-      } else {
+      // Check for visibility state to determine if dropdown is visible
+      const isHidden = this.profileDropdownTarget.classList.contains("hidden") || 
+                       this.profileDropdownTarget.classList.contains("opacity-0") ||
+                       this.profileDropdownTarget.classList.contains("invisible");
+      
+      if (!isHidden) {
         this.dropdownArrowTarget.classList.add("rotate-180")
+      } else {
+        this.dropdownArrowTarget.classList.remove("rotate-180")
       }
     } else if (showDropdown) {
       this.dropdownArrowTarget.classList.add("rotate-180")

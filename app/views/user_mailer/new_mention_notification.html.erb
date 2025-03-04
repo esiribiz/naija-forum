@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .header {
+      background-color: #006600;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 5px 5px 0 0;
+    }
+    .content {
+      padding: 20px;
+      background-color: white;
+      border-radius: 0 0 5px 5px;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+    .button {
+      display: inline-block;
+      background-color: #006600;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #006600;
+    }
+    .mention {
+      font-weight: bold;
+      background-color: #e8f4f8;
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>You've Been Mentioned!</h1>
+    </div>
+    <div class="content">
+      <p>Hello <%= @recipient.username %>,</p>
+      
+      <p><span class="highlight"><%= @actor.username %></span> mentioned you in a <%= @notifiable.class.name.downcase %>:</p>
+      
+      <blockquote style="border-left: 3px solid #006600; padding-left: 10px; margin-left: 10px; color: #555;">
+        "<%= @notifiable.body.gsub("@#{@recipient.username}", "<span class='mention'>@#{@recipient.username}</span>").html_safe.truncate(150) %>"
+      </blockquote>
+      
+      <% if @notifiable.instance_of?(Comment) %>
+        <p>This mention was in a comment on the post "<%= @notifiable.post.title %>"</p>
+        <div style="text-align: center;">
+          <a href="<%= post_url(@notifiable.post, anchor: "comment-#{@notifiable.id}") %>" class="button">View Mention</a>
+        </div>
+      <% elsif @notifiable.instance_of?(Post) %>
+        <div style="text-align: center;">
+          <a href="<%= post_url(@notifiable) %>" class="button">View Mention</a>
+        </div>
+      <% end %>
+      
+      <p>Join the conversation and be part of the Nigerian community discussion!</p>
+    </div>
+    <div class="footer">
+      <p>© <%= Date.today.year %> Naija-Forum - The Nigerian Community Platform</p>
+      <p>
+        You received this email because you have enabled notifications for mentions.
+        <a href="<%= edit_user_notification_settings_url(@recipient) %>">Update your notification preferences</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+

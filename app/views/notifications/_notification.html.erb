@@ -1,0 +1,103 @@
+<%
+  # Set defaults for optional local variables
+  small = local_assigns.fetch(:small, false)
+  show_actions = local_assigns.fetch(:show_actions, true)
+  show_delete = local_assigns.fetch(:show_delete, false)
+  show_mark_read_icon = local_assigns.fetch(:show_mark_read_icon, false)
+%>
+<div id="notification_<%= notification.id %>" class="flex items-start notification-item <%= notification.read? ? 'read' : 'unread' %>">
+  <div class="flex-shrink-0 mr-3">
+    <% if notification.actor && notification.actor.respond_to?(:avatar) && notification.actor.avatar.attached? %>
+      <%= image_tag notification.actor.avatar.variant(resize_to_fill: [40, 40]), class: "h-10 w-10 rounded-full object-cover" %>
+    <% else %>
+      <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+        <% if notification.actor && notification.actor.respond_to?(:username) %>
+          <span class="text-gray-600 text-sm font-medium">
+            <%= notification.actor.username.first(2).upcase %>
+          </span>
+        <% else %>
+          <svg class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  
+  <div class="flex-1 min-w-0">
+    <p class="<%= small ? 'text-xs' : 'text-sm' %> text-gray-900">
+      <% case notification.action %>
+      <% when 'commented' %>
+        <span class="font-medium"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
+        commented on your 
+        <%= link_to "post", post_path(notification.notifiable.post), class: "font-medium hover:underline" %>
+      <% when 'liked' %>
+        <span class="font-medium"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
+        liked your 
+        <%= link_to "post", post_path(notification.notifiable.likeable), class: "font-medium hover:underline" %>
+      <% when 'mentioned' %>
+        <span class="font-medium"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
+        mentioned you
+        <% if notification.notifiable.is_a?(Comment) %>
+          in a <%= link_to "comment", post_path(notification.notifiable.post, anchor: "comment-#{notification.notifiable.id}"), class: "font-medium hover:underline" %>
+        <% else %>
+          in a <%= link_to "post", post_path(notification.notifiable), class: "font-medium hover:underline" %>
+        <% end %>
+      <% when 'followed' %>
+        <span class="font-medium"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
+        started following you
+      <% else %>
+        <%= notification.action.humanize %>
+      <% end %>
+    </p>
+    
+    <p class="mt-1 <%= small ? 'text-xs' : 'text-sm' %> text-gray-500">
+      <%= time_ago_in_words(notification.created_at) %> ago
+    </p>
+    
+    <% if show_actions %>
+      <div class="flex mt-2 space-x-3">
+        <% if notification.notifiable.present? %>
+          <%= link_to "View", 
+                      polymorphic_path(notification.notifiable), 
+                      class: "text-xs text-blue-600 hover:text-blue-800" %>
+        <% end %>
+        
+        <% unless notification.read? %>
+          <%= button_to "Mark as read", 
+                      mark_as_read_notification_path(notification), 
+                      method: :post, 
+                      class: "text-xs text-gray-500 hover:text-gray-700" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  
+  <% if show_delete %>
+    <div class="ml-2">
+      <%= button_to notification_path(notification), 
+                  method: :delete,
+                  data: { confirm: "Delete this notification?" },
+                  class: "text-xs text-red-500 hover:text-red-700" do %>
+        <span class="sr-only">Delete</span>
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      <% end %>
+    </div>
+  <% end %>
+  
+  <% if !show_delete && !notification.read? && show_mark_read_icon %>
+    <div class="ml-2">
+      <%= button_to mark_as_read_notification_path(notification), 
+                  method: :post,
+                  class: "text-xs text-gray-500 hover:text-gray-700" do %>
+        <span class="sr-only">Mark as read</span>
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+

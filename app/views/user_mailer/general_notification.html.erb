@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .header {
+      background-color: #4F46E5;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 5px 5px 0 0;
+    }
+    .content {
+      padding: 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-top: none;
+      border-radius: 0 0 5px 5px;
+    }
+    .notification-details {
+      background-color: white;
+      border: 1px solid #eee;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+    }
+    .footer {
+      font-size: 12px;
+      color: #666;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .button {
+      display: inline-block;
+      background-color: #4F46E5;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Naija-Forum Notification</h1>
+  </div>
+  
+  <div class="content">
+    <p>Hello <%= @recipient.username %>,</p>
+    
+    <p>You have a new notification from Naija-Forum:</p>
+    
+    <div class="notification-details">
+      <p><strong><%= @notification.action_text %></strong></p>
+      <p><%= @notification.message %></p>
+      
+      <% if @notification.notifiable %>
+        <p>
+          <% case @notification.notifiable_type %>
+          <% when 'Post' %>
+            This notification relates to a post titled: <%= @notification.notifiable.title %>
+          <% when 'Comment' %>
+            This notification relates to a comment on: <%= @notification.notifiable.post.title rescue "a post" %>
+          <% when 'User' %>
+            This notification relates to user: <%= @notification.notifiable.username %>
+          <% end %>
+        </p>
+      <% end %>
+    </div>
+    
+    <p>
+      <a href="<%= @url %>" class="button">View on Naija-Forum</a>
+    </p>
+    
+    <p>Thank you for being part of our community!</p>
+  </div>
+  
+  <div class="footer">
+    <p>
+      This email was sent to <%= @recipient.email %>. If you prefer not to receive 
+      these emails, you can change your notification settings in your profile.
+    </p>
+    <p>&copy; <%= Date.today.year %> Naija-Forum. All rights reserved.</p>
+  </div>
+</body>
+</html>
+

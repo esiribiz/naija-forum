@@ -6,6 +6,9 @@ class Notification < ApplicationRecord
   belongs_to :notifiable, polymorphic: true # the object that generated the notification
   belongs_to :actor, class_name: 'User', optional: true # user who triggered the notification
 
+  # Callbacks
+  after_create :send_email_notification
+
   # Attributes
   # - action (string): type of notification (e.g. 'liked', 'commented', 'mentioned')
   # - read (boolean): whether the notification has been read
@@ -90,5 +93,11 @@ class Notification < ApplicationRecord
       )
     end
   end
+  
+  private
+  
+  # Send email notification if the user has enabled email notifications
+  def send_email_notification
+    EmailNotificationJob.perform_later(self.id) if user.email_notifications_enabled?
+  end
 end
-

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .header {
+      background-color: #006600;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 5px 5px 0 0;
+    }
+    .content {
+      padding: 20px;
+      background-color: white;
+      border-radius: 0 0 5px 5px;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+    }
+    .button {
+      display: inline-block;
+      background-color: #006600;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 15px;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #006600;
+    }
+    .profile-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .profile-image {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #006600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>You Have a New Follower!</h1>
+    </div>
+    <div class="content">
+      <p>Hello <%= @recipient.username %>,</p>
+      
+      <div class="profile-container">
+        <% if @actor.profile_image.attached? %>
+          <%= image_tag url_for(@actor.profile_image), class: "profile-image", alt: "Profile picture" %>
+        <% else %>
+          <div class="profile-image" style="background-color: #ccc; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 30px; color: #666;"><%= @actor.username[0].upcase %></span>
+          </div>
+        <% end %>
+        <p style="margin-top: 10px;"><span class="highlight"><%= @actor.username %></span> is now following you!</p>
+      </div>
+      
+      <p>Your insights and contributions to the Nigerian community are valued by others. Keep sharing your thoughts and connecting with fellow Nigerians!</p>
+      
+      <div style="text-align: center;">
+        <a href="<%= user_url(@actor) %>" class="button">View Profile</a>
+        
+        <% unless @recipient.following?(@actor) %>
+          <a href="<%= follow_user_url(@actor) %>" class="button" style="background-color: #999;">Follow Back</a>
+        <% end %>
+      </div>
+      
+      <p>Build your network within the Nigerian community!</p>
+    </div>
+    <div class="footer">
+      <p>© <%= Date.today.year %> Naija-Forum - The Nigerian Community Platform</p>
+      <p>
+        You received this email because you have enabled notifications for new followers.
+        <a href="<%= edit_user_notification_settings_url(@recipient) %>">Update your notification preferences</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+

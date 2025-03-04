@@ -15,10 +15,11 @@ accepts_nested_attributes_for :security_questions
 has_many :posts, dependent: :destroy
 has_many :comments, dependent: :destroy
 has_many :login_activities, dependent: :destroy
+has_many :login_activities, dependent: :destroy
 has_many :likes, dependent: :destroy
+has_many :notifications, foreign_key: "user_id", dependent: :destroy
 has_many :followings, class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
 has_many :followers, class_name: "Follow", foreign_key: "followed_id", dependent: :destroy
-has_many :followed_users, through: :followings, source: :followed
 has_many :following_users, through: :followers, source: :follower
 has_many :following, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
 has_many :liked_posts, through: :likes, source: :post
@@ -233,6 +234,31 @@ def lock_access!
     UserMailer.account_locked(self).deliver_later
 end
 
+# Notification methods
+
+# Get a limited number of recent notifications
+def recent_notifications(limit = 5)
+  notifications.order(created_at: :desc).limit(limit)
+end
+
+# Get all unread notifications
+def unread_notifications
+  notifications.where(read: false)
+end
+
+# Mark all notifications as read
+def mark_all_notifications_as_read
+  notifications.where(read: false).update_all(read: true)
+end
+
+# Determines if user should receive email notifications
+# This can be extended with a user preference in the future
+def email_notifications_enabled?
+    # By default, all users receive email notifications unless they've opted out
+    # In a future implementation, this could check a database column for user preferences
+    true
+end
+
 def reset_password!
 if can_reset_password?
     register_password_reset_attempt
@@ -264,6 +290,4 @@ end
 def security_questions_required?
     false
 end
-
-
 end

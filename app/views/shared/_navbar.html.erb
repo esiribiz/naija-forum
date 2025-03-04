@@ -54,6 +54,53 @@
           </svg>
         </button>
         
+        <!-- Notifications dropdown -->
+        <div class="hidden md:block relative" data-controller="notifications">
+          <% if user_signed_in? %>
+            <button data-notifications-target="notificationButton" data-action="click->notifications#toggleNotifications click@window->notifications#closeNotifications" class="p-1 rounded-full text-white hover:text-yellow-300 focus:outline-none relative transition-all duration-300">
+              <span class="sr-only">View notifications</span>
+              <!-- Bell Icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              
+              <!-- Notification Counter Badge -->
+              <% unread_count = 0 %>
+              <%# Temporarily disabled notifications until association is added to User model %>
+              <% if false && user_signed_in? && unread_count > 0 %>
+                <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform -translate-y-1/2 translate-x-1/2">
+                  <%= unread_count > 9 ? '9+' : unread_count %>
+                </span>
+              <% end %>
+            </button>
+            
+            <!-- Notifications dropdown menu -->
+            <div data-notifications-target="notificationsDropdown" class="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 transition-all duration-300 transform opacity-0 scale-95 invisible z-50">
+              <div class="py-2 border-b border-gray-200">
+                <div class="flex items-center justify-between px-4">
+                  <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+                  <% if false && user_signed_in? %>
+                  <%# Temporarily disabled notifications until association is added to User model %>
+                    <%= button_to mark_all_as_read_notifications_path, method: :post, class: "text-xs text-green-600 hover:text-green-800" do %>
+                      Mark all as read
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+              
+              <div class="max-h-96 overflow-y-auto">
+                <%= render partial: "shared/notification_dropdown" %>
+              </div>
+              
+              <div class="py-1 border-t border-gray-200">
+                <%= link_to notifications_path, class: "block w-full text-center px-4 py-2 text-sm text-green-600 hover:bg-gray-100" do %>
+                  View all notifications
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        
         <!-- Profile dropdown -->
         <div class="hidden md:block ml-3 relative">
           <% if user_signed_in? %>
@@ -121,6 +168,22 @@
     
     <!-- Mobile Menu (hidden by default) -->
     <div data-navbar-target="mobileMenu" class="hidden opacity-0 invisible md:hidden mobile-menu bg-gradient-to-r from-green-600 via-green-700 to-green-800 px-2 pt-2 pb-4 space-y-3 rounded-md shadow-md transition-all duration-300">
+      <!-- Mobile Notifications Link -->
+      <% if user_signed_in? %>
+        <%= link_to notifications_path, class: "flex items-center px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-600 hover:text-yellow-300 transition-all duration-300" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+          <span>Notifications</span>
+          <% unread_count = 0 %>
+          <%# Temporarily disabled notifications until association is added to User model %>
+          <% if false && unread_count > 0 %>
+            <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+              <%= unread_count > 9 ? '9+' : unread_count %>
+            </span>
+          <% end %>
+        <% end %>
+      <% end %>
       <%= link_to root_path, class: "flex items-center px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-600 hover:text-yellow-300 transition-all duration-300" do %>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />

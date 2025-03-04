@@ -47,3 +47,5 @@ def process_html_content
     end
 end
 end
+
+

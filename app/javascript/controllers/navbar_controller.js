@@ -2,10 +2,19 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["mobileMenu", "mobileMenuButton", "profileDropdown", "dropdownArrow"]
+  static classes = ["visible", "hidden", "rotate"]
+
+  initialize() {
+    this.boundClickOutside = this.handleClickOutside.bind(this)
+  }
 
   connect() {
     console.log("Navbar controller connected")
-    document.addEventListener("click", this.closeProfileDropdown.bind(this))
+    document.addEventListener("click", this.boundClickOutside)
+  }
+
+  disconnect() {
+    document.removeEventListener("click", this.boundClickOutside)
   }
 
   toggleMobileMenu() {
@@ -41,62 +50,70 @@ export default class extends Controller {
     console.log("Toggling profile dropdown")
 
     if (this.hasProfileDropdownTarget) {
-      const isHidden = this.profileDropdownTarget.classList.contains("hidden") || 
-                       this.profileDropdownTarget.classList.contains("opacity-0") ||
-                       this.profileDropdownTarget.classList.contains("invisible");
+      const isHidden = this.isDropdownHidden()
       
       if (isHidden) {
-        // Show dropdown
-        this.profileDropdownTarget.classList.remove("hidden", "opacity-0", "invisible")
-        this.profileDropdownTarget.classList.add("show")
+        this.showDropdown()
       } else {
-        // Hide dropdown
-        this.profileDropdownTarget.classList.add("opacity-0", "invisible")
-        // Add hidden class after transition completes
-        setTimeout(() => {
-          this.profileDropdownTarget.classList.add("hidden")
-        }, 300) // Match this to your CSS transition duration
-        this.profileDropdownTarget.classList.remove("show")
+        this.hideDropdown()
       }
     }
-    
-    this.rotateDropdownArrow()
   }
 
-  closeProfileDropdown(event) {
+  showDropdown() {
+    this.profileDropdownTarget.classList.remove("hidden")
+    // Trigger a reflow to ensure the transition works
+    this.profileDropdownTarget.offsetHeight
+    this.profileDropdownTarget.classList.remove("opacity-0", "translate-y-2")
+    this.profileDropdownTarget.classList.add("opacity-100", "translate-y-0")
+    this.rotateDropdownArrow(true)
+  }
+
+  hideDropdown() {
+    this.profileDropdownTarget.classList.add("opacity-0", "translate-y-2")
+    this.profileDropdownTarget.classList.remove("opacity-100", "translate-y-0")
+    
+    // Wait for the transition to complete before hiding
+    setTimeout(() => {
+      if (this.isDropdownHidden()) {
+        this.profileDropdownTarget.classList.add("hidden")
+      }
+    }, 300)
+    
+    this.rotateDropdownArrow(false)
+  }
+
+  isDropdownHidden() {
+    return this.profileDropdownTarget.classList.contains("hidden") || 
+           this.profileDropdownTarget.classList.contains("opacity-0")
+  }
+
+  handleClickOutside(event) {
     if (
       this.hasProfileDropdownTarget && 
-      !this.profileDropdownTarget.contains(event.target) &&
-      !event.target.closest('[data-action="click->navbar#toggleProfileDropdown"]')
+      !this.element.contains(event.target) &&
+      !this.isDropdownHidden()
     ) {
-      this.profileDropdownTarget.classList.add("opacity-0", "invisible")
-      setTimeout(() => {
-        this.profileDropdownTarget.classList.add("hidden")
-      }, 300) // Match this to your CSS transition duration
-      this.profileDropdownTarget.classList.remove("show")
-      this.rotateDropdownArrow(false)
+      this.hideDropdown()
     }
   }
 
   rotateDropdownArrow(showDropdown = null) {
     if (!this.hasDropdownArrowTarget) return
     
+    const rotateClass = "rotate-180"
     if (showDropdown === null) {
-      // Toggle rotation based on dropdown visibility
-      // Check for visibility state to determine if dropdown is visible
-      const isHidden = this.profileDropdownTarget.classList.contains("hidden") || 
-                       this.profileDropdownTarget.classList.contains("opacity-0") ||
-                       this.profileDropdownTarget.classList.contains("invisible");
-      
-      if (!isHidden) {
-        this.dropdownArrowTarget.classList.add("rotate-180")
-      } else {
-        this.dropdownArrowTarget.classList.remove("rotate-180")
-      }
+      this.dropdownArrowTarget.classList.toggle(rotateClass)
     } else if (showDropdown) {
-      this.dropdownArrowTarget.classList.add("rotate-180")
+      this.dropdownArrowTarget.classList.add(rotateClass)
     } else {
-      this.dropdownArrowTarget.classList.remove("rotate-180")
+      this.dropdownArrowTarget.classList.remove(rotateClass)
     }
+  }
+
+  // Utility method to apply transitions smoothly
+  applyTransition(element, addClass, removeClass) {
+    if (addClass) element.classList.add(...addClass)
+    if (removeClass) element.classList.remove(...removeClass)
   }
 }

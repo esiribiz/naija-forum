@@ -23,7 +23,7 @@ def create
                 partial: 'comments/comment',
                 locals: { comment: @comment }
             ),
-            turbo_stream.replace("comment_#{@comment.parent_id}_reply_form",
+            turbo_stream.replace("reply_form_#{@comment.parent_id}",
                 partial: 'comments/form',
                 locals: { comment: Comment.new(parent_id: @comment.parent_id), post: @post }
             )
@@ -39,7 +39,7 @@ def create
         format.html { redirect_to post_path(@post), alert: 'Error creating comment.' }
         format.turbo_stream {
         render turbo_stream: turbo_stream.replace(
-            @comment.parent_id.present? ? "comment_#{@comment.parent_id}_reply_form" : "new_comment",
+            @comment.parent_id.present? ? "reply_form_#{@comment.parent_id}" : "new_comment",
             partial: "comments/form",
             locals: { comment: @comment, post: @post }
         )

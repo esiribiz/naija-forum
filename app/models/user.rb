@@ -32,6 +32,7 @@ PASSWORD_MIN_LENGTH = 12
 PASSWORD_MAX_LENGTH = 128
 USERNAME_MIN_LENGTH = 3
 USERNAME_MAX_LENGTH = 30
+VALID_ROLES = %w[user admin moderator].freeze
 
 # Username validations
 validates :username,
@@ -55,6 +56,9 @@ validates :email,
         presence: true,
         format: { with: URI::MailTo::EMAIL_REGEXP },
         uniqueness: { case_sensitive: false }
+
+# Role validation
+validates :role, inclusion: { in: VALID_ROLES, message: "must be one of: #{VALID_ROLES.join(', ')}" }
 
 # Password validations using strong_password gem
 validates :password,
@@ -214,6 +218,14 @@ end
 
 def admin?
     role == "admin"
+end
+
+def moderator?
+    role == "moderator"
+end
+
+def staff?
+    admin? || moderator?
 end
 
 def lock_access!

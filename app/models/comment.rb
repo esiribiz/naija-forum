@@ -35,8 +35,13 @@ end
 
 def notify_post_author
     return if user_id == post.user_id # Don't notify if commenter is the post author
-    # Implement notification logic here
-    # Example: Notification.create(recipient: post.user, actor: user, action: 'commented', notifiable: self)
+    
+    Notification.notify(
+      recipient: post.user,
+      actor: user,
+      action: 'commented',
+      notifiable: self
+    )
 end
 
 # Sanitizes HTML content without auto-linking URLs to prevent XSS attacks

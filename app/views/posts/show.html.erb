@@ -1,5 +1,5 @@
 <% content_for :title, @post.title %>
-<div class="max-w-4xl w-full mx-auto bg-white shadow-lg rounded-xl p-8 border-t-4 border-naija-green">
+<div class="max-w-5xl w-full mx-auto bg-white shadow-xl rounded-xl p-8 border-t-4 border-naija-green">
   <% if notice.present? %>
     <p class="py-3 px-5 bg-naija-green/10 text-naija-green-800 font-semibold rounded-lg mb-6 border-l-4 border-naija-green animate-fadeIn">
       <%= notice %>
@@ -7,50 +7,73 @@
   <% end %>
 
   <!-- Back to Posts Button -->
-  <div class="mb-6">
-    <%= link_to '← Back to Posts', posts_path, class: "inline-block px-5 py-2.5 bg-green hover:bg-naija-green-600 text-green font-medium rounded-lg transition duration-300 shadow-sm" %>
+  <div class="mb-8">
+    <%= link_to posts_path, class: "inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-naija-green/10 text-gray-700 hover:text-naija-green-700 font-medium rounded-lg transition duration-300 shadow-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+      Back to Posts
+    <% end %>
   </div>
-
   <!-- Post Header: User Info -->
-  <div class="flex items-center space-x-5 mb-8 bg-gray-50 rounded-xl p-4 border border-gray-100">
+  <div class="flex items-center space-x-5 mb-8 bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-sm">
     <% if @post.user&.avatar&.attached? %>
-      <%= image_tag @post.user.avatar, class: "w-16 h-16 rounded-full border-2 border-naija-green shadow-md object-cover" %>
+      <%= image_tag @post.user.avatar, class: "w-18 h-18 rounded-full border-2 border-naija-green shadow-lg object-cover" %>
     <% else %>
-      <div class="w-16 h-16 bg-gradient-to-br from-naija-green to-naija-green-600 rounded-full flex items-center justify-center text-white text-lg font-bold shadow-md">
+      <div class="w-18 h-18 bg-gradient-to-br from-naija-green to-naija-green-600 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
         <%= @post.user.username.first(2).upcase %>
       </div>
     <% end %>
     <div>
-      <h2 class="text-xl font-semibold text-gray-800"><%= @post.user.username %></h2>
-      <p class="text-sm text-gray-500 flex items-center gap-2">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-1"><%= @post.user.username %></h2>
+      <p class="text-sm text-gray-600 flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-naija-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         Posted <%= time_ago_in_words(@post.created_at) %> ago
       </p>
+      <% if @post.category %>
+        <div class="mt-2">
+          <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-naija-green/20 text-naija-green-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <%= @post.category.name %>
+          </span>
+        </div>
+      <% end %>
     </div>
   </div>
-
   <!-- Post Title & Content -->
-  <div class="bg-white rounded-xl p-6 mb-8">
-    <h1 class="font-bold text-3xl text-gray-800 mb-4 border-b-2 border-naija-green/20 pb-3"><%= @post.title %></h1>
-    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed mt-6">
+  <div class="bg-white rounded-xl p-8 mb-10 border border-gray-100 shadow-sm">
+    <h1 class="font-bold text-4xl text-gray-800 mb-6 border-b-2 border-naija-green/20 pb-4 leading-tight"><%= @post.title %></h1>
+    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed mt-8 prose-headings:text-naija-green-800 prose-a:text-naija-green-600 prose-a:no-underline prose-a:font-medium hover:prose-a:text-naija-green-700">
       <%= simple_format(@post.body) %>
     </div>
+    
+    <% if @post.images.attached? %>
+      <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% @post.images.each do |image| %>
+          <div class="relative rounded-lg overflow-hidden shadow-md">
+            <%= image_tag image, class: "w-full h-48 object-cover hover:opacity-95 transition duration-300" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 
   <!-- Tag Section -->
   <% if @post.tags.any? %>
-    <div class="mb-8 bg-gray-50 rounded-xl p-5 border border-gray-100">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+    <div class="mb-10 bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-sm">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-naija-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
         </svg>
         Tags
       </h3>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-3">
         <% @post.tags.each do |tag| %>
-          <span class="px-4 py-1.5 bg-naija-green/10 text-naija-green-700 border border-naija-green/20 rounded-full text-sm font-medium hover:bg-naija-green/20 transition duration-200 cursor-pointer">
+          <span class="px-4 py-2 bg-naija-green/10 text-naija-green-700 border border-naija-green/20 rounded-full text-sm font-medium hover:bg-naija-green/20 transition duration-200 cursor-pointer">
             <%= tag.name %>
           </span>
         <% end %>
@@ -59,17 +82,12 @@
   <% end %>
 
   <!-- Comments Section -->
-  <div class="mt-12 pt-6">
-    <div class="flex items-center mb-6">
-      <div class="w-8 h-8 bg-naija-green rounded-full flex items-center justify-center mr-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-        </svg>
-      </div>
-      <h2 class="text-2xl font-bold text-gray-800">Discussion</h2>
-      <div class="ml-3 px-3 py-1 bg-naija-green/10 text-naija-green-700 rounded-full text-sm font-medium">
-        <%= @post.comments.count %> <%= 'Comment'.pluralize(@post.comments.count) %>
-      </div>
+  <div class="mt-12 pt-6 border-t-2 border-gray-100">
+    <div class="mb-6 flex items-center">
+      <h2 class="text-2xl font-bold text-gray-800">
+        <span class="border-b-2 border-naija-green pb-1">Comments</span>
+        <span class="ml-2 text-lg text-gray-500">(<%= @post.comments.count %>)</span>
+      </h2>
     </div>
 
     <% if user_signed_in? %>
@@ -101,6 +119,63 @@
       <% end %>
     </div>
   </div>
-</div>
 
+  <!-- Related Posts Section -->
+  <div class="mt-12 pt-6 border-t-2 border-gray-100">
+    <div class="mb-6 flex items-center">
+      <h2 class="text-2xl font-bold text-gray-800">
+        <span class="border-b-2 border-naija-green pb-1">Related Posts</span>
+        <span class="ml-2 text-lg text-gray-500">(<%= @related_posts.count %>)</span>
+      </h2>
+    </div>
+
+    <% if @related_posts.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @related_posts.each do |post| %>
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden border border-gray-100">
+            <% if post.images.attached? %>
+              <%= link_to post_path(post) do %>
+                <%= image_tag post.images.first, class: "w-full h-48 object-cover" %>
+              <% end %>
+            <% else %>
+              <div class="w-full h-32 bg-gradient-to-r from-naija-green/20 to-naija-green/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-naija-green/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+            <% end %>
+            <div class="p-5">
+              <div class="mb-2">
+                <% if post.category %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-naija-green/20 text-naija-green-800">
+                    <%= post.category.name %>
+                  </span>
+                <% end %>
+                <span class="text-xs text-gray-500 ml-2"><%= time_ago_in_words(post.created_at) %> ago</span>
+              </div>
+              <h3 class="font-semibold text-lg text-gray-800 mb-2 line-clamp-2">
+                <%= link_to post.title, post_path(post), class: "hover:text-naija-green transition duration-300" %>
+              </h3>
+              <p class="text-gray-600 text-sm line-clamp-3">
+                <%= truncate(post.body, length: 100) %>
+              </p>
+              <div class="mt-4 flex items-center">
+                <% if post.user&.avatar&.attached? %>
+                  <%= image_tag post.user.avatar, class: "w-8 h-8 rounded-full border border-gray-200 object-cover" %>
+                <% else %>
+                  <div class="w-8 h-8 bg-naija-green rounded-full flex items-center justify-center text-white text-xs font-bold">
+                    <%= post.user.username.first(2).upcase %>
+                  </div>
+                <% end %>
+                <span class="ml-2 text-sm text-gray-700"><%= post.user.username %></span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-500 text-sm">No related posts found.</p>
+    <% end %>
+  </div>
+</div>
 

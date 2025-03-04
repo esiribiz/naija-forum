@@ -31,7 +31,13 @@ if params[:category_id]
 
   # GET /posts/1 or /posts/1.json
 def show
-authorize @post
+  authorize @post
+  # Fetch related posts from the same category
+  @related_posts = Post.where(category_id: @post.category_id)
+                      .where.not(id: @post.id)
+                      .includes(:user, :category)
+                      .order(created_at: :desc)
+                      .limit(5)
 end
 
   # GET /posts/new

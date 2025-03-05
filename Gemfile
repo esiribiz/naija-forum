@@ -6,7 +6,7 @@ gem 'redcarpet', '~> 3.6'             # For markdown support
 gem 'rinku', '~> 2.0'                 # For auto-linking
 gem 'sanitize', '~> 6.0'              # For HTML sanitization
 gem 'loofah', '~> 2.21'              # For HTML processing using Nokogiri
-gem 'noticed', '~> 1.6'               # For notifications
+gem 'noticed', '~> 2.6'               # For notifications
 gem 'kaminari', '~> 1.2'              # For pagination
 
 # Caching

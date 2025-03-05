@@ -98,4 +98,4 @@ end
 
 gem "devise", "~> 4.9"
 gem 'devise-security'
-gem "pundit", "~> 2.3"
+gem "pundit", "~> 2.5"

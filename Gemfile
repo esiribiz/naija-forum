@@ -35,7 +35,7 @@ gem "jbuilder"
 
 # Security
 gem 'rack-attack', '~> 6.7'           # Rate limiting and throttling
-gem 'secure_headers', '~> 6.5'        # Security headers (HSTS, CSP, etc.)
+gem 'secure_headers', '~> 7.1'        # Security headers (HSTS, CSP, etc.)
 gem 'rack-cors', '~> 2.0'             # Cross-Origin Resource Sharing (CORS) management
 gem 'redis-objects', '~> 1.7'         # Redis for rate limiting and session storage
 gem 'strong_password', '~> 0.0.10'    # Password strength validation

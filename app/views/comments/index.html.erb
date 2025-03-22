@@ -1,0 +1,28 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+<div class="bg-white rounded-lg shadow-sm p-6">
+    <%= turbo_frame_tag "comments" do %>
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="font-bold text-4xl">Comments for <%= @post.title %></h1>
+        <%= link_to "Back to Post", post_path(@post), class: "rounded-md px-3.5 py-2.5 bg-gray-600 hover:bg-gray-500 text-white block font-medium" %>
+    </div>
+
+    <div id="post_comments" class="space-y-4">
+        <% if @post.comments.top_level.any? %>
+        <%= render @post.comments.includes(:user).top_level %>
+        <% else %>
+        <p class="text-center text-gray-500 my-10">No comments yet. Be the first to comment!</p>
+        <% end %>
+    </div>
+
+    <% if user_signed_in? %>
+        <div class="mt-6">
+        <%= render 'comments/form', comment: Comment.new, post: @post %>
+        </div>
+    <% else %>
+        <div class="mt-6 bg-gray-50 p-4 rounded-lg text-center">
+        <%= link_to "Sign in to comment", new_user_session_path, class: "text-blue-600 hover:text-blue-800" %>
+        </div>
+    <% end %>
+    <% end %>
+</div>
+</div>

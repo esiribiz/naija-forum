@@ -1,0 +1,66 @@
+# frozen_string_literal: true
+
+# Configure SecureHeaders for enhanced security
+SecureHeaders::Configuration.default do |config|
+  # Content Security Policy
+  config.csp = {
+    default_src: %w['self' https:],
+    font_src: %w['self' https: data:],
+    img_src: %w['self' https: data:],
+    script_src: %w['self' https:],
+    style_src: %w['self' https: 'unsafe-inline'],
+    connect_src: %w['self' https:],
+    frame_src: %w['self' https:],
+    frame_ancestors: %w['self'],
+    form_action: %w['self' https:],
+    object_src: %w['none'],
+    base_uri: %w['self']
+  }
+
+  # HTTP Strict Transport Security
+  config.hsts = "max-age=31536000; includeSubDomains; preload"
+
+  # X-XSS-Protection
+  config.x_xss_protection = "1; mode=block"
+
+  # X-Frame-Options
+  config.x_frame_options = "SAMEORIGIN"
+
+  # X-Content-Type-Options
+  config.x_content_type_options = "nosniff"
+
+  # Referrer-Policy
+  config.referrer_policy = "strict-origin-when-cross-origin"
+
+  # Feature-Policy / Permissions-Policy
+  # Commented out due to compatibility issues with secure_headers gem version
+  # config.permissions_policy = {
+  #   camera: %w['none'],
+  #   microphone: %w['none'],
+  #   geolocation: %w['none'],
+  #   accelerometer: %w['none'],
+  #   gyroscope: %w['none']
+  # }
+
+  # Report-To and NEL
+  # Commented out due to compatibility issues with secure_headers gem version
+  # config.report_to = {
+  #   group: "default",
+  #   max_age: 10886400,
+  #   endpoints: [{ url: "/csp_report" }],
+  #   include_subdomains: true
+  # }
+
+  # Cache-Control
+  config.x_permitted_cross_domain_policies = "none"
+
+  # Enable or disable by environment
+  if Rails.env.development? || Rails.env.test?
+    config.csp[:script_src] << "'unsafe-eval'"
+    config.csp[:style_src] << "'unsafe-inline'"
+  end
+
+  # Allow unsafe-eval in development for Webpack
+  config.csp[:script_src] << "'unsafe-eval'" if Rails.env.development?
+end
+

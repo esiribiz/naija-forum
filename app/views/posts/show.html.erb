@@ -1,0 +1,530 @@
+<% content_for :title, @post.title %>
+
+<!-- Sticky Header with Breadcrumbs -->
+<div id="sticky-header" class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 transform transition-transform duration-300 -translate-y-full opacity-0" data-controller="scroll">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-2 text-sm text-gray-600">
+      <%= link_to "Home", root_path, class: "hover:text-naija-green" %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <%= link_to "Posts", posts_path, class: "hover:text-naija-green" %>
+      <% if @post.category %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+        <%= link_to @post.category.name, category_path(@post.category), class: "hover:text-naija-green" %>
+      <% end %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <span class="font-medium text-naija-green truncate max-w-xs"><%= @post.title %></span>
+    </div>
+    <div>
+      <button id="scroll-to-top" class="text-sm text-naija-green flex items-center">
+        <span>Back to top</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Action Button -->
+<div class="fixed bottom-8 right-8 z-40 flex flex-col space-y-4 items-end">
+  <div id="fab-menu" class="hidden flex-col space-y-2 items-center mb-2 transform transition-all duration-300 scale-95 opacity-0">
+    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Share" id="share-fab">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+      </svg>
+    </button>
+    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Print" id="print-fab">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+      </svg>
+    </button>
+    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Jump to Comments" id="comments-fab">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+      </svg>
+    </button>
+  </div>
+  <button id="fab-toggle" class="w-12 h-12 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition-all duration-300 transform hover:scale-110 focus:outline-none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+    </svg>
+  </button>
+</div>
+
+<!-- Social Share Modal -->
+<div id="share-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
+  <div class="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm" id="share-modal-backdrop"></div>
+  <div class="relative bg-white rounded-xl p-6 shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="share-modal-content">
+    <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-600" id="close-share-modal">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <h3 class="text-xl font-bold text-gray-800 mb-4">Share this post</h3>
+    <div class="grid grid-cols-4 gap-4">
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-blue-50 transition duration-300" data-share="twitter">
+        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+          </svg>
+        </div>
+        <span class="text-xs font-medium">Twitter</span>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-blue-50 transition duration-300" data-share="facebook">
+        <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </div>
+        <span class="text-xs font-medium">Facebook</span>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-blue-50 transition duration-300" data-share="linkedin">
+        <div class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </div>
+        <span class="text-xs font-medium">LinkedIn</span>
+      </a>
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-blue-50 transition duration-300" data-share="whatsapp">
+        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          </svg>
+        </div>
+        <span class="text-xs font-medium">WhatsApp</span>
+      </a>
+    </div>
+    <div class="mt-4">
+      <div class="relative">
+        <input type="text" id="share-url" value="<%= request.original_url %>" readonly class="w-full py-2 px-3 border border-gray-300 rounded-lg text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-naija-green focus:border-transparent">
+        <button id="copy-url" class="absolute right-2 top-2 text-naija-green hover:text-naija-green-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+          </svg>
+        </button>
+      </div>
+      <p id="copy-message" class="text-center text-sm text-naija-green mt-2 opacity-0 transition-opacity duration-300">URL copied to clipboard!</p>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Container -->
+<div class="container max-w-7xl mx-auto px-4 pt-10 pb-20">
+  <% if notice.present? %>
+    <p class="py-3 px-5 bg-naija-green/10 text-naija-green-800 font-semibold rounded-lg mb-6 border-l-4 border-naija-green animate-fadeIn">
+      <%= notice %>
+    </p>
+  <% end %>
+
+  <!-- Back to Posts Button -->
+  <div class="mb-8">
+    <%= link_to posts_path, class: "inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-naija-green/10 text-gray-700 hover:text-naija-green-700 font-medium rounded-lg transition duration-300 shadow-sm" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+      Back to Posts
+    <% end %>
+  </div>
+  <!-- Post Header: User Info -->
+  <div class="flex items-center space-x-5 mb-8 bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-sm">
+    <% if @post.user&.avatar&.attached? %>
+      <%= image_tag @post.user.avatar, class: "w-18 h-18 rounded-full border-2 border-naija-green shadow-lg object-cover" %>
+    <% else %>
+      <div class="w-18 h-18 bg-gradient-to-br from-naija-green to-naija-green-600 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
+        <%= @post.user.username.first(2).upcase %>
+      </div>
+    <% end %>
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-1"><%= @post.user.username %></h2>
+      <p class="text-sm text-gray-600 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-naija-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Posted <%= time_ago_in_words(@post.created_at) %> ago
+      </p>
+      <% if @post.category %>
+        <div class="mt-2">
+          <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-naija-green/20 text-naija-green-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <%= @post.category.name %>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <!-- Post Title & Content -->
+  <div class="bg-white rounded-xl p-8 mb-10 border border-gray-100 shadow-sm">
+    <h1 class="font-bold text-4xl text-gray-800 mb-6 border-b-2 border-naija-green/20 pb-4 leading-tight"><%= @post.title %></h1>
+    
+    <!-- Reading time estimator -->
+    <div class="flex items-center mb-4 text-sm text-gray-600">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-naija-green mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <% 
+        # Calculate reading time (average reading speed: 200 words per minute)
+        word_count = @post.body.split.size
+        reading_minutes = (word_count / 200.0).ceil
+        reading_time = reading_minutes == 1 ? "1 minute" : "#{reading_minutes} minutes"
+      %>
+      <span><%= reading_time %> read</span>
+      
+      <% if @post.updated_at - @post.created_at > 1.day %>
+        <span class="mx-2">•</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-naija-green mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        <span>Updated <%= time_ago_in_words(@post.updated_at) %> ago</span>
+      <% end %>
+    </div>
+    
+    <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed mt-8 prose-headings:text-naija-green-800 prose-a:text-naija-green-600 prose-a:no-underline prose-a:font-medium hover:prose-a:text-naija-green-700">
+      <%= simple_format(@post.body) %>
+    </div>
+    
+    <% if @post.images.attached? %>
+      <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% @post.images.each do |image| %>
+          <div class="relative rounded-lg overflow-hidden shadow-md">
+            <%= image_tag image, class: "w-full h-48 object-cover hover:opacity-95 transition duration-300" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Tag Section -->
+  <% if @post.tags.any? %>
+    <div class="mb-10 bg-gray-50 rounded-xl p-6 border border-gray-100 shadow-sm">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-naija-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+        </svg>
+        Tags
+      </h3>
+      <div class="flex flex-wrap gap-3">
+        <% @post.tags.each do |tag| %>
+          <span class="px-4 py-2 bg-naija-green/10 text-naija-green-700 border border-naija-green/20 rounded-full text-sm font-medium hover:bg-naija-green/20 transition duration-200 cursor-pointer">
+            <%= tag.name %>
+          </span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Comments Section -->
+  <div class="mt-12 pt-6 border-t-2 border-gray-100">
+    <div class="mb-6 flex items-center">
+      <h2 class="text-2xl font-bold text-gray-800">
+        <span class="border-b-2 border-naija-green pb-1">Comments</span>
+        <span class="ml-2 text-lg text-gray-500">(<%= @post.comments.count %>)</span>
+      </h2>
+    </div>
+
+    <% if user_signed_in? %>
+      <div id="new_comment" class="mb-8 bg-gray-50 rounded-xl p-5 border border-gray-100 shadow-sm">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Join the conversation</h3>
+        <%= render 'comments/form', comment: Comment.new, post: @post %>
+      </div>
+    <% else %>
+      <div class="bg-gradient-to-r from-naija-green/5 to-naija-amber/10 p-6 rounded-xl text-center mb-8 border border-naija-green/20 shadow-sm">
+        <p class="text-gray-700 mb-3">Sign in to participate in this discussion</p>
+        <%= link_to new_user_session_path, class: "inline-block px-5 py-2.5 bg-naija-green hover:bg-naija-green-600 text-white font-medium rounded-lg transition duration-300 shadow-sm" do %>
+          <span class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            Sign in
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div id="comments" class="space-y-6">
+      <% if @post.comments.top_level.any? %>
+        <% @post.comments.top_level.includes(:user, :replies).order(created_at: :desc).each do |comment| %>
+          <%= render partial: 'comments/comment', locals: { comment: comment, post: @post } %>
+        <% end %>
+      <% else %>
+        <p class="text-gray-500 text-sm">No comments yet.</p>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Related Posts Section -->
+  <div class="mt-12 pt-6 border-t-2 border-gray-100">
+    <div class="mb-6 flex items-center">
+      <h2 class="text-2xl font-bold text-gray-800">
+        <span class="border-b-2 border-naija-green pb-1">Related Posts</span>
+        <span class="ml-2 text-lg text-gray-500">(<%= @related_posts.count %>)</span>
+      </h2>
+    </div>
+
+    <% if @related_posts.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @related_posts.each do |post| %>
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden border border-gray-100">
+            <% if post.images.attached? %>
+              <%= link_to post_path(post) do %>
+                <%= image_tag post.images.first, class: "w-full h-48 object-cover" %>
+              <% end %>
+            <% else %>
+              <div class="w-full h-32 bg-gradient-to-r from-naija-green/20 to-naija-green/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-naija-green/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+            <% end %>
+            <div class="p-5">
+              <div class="mb-2">
+                <% if post.category %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-naija-green/20 text-naija-green-800">
+                    <%= post.category.name %>
+                  </span>
+                <% end %>
+                <span class="text-xs text-gray-500 ml-2"><%= time_ago_in_words(post.created_at) %> ago</span>
+              </div>
+              <h3 class="font-semibold text-lg text-gray-800 mb-2 line-clamp-2">
+                <%= link_to post.title, post_path(post), class: "hover:text-naija-green transition duration-300" %>
+              </h3>
+              <p class="text-gray-600 text-sm line-clamp-3">
+                <%= truncate(post.body, length: 100) %>
+              </p>
+              <div class="mt-4 flex items-center">
+                <% if post.user&.avatar&.attached? %>
+                  <%= image_tag post.user.avatar, class: "w-8 h-8 rounded-full border border-gray-200 object-cover" %>
+                <% else %>
+                  <div class="w-8 h-8 bg-naija-green rounded-full flex items-center justify-center text-white text-xs font-bold">
+                    <%= post.user.username.first(2).upcase %>
+                  </div>
+                <% end %>
+                <span class="ml-2 text-sm text-gray-700"><%= post.user.username %></span>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-gray-500 text-sm">No related posts found.</p>
+    <% end %>
+  </div>
+</div>
+
+<!-- JavaScript for sticky header functionality -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const stickyHeader = document.getElementById('sticky-header');
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
+    let lastScrollY = window.scrollY;
+    
+    // Function to handle scroll events
+    function handleScroll() {
+      const currentScrollY = window.scrollY;
+      
+      // Show/hide sticky header based on scroll position and direction
+      if (currentScrollY > 300) {
+        if (currentScrollY < lastScrollY) {
+          // Scrolling up - show header
+          stickyHeader.classList.remove('-translate-y-full', 'opacity-0');
+          stickyHeader.classList.add('translate-y-0', 'opacity-100');
+        } else {
+          // Scrolling down - hide header
+          stickyHeader.classList.remove('translate-y-0', 'opacity-100');
+          stickyHeader.classList.add('-translate-y-full', 'opacity-0');
+        }
+      } else {
+        // At the top - hide header
+        stickyHeader.classList.remove('translate-y-0', 'opacity-100');
+        stickyHeader.classList.add('-translate-y-full', 'opacity-0');
+      }
+      
+      lastScrollY = currentScrollY;
+    }
+    
+    // Add event listeners
+    window.addEventListener('scroll', handleScroll);
+    
+    // Scroll to top button functionality
+    if (scrollToTopBtn) {
+      scrollToTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    }
+    
+    // FAB menu toggle
+    const fabToggle = document.getElementById('fab-toggle');
+    const fabMenu = document.getElementById('fab-menu');
+    
+    if (fabToggle && fabMenu) {
+      fabToggle.addEventListener('click', function() {
+        if (fabMenu.classList.contains('hidden')) {
+          fabMenu.classList.remove('hidden', 'scale-95', 'opacity-0');
+          fabMenu.classList.add('flex', 'scale-100', 'opacity-100');
+        } else {
+          fabMenu.classList.remove('flex', 'scale-100', 'opacity-100');
+          fabMenu.classList.add('scale-95', 'opacity-0');
+          setTimeout(() => {
+            fabMenu.classList.add('hidden');
+          }, 300);
+        }
+      });
+    }
+    
+    // Share functionality
+    const shareButtons = document.querySelectorAll('[data-share]');
+    const shareModal = document.getElementById('share-modal');
+    const shareModalContent = document.getElementById('share-modal-content');
+    const shareModalBackdrop = document.getElementById('share-modal-backdrop');
+    const closeShareModal = document.getElementById('close-share-modal');
+    const shareFab = document.getElementById('share-fab');
+    
+    function openShareModal() {
+      shareModal.classList.remove('hidden');
+      shareModal.classList.add('flex');
+      setTimeout(() => {
+        shareModalContent.classList.remove('scale-95', 'opacity-0');
+        shareModalContent.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+    
+    function closeShareModalFn() {
+      shareModalContent.classList.remove('scale-100', 'opacity-100');
+      shareModalContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        shareModal.classList.remove('flex');
+        shareModal.classList.add('hidden');
+      }, 300);
+    }
+    
+    if (shareFab) {
+      shareFab.addEventListener('click', openShareModal);
+    }
+    
+    if (closeShareModal) {
+      closeShareModal.addEventListener('click', closeShareModalFn);
+    }
+    
+    if (shareModalBackdrop) {
+      shareModalBackdrop.addEventListener('click', closeShareModalFn);
+    }
+    
+    // Copy URL functionality
+    const copyUrlBtn = document.getElementById('copy-url');
+    const shareUrlInput = document.getElementById('share-url');
+    const copyMessage = document.getElementById('copy-message');
+    
+    if (copyUrlBtn && shareUrlInput) {
+      copyUrlBtn.addEventListener('click', function() {
+        shareUrlInput.select();
+        document.execCommand('copy');
+        
+        if (copyMessage) {
+          copyMessage.classList.remove('opacity-0');
+          copyMessage.classList.add('opacity-100');
+          
+          setTimeout(() => {
+            copyMessage.classList.remove('opacity-100');
+            copyMessage.classList.add('opacity-0');
+          }, 2000);
+        }
+      });
+    }
+    
+    if (shareButtons.length > 0) {
+      shareButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          const platform = this.getAttribute('data-share');
+          const url = encodeURIComponent(window.location.href);
+          const title = encodeURIComponent(document.title);
+          
+          let shareUrl = '';
+          
+          switch(platform) {
+            case 'twitter':
+              shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`;
+              break;
+            case 'facebook':
+              shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+              break;
+            case 'linkedin':
+              shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+              break;
+            case 'whatsapp':
+              shareUrl = `https://api.whatsapp.com/send?text=${title}%20${url}`;
+              break;
+          }
+          
+          window.open(shareUrl, '_blank').focus();
+        });
+      });
+    }
+    
+    // Comment navigation
+    const commentsFab = document.getElementById('comments-fab');
+    const commentsSection = document.getElementById('comments');
+    
+    if (commentsFab && commentsSection) {
+      commentsFab.addEventListener('click', function() {
+        commentsSection.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+    
+    // Print functionality
+    const printFab = document.getElementById('print-fab');
+    
+    if (printFab) {
+      printFab.addEventListener('click', function() {
+        window.print();
+      });
+    }
+    
+    // Initialize the sticky header on page load to check initial scroll position
+    handleScroll();
+  });
+</script>
+
+<!-- Print Styles -->
+<style media="print">
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break-after {
+    page-break-after: always;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .container {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .prose {
+    max-width: 100%;
+  }
+</style>

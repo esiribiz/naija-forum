@@ -1,0 +1,32 @@
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <table class="w-full table-auto">
+        <!-- Table Headers -->
+        <thead>
+          <tr class="bg-gradient-to-r from-green-600 to-green-700 text-white">
+            <th class="px-6 py-4 text-left text-sm font-semibold">Topics</th>
+            <th class="px-6 py-4 text-left text-sm font-semibold">Replies</th>
+            <th class="px-6 py-4 text-left text-sm font-semibold">Activity</th>
+          </tr>
+        </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% @posts.each do |post| %>
+          <tr class="hover:bg-green-50 transition-colors duration-150">
+              <div class="p-5 flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-x-6 w-full">
+                <div class="flex-shrink-0">
+                  <% if post.user&.avatar&.attached? %>
+                    <%= image_tag post.user.avatar, class: "w-12 h-12 rounded-full ring-2 ring-green-100 object-cover shadow-md" %>
+                  <% else %>
+                    <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center font-bold shadow-md">
+                      <%= post.user&.username&.first(2)&.upcase || "UN" %>
+                    </div>
+                  <% end %>
+                </div>
+                  <a href="<%= post_path(post) %>" class="text-lg font-semibold text-gray-800 transition duration-200 hover:text-green-700 group">
+                    <%= post.title %>
+                    <span class="block h-0.5 w-0 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
+                  </a>
+  <div class="text-sm font-medium text-gray-500 mt-2 flex items-center space-x-2">
+    <% if post.category %>
+      <a href="<%= category_path(post.category) %>" class="text-gray-600 hover:text-green-700 flex items-center space-x-2 transition duration-200">
+        <a href="<%= tag_path(tag) %>" class="inline-block text-gray-600 hover:text-green-700 italic px-2 py-1 rounded-md bg-gray-100 hover:bg-green-100 transition-all duration-300 shadow-sm hover:shadow">
+                  <div class="text-base text-gray-700 mt-3

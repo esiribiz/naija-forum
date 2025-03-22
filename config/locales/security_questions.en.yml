@@ -1,0 +1,9 @@
+en:
+  devise:
+    security_questions:
+      questions:
+        1: "What was your first pet's name?"
+        2: "What was your childhood nickname?"
+        3: "In which city were you born?"
+        4: "What is your mother's maiden name?"
+        5: "What was the name of your elementary school?"

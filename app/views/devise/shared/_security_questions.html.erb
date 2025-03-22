@@ -1,0 +1,116 @@
+<div class="security-questions-container mb-4">
+  <h3 class="text-lg font-medium mb-3">Security Questions</h3>
+  <p class="text-sm text-gray-600 mb-4">
+    Please provide <%= Devise.security_question_count %> security questions and answers. 
+    These will be used to verify your identity if you need to recover your account.
+  </p>
+
+  <div id="security-questions-fields">
+    <% if f.object.security_questions.any? %>
+      <%= f.fields_for :security_questions do |sq| %>
+        <div class="security-question-group mb-4 p-3 border border-gray-200 rounded">
+          <div class="mb-3">
+            <%= sq.label :question, "Question", class: "block font-medium text-sm text-gray-700 mb-1" %>
+            <%= sq.text_field :question, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+          </div>
+          <div class="mb-1">
+            <%= sq.label :answer, "Answer", class: "block font-medium text-sm text-gray-700 mb-1" %>
+            <%= sq.text_field :answer, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            <p class="text-xs text-gray-500 mt-1">Your answer is case-insensitive.</p>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <% 3.times do |i| %>
+        <div class="security-question-group mb-4 p-3 border border-gray-200 rounded">
+          <%= f.fields_for :security_questions, f.object.security_questions.build do |sq| %>
+            <div class="mb-3">
+              <%= sq.label :question, "Question #{i+1}", class: "block font-medium text-sm text-gray-700 mb-1" %>
+              <%= sq.text_field :question, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            </div>
+            <div class="mb-1">
+              <%= sq.label :answer, "Answer #{i+1}", class: "block font-medium text-sm text-gray-700 mb-1" %>
+              <%= sq.text_field :answer, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+              <p class="text-xs text-gray-500 mt-1">Your answer is case-insensitive.</p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if f.object.security_questions.size < 3 && f.object.security_questions.any? %>
+    <div class="mb-3">
+      <button type="button" id="add-security-question" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        Add Another Question
+      </button>
+      <p class="text-xs text-gray-500 mt-1">You need to have <%= Devise.security_question_count %> security questions.</p>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const addQuestionBtn = document.getElementById('add-security-question');
+        if (addQuestionBtn) {
+          addQuestionBtn.addEventListener('click', function() {
+            const questionsContainer = document.getElementById('security-questions-fields');
+            const questionGroups = questionsContainer.querySelectorAll('.security-question-group');
+            const nextIndex = questionGroups.length;
+            
+            if (nextIndex < <%= Devise.security_question_count %>) {
+              const newGroup = document.createElement('div');
+              newGroup.className = 'security-question-group mb-4 p-3 border border-gray-200 rounded';
+              
+              // Create new question field with unique name
+              const questionDiv = document.createElement('div');
+              questionDiv.className = 'mb-3';
+              
+              const questionLabel = document.createElement('label');
+              questionLabel.className = 'block font-medium text-sm text-gray-700 mb-1';
+              questionLabel.textContent = `Question ${nextIndex + 1}`;
+              
+              const questionInput = document.createElement('input');
+              questionInput.type = 'text';
+              questionInput.name = `user[security_questions_attributes][${nextIndex}][question]`;
+              questionInput.className = 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm';
+              
+              questionDiv.appendChild(questionLabel);
+              questionDiv.appendChild(questionInput);
+              
+              // Create new answer field with unique name
+              const answerDiv = document.createElement('div');
+              answerDiv.className = 'mb-1';
+              
+              const answerLabel = document.createElement('label');
+              answerLabel.className = 'block font-medium text-sm text-gray-700 mb-1';
+              answerLabel.textContent = `Answer ${nextIndex + 1}`;
+              
+              const answerInput = document.createElement('input');
+              answerInput.type = 'text';
+              answerInput.name = `user[security_questions_attributes][${nextIndex}][answer]`;
+              answerInput.className = 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm';
+              
+              const answerHelp = document.createElement('p');
+              answerHelp.className = 'text-xs text-gray-500 mt-1';
+              answerHelp.textContent = 'Your answer is case-insensitive.';
+              
+              answerDiv.appendChild(answerLabel);
+              answerDiv.appendChild(answerInput);
+              answerDiv.appendChild(answerHelp);
+              
+              newGroup.appendChild(questionDiv);
+              newGroup.appendChild(answerDiv);
+              
+              questionsContainer.appendChild(newGroup);
+              
+              // Hide the button if we've reached the maximum number of questions
+              if (questionsContainer.querySelectorAll('.security-question-group').length >= <%= Devise.security_question_count %>) {
+                addQuestionBtn.style.display = 'none';
+              }
+            }
+          });
+        }
+      });
+    </script>
+  <% end %>
+</div>
+

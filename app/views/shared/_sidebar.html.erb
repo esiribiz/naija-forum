@@ -1,0 +1,59 @@
+<!-- Sidebar -->
+<aside class="w-72 p-6 bg-gradient-to-br from-white to-green-50 shadow-lg border border-green-100 rounded-2xl hidden md:block flex-shrink-0 self-start transition-all duration-300 hover:shadow-xl">
+  <!-- Categories Section -->
+  <div class="mb-6 p-5 bg-white shadow-md border border-green-200 rounded-xl overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
+    <h2 class="text-lg font-bold text-green-800 mb-4 flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+      </svg>
+      Categories
+    </h2>
+    <ul class="space-y-2.5">
+      <% @categories.each do |category| %>
+        <li>
+          <%= link_to category_posts_path(category), class: "block py-1.5 px-2 text-green-700 font-medium rounded-lg transition-all duration-200 hover:bg-green-100 hover:pl-3 hover:text-green-800 group flex items-center" do %>
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-2 transition-all duration-200 group-hover:w-2 group-hover:h-2"></span>
+            <%= category.name %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+    <!-- Link to All Categories -->
+    <div class="mt-5 text-right">
+      <%= link_to categories_path, class: "inline-flex items-center text-sm text-green-600 hover:text-green-800 font-medium transition-all duration-200 hover:translate-x-1" do %>
+        View All Categories
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Tags Section -->
+  <div class="p-5 bg-white shadow-md border border-green-200 rounded-xl overflow-hidden relative">
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-green-600"></div>
+    <h2 class="text-lg font-bold text-green-800 mb-4 flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+      </svg>
+      Tags
+    </h2>
+    <div class="flex flex-wrap gap-2">
+      <% @tags.each do |tag| %>
+        <a href="<%= tag_path(tag) %>" class="bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-md transition-all duration-200 hover:bg-green-100 hover:border-green-300 hover:shadow-sm">
+          <%= tag.name %>
+        </a>
+      <% end %>
+    </div>
+    <!-- Link to All Tags -->
+    <div class="mt-5 text-right">
+      <%= link_to tags_path, class: "inline-flex items-center text-sm text-green-600 hover:text-green-800 font-medium transition-all duration-200 hover:translate-x-1" do %>
+        View All Tags
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+        </svg>
+      <% end %>
+    </div>
+  </div>
+</aside>

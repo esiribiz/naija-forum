@@ -1,0 +1,17 @@
+en:
+  devise:
+    security_questions:
+      questions:
+        - question: "What was your first pet's name?"
+          reference: "first_pet"
+        - question: "What was your childhood nickname?"
+          reference: "childhood_nickname"
+        - question: "In what city were you born?"
+          reference: "birth_city"
+        - question: "What is your mother's maiden name?"
+          reference: "mother_maiden_name"
+        - question: "What was the name of your elementary school?"
+          reference: "elementary_school"
+        - question: "What was your favorite food as a child?"
+          reference: "childhood_food"
+

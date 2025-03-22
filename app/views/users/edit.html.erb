@@ -1,0 +1,49 @@
+<% content_for :title, "Edit Profile" %>
+<div class="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
+  <h1 class="text-2xl font-bold text-gray-800 mb-4">Edit Profile</h1>
+  <%= form_with(model: @user, local: true) do |f| %>
+    <div class="mb-4">
+      <%= f.label :name, class: "block font-medium text-gray-700" %>
+      <%= f.text_field :name, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div class="mb-4">
+      <%= f.label :username, class: "block font-medium text-gray-700" %>
+      <%= f.text_field :username, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div class="mb-4">
+      <%= f.label :email, class: "block font-medium text-gray-700" %>
+      <%= f.email_field :email, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div>
+      <%= f.label :bio, "Bio (max 650 chars)" %>
+      <%= f.text_area :bio, class: "w-full p-2 border rounded-md", rows: 3 %>
+    </div>
+    <div>
+      <%= f.label :location, "Location" %>
+      <%= f.text_field :location, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div>
+      <%= f.label :website, "Website" %>
+      <%= f.text_field :website, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div>
+      <%= f.label :facebook, "Facebook Profile" %>
+      <%= f.text_field :facebook, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div>
+      <%= f.label :twitter, "Twitter Profile" %>
+      <%= f.text_field :twitter, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div>
+      <%= f.label :linkedin, "LinkedIn Profile" %>
+      <%= f.text_field :linkedin, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div class="mb-4">
+      <%= f.label :avatar, class: "block font-medium text-gray-700" %>
+      <%= f.file_field :avatar, class: "w-full p-2 border rounded-md" %>
+    </div>
+    <div class="mt-4">
+      <%= f.submit "Update Profile", class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 font-medium transition" %>
+    </div>
+  <% end %>
+</div>

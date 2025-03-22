@@ -25,7 +25,7 @@
       <% if @posts.present? %>
         <% @posts.each do |post| %>
           <!-- Post Card with Nigerian-inspired design -->
-          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden border-l-4 border-green-500">
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-green-500">
             <!-- User Info Section -->
             <div class="flex items-center space-x-4 p-5 border-b border-gray-100">
               <% if post.user&.avatar&.attached? %>
@@ -51,6 +51,13 @@
                 </p>
               </div>
             </div>
+            
+            <!-- Post Image (if available) -->
+            <% if post.images.attached? %>
+              <div class="post-images-container">
+                <%= image_tag post.images.first, class: "w-full h-48 object-cover" if post.images.first %>
+              </div>
+            <% end %>
             
             <!-- Post Content -->
             <div class="p-5">

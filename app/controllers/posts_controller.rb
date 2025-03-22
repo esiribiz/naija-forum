@@ -104,12 +104,12 @@ raise ActiveRecord::RecordNotFound, "Post not found"
 end
 
 def set_security_headers
-response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self' https:; script-src 'self'; style-src 'self' 'unsafe-inline'"
-response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-response.headers['X-XSS-Protection'] = '1; mode=block'
-response.headers['X-Content-Type-Options'] = 'nosniff'
-response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-response.headers['Permissions-Policy'] = 'geolocation=(), microphone=()'
+  response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+  response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+  response.headers['X-XSS-Protection'] = '1; mode=block'
+  response.headers['X-Content-Type-Options'] = 'nosniff'
+  response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+  response.headers['Permissions-Policy'] = 'geolocation=(), microphone=()'
 end
 
 # Strong parameters with sanitization

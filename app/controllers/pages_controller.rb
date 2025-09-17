@@ -1,4 +1,8 @@
 class PagesController < ApplicationController
+  # Skip authentication and authorization for public pages
+  skip_before_action :authenticate_user!
+  skip_after_action :verify_authorized
+  
   def about
   end
 

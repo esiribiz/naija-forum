@@ -64,10 +64,14 @@
              (controller_name == "posts" && ["new", "create", "edit", "update"].include?(action_name)) ||
              (controller_name == "notifications") ||
              (controller_name == "registrations" && ["edit", "update"].include?(action_name)) ||
-             (controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user)) ||
-             (controller_name == "home" && action_name == "index")
+             (controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user))
             show_sidebar = true
           end
+        end
+        
+        # Show main sidebar on homepage for all users (logged-in and guests)
+        if controller_name == "home" && action_name == "index"
+          show_sidebar = true
         end
       %>
       
@@ -89,8 +93,8 @@
           <% elsif user_signed_in? && controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user) %>
             <!-- Profile Dashboard Sidebar -->
             <%= render "shared/profile_sidebar" %>
-          <% elsif user_signed_in? && controller_name == "home" && action_name == "index" %>
-            <!-- Main Site Sidebar - Only on homepage for logged-in users -->
+          <% elsif controller_name == "home" && action_name == "index" %>
+            <!-- Main Site Sidebar - On homepage for all users -->
             <%= render "shared/sidebar" %>
           <% end %>
         <% end %>

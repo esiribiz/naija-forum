@@ -111,7 +111,7 @@ raise ActiveRecord::RecordNotFound, "Post not found"
 end
 
 def set_security_headers
-  response.headers['Content-Security-Policy'] = "default-src 'self'; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+  # CSP is now handled by Rails configuration in config/initializers/content_security_policy.rb
   response.headers['X-Frame-Options'] = 'SAMEORIGIN'
   response.headers['X-XSS-Protection'] = '1; mode=block'
   response.headers['X-Content-Type-Options'] = 'nosniff'

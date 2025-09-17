@@ -23,43 +23,26 @@ export default class extends Controller {
     event.preventDefault()
     event.stopPropagation()
     
-    console.log("Toggle profile dropdown called")
-    console.log("Has profile dropdown target:", this.hasProfileDropdownTarget)
-    
     if (!this.hasProfileDropdownTarget) {
       console.error("Profile dropdown target not found")
-      console.log("Available targets:", this.targets)
       return
     }
 
-    console.log("Dropdown is hidden:", this.isDropdownHidden())
-    
     if (this.isDropdownHidden()) {
-      console.log("Showing dropdown")
       this.showDropdown()
     } else {
-      console.log("Hiding dropdown")
       this.hideDropdown()
     }
   }
 
   showDropdown() {
-    console.log("showDropdown called")
-    console.log("Profile dropdown classes before:", this.profileDropdownTarget.className)
-    
     this.profileDropdownTarget.classList.remove("hidden", "invisible", "opacity-0", "scale-95", "pointer-events-none")
-    
-    console.log("Profile dropdown classes after remove:", this.profileDropdownTarget.className)
     
     requestAnimationFrame(() => {
       this.profileDropdownTarget.classList.add("opacity-100", "scale-100", "pointer-events-auto")
-      console.log("Profile dropdown classes after add:", this.profileDropdownTarget.className)
       
       if (this.hasDropdownArrowTarget) {
         this.dropdownArrowTarget.classList.add("rotate-180")
-        console.log("Arrow rotated")
-      } else {
-        console.log("No dropdown arrow target found")
       }
     })
   }

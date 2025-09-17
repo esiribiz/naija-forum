@@ -16,7 +16,12 @@ module SecurityEnforceable
     private
   
     def enforce_security_headers
-      response.headers.merge!(SecureHeaders.header_hash_for(request))
+      # Use Rails built-in CSP configuration instead of SecureHeaders
+      # Custom security headers can be added here if needed, but CSP is handled by Rails
+      response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+      response.headers['X-XSS-Protection'] = '1; mode=block'
+      response.headers['X-Content-Type-Options'] = 'nosniff'
+      response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     end
   
     def check_rate_limit

@@ -42,13 +42,20 @@ export default class extends Controller {
   }
 
   open() {
-    this.panelTarget.classList.remove("hidden")
+    this.panelTarget.classList.remove("hidden", "invisible", "opacity-0", "scale-95")
+    this.panelTarget.classList.add("visible", "opacity-100", "scale-100")
     // Fetch latest notifications when opening dropdown
     this.fetchNotifications()
   }
 
   close() {
-    this.panelTarget.classList.add("hidden")
+    this.panelTarget.classList.add("hidden", "invisible", "opacity-0", "scale-95")
+    this.panelTarget.classList.remove("visible", "opacity-100", "scale-100")
+  }
+  
+  // Alias for close method to match HTML action
+  closeNotifications() {
+    this.close()
   }
 
   isPanelOpen() {

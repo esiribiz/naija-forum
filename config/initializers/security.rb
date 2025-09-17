@@ -21,34 +21,61 @@ req.user_agent =~ /^$/
 end
 
 # Configure secure headers
-SecureHeaders::Configuration.default do |config|
-config.cookies = {
-    secure: true,
-    httponly: true,
-    samesite: {
-    strict: true
+if Rails.env.development?
+  # Minimal configuration for development - allows JavaScript debugging without CSP restrictions
+  SecureHeaders::Configuration.default do |config|
+    # Disable most security headers in development for easier debugging
+    config.cookies = {
+        secure: true,  # Must be true per SecureHeaders validation
+        httponly: true,
+        samesite: {
+            lax: true   # More permissive for development
+        }
     }
-}
+    
+    # Disable restrictive headers in development
+    config.x_frame_options = nil
+    config.x_content_type_options = nil
+    config.x_xss_protection = nil
+    config.x_download_options = nil
+    config.x_permitted_cross_domain_policies = nil
+    config.referrer_policy = nil
+    
+    # No CSP in development to allow inline scripts/styles and importmap
+    config.csp = SecureHeaders::OPT_OUT
+    config.hsts = SecureHeaders::OPT_OUT
+  end
+else
+  # Production configuration with full security headers
+  SecureHeaders::Configuration.default do |config|
+    config.cookies = {
+        secure: true,
+        httponly: true,
+        samesite: {
+        strict: true
+        }
+    }
 
-config.x_frame_options = "DENY"
-config.x_content_type_options = "nosniff"
-config.x_xss_protection = "1; mode=block"
-config.x_download_options = "noopen"
-config.x_permitted_cross_domain_policies = "none"
-config.referrer_policy = %w(strict-origin-when-cross-origin)
+    config.x_frame_options = "DENY"
+    config.x_content_type_options = "nosniff"
+    config.x_xss_protection = "1; mode=block"
+    config.x_download_options = "noopen"
+    config.x_permitted_cross_domain_policies = "none"
+    config.referrer_policy = %w(strict-origin-when-cross-origin)
 
-config.csp = {
-    default_src: %w('self'),
-    img_src: %w('self' data: https:),
-    media_src: %w('self'),
-    script_src: %w('self'),
-    style_src: %w('self' 'unsafe-inline'),
-    form_action: %w('self'),
-    frame_ancestors: %w('none'),
-    upgrade_insecure_requests: true
-}
+    config.csp = {
+        default_src: %w('self'),
+        img_src: %w('self' data: https:),
+        media_src: %w('self'),
+        script_src: %w('self'),
+        style_src: %w('self' 'unsafe-inline'),
+        form_action: %w('self'),
+        frame_ancestors: %w('none'),
+        upgrade_insecure_requests: true
+    }
 
-config.hsts = "max-age=31536000; includeSubDomains; preload"
+    config.hsts = "max-age=31536000; includeSubDomains; preload"
+  end
 end
 
 # Configure CORS

@@ -2,66 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles */
-@layer components {
-    /* Navbar and Dropdown styles */
-    .dropdown-arrow {
-        transform-origin: center;
-        transition: transform 0.3s ease;
+/* Custom styles for proper z-index layering */
+@layer utilities {
+    /* Navigation and dropdown z-index hierarchy */
+    .z-navbar {
+        z-index: 1000;
     }
-
-    .rotate-180 {
-        transform: rotate(180deg);
+    
+    .z-dropdown {
+        z-index: 9999;
     }
-
-    .dropdown-menu {
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-        visibility: hidden;
+    
+    .z-hero {
+        z-index: 1;
     }
-
-    .dropdown-menu.show {
-        opacity: 1;
-        transform: translateY(0);
-        visibility: visible;
-        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s;
-    }
-
-    .mobile-menu {
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-        visibility: hidden;
-        max-height: 0;
-        overflow: hidden;
-    }
-
-    .mobile-menu.show {
-        opacity: 1;
-        transform: translateY(0);
-        visibility: visible;
-        max-height: 1000px;
-        transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.5s ease, visibility 0s;
-    }
-
+    
     /* Flash message transitions */
     [data-controller="flash"] {
         transition: opacity 0.3s ease-in-out;
-    }
-
-    .opacity-0 {
-        opacity: 0;
-    }
-
-    .opacity-100 {
-        opacity: 1;
-    }
-}
-
-@layer utilities {
-    /* Ensure all hover transitions are consistent */
-    a, button {
-        transition: all 0.3s ease !important;
     }
 }

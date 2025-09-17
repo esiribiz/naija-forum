@@ -6,7 +6,7 @@ class NotificationsController < ApplicationController
 
   # GET /notifications
   def index
-    @notifications = current_user.notifications
+    @notifications = policy_scope(Notification)
                               .includes(:actor, :notifiable)
                               .order(created_at: :desc)
                               .page(params[:page])
@@ -21,6 +21,7 @@ class NotificationsController < ApplicationController
 
   # POST /notifications/:id/mark_as_read
   def mark_as_read
+    authorize @notification
     if @notification.update(read: true)
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "Notification marked as read.") }
@@ -38,6 +39,7 @@ class NotificationsController < ApplicationController
 
   # POST /notifications/mark_all_as_read
   def mark_all_as_read
+    authorize :notification, :mark_all_as_read?
     if current_user.notifications.unread.update_all(read: true)
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "All notifications marked as read.") }
@@ -55,6 +57,7 @@ class NotificationsController < ApplicationController
 
   # DELETE /notifications/:id
   def destroy
+    authorize @notification
     if @notification.destroy
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "Notification was successfully deleted.") }
@@ -72,6 +75,7 @@ class NotificationsController < ApplicationController
 
   # DELETE /notifications/clear
   def clear
+    authorize :notification, :clear?
     if current_user.notifications.destroy_all
       respond_to do |format|
         format.html { redirect_to notifications_path, notice: "All notifications cleared." }

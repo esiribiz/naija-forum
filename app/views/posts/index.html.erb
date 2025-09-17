@@ -20,20 +20,6 @@
       </div>
     </div>
     
-    <!-- Guest Call-to-Action Banner -->
-    <% unless user_signed_in? %>
-      <div class="bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-white p-6 rounded-xl mb-8 shadow-lg relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-24 h-24 bg-white opacity-10 rounded-full -mr-8 -mt-8"></div>
-        <div class="relative z-10 text-center">
-          <h3 class="text-xl font-bold mb-2">Welcome to Naija Forum! 🇳🇬</h3>
-          <p class="mb-4 text-yellow-100">Join our vibrant community to read full posts, participate in discussions, and connect with Nigerians worldwide.</p>
-          <div class="flex flex-col sm:flex-row gap-3 justify-center">
-            <%= link_to "Sign Up Free", new_user_registration_path, class: "px-6 py-2.5 bg-white text-yellow-600 rounded-lg hover:bg-yellow-50 font-semibold shadow-sm transition duration-300 inline-flex items-center justify-center" %>
-            <%= link_to "Sign In", new_user_session_path, class: "px-6 py-2.5 bg-yellow-400 text-yellow-900 rounded-lg hover:bg-yellow-300 font-semibold shadow-sm transition duration-300 inline-flex items-center justify-center" %>
-          </div>
-        </div>
-      </div>
-    <% end %>
     
     <!-- Post Grid -->
     <div class="grid gap-6 md:grid-cols-1 lg:grid-cols-2">

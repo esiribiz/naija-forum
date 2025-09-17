@@ -81,22 +81,6 @@
       </div>
     </div>
     
-    <!-- Guest Sidebar Teaser - Only show for non-logged-in users -->
-    <% unless user_signed_in? %>
-      <div class="mb-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-dashed border-blue-200 rounded-xl text-center">
-        <div class="mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-800 mb-2">Missing something?</h3>
-        <p class="text-gray-600 mb-4 text-sm">Logged-in members see categories, tags, and quick navigation tools in a sidebar here.</p>
-        <div class="flex flex-col sm:flex-row gap-2 justify-center">
-          <%= link_to "Sign Up for Full Experience", new_user_registration_path, class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition duration-300 text-sm" %>
-          <%= link_to "Sign In", new_user_session_path, class: "px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium transition duration-300 text-sm" %>
-        </div>
-      </div>
-    <% end %>
     
     <!-- Posts List -->
     <table class="w-full table-auto border-collapse overflow-hidden rounded-xl">

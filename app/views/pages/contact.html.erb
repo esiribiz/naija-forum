@@ -1,0 +1,193 @@
+<%- content_for :title, "Contact Us - Naija Forum" %>
+
+<div class="min-h-screen bg-gradient-to-b from-green-50 to-white">
+  <!-- Hero Section -->
+  <div class="bg-gradient-to-r from-green-600 via-green-700 to-green-800 text-white py-16">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="relative">
+        <!-- Decorative elements -->
+        <div class="absolute top-0 left-1/4 w-16 h-16 rounded-full bg-yellow-400 opacity-20 animate-pulse"></div>
+        <div class="absolute top-8 right-1/4 w-12 h-12 rounded-full bg-white opacity-10"></div>
+        
+        <div class="relative z-10">
+          <div class="flex justify-center mb-6">
+            <div class="h-16 w-16 rounded-full bg-white p-3 shadow-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="text-green-600">
+                <path fill-rule="evenodd" d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+          
+          <h1 class="text-5xl font-extrabold mb-4 tracking-tight">
+            Contact <span class="relative inline-block">
+              <span class="relative z-10">Us</span>
+              <span class="absolute bottom-1 left-0 w-full h-3 bg-gradient-to-r from-yellow-400 to-yellow-300 opacity-50 rounded-lg -z-0"></span>
+            </span>
+          </h1>
+          <p class="text-xl text-green-100 max-w-3xl mx-auto leading-relaxed">
+            We'd love to hear from you! Get in touch with our community team for support, feedback, or partnership opportunities.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="grid lg:grid-cols-2 gap-12">
+      <!-- Contact Form -->
+      <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        <div class="mb-8">
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">Send us a Message</h2>
+          <p class="text-gray-600">Fill out the form below and we'll get back to you as soon as possible.</p>
+        </div>
+        
+        <%= form_with url: contact_path, method: :post, local: true, class: "space-y-6" do |form| %>
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <%= form.label :first_name, "First Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :first_name, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200", placeholder: "Enter your first name" %>
+            </div>
+            <div>
+              <%= form.label :last_name, "Last Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+              <%= form.text_field :last_name, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200", placeholder: "Enter your last name" %>
+            </div>
+          </div>
+          
+          <div>
+            <%= form.label :email, "Email Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.email_field :email, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200", placeholder: "your.email@example.com" %>
+          </div>
+          
+          <div>
+            <%= form.label :subject, "Subject", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.select :subject, 
+                options_for_select([
+                  ['General Inquiry', 'general'],
+                  ['Technical Support', 'support'],
+                  ['Partnership/Business', 'business'],
+                  ['Community Guidelines', 'guidelines'],
+                  ['Report an Issue', 'report'],
+                  ['Other', 'other']
+                ]), 
+                { prompt: 'Select a subject' }, 
+                { class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200" } %>
+          </div>
+          
+          <div>
+            <%= form.label :message, "Message", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= form.text_area :message, rows: 5, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200", placeholder: "Tell us more about your inquiry..." %>
+          </div>
+          
+          <div>
+            <%= form.submit "Send Message", class: "w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 px-6 rounded-lg hover:from-green-500 hover:to-green-600 font-medium transition duration-300 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl" %>
+          </div>
+        <% end %>
+        
+        <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div class="flex items-start">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mt-0.5 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <h4 class="text-sm font-medium text-green-800 mb-1">Quick Response</h4>
+              <p class="text-sm text-green-700">We typically respond to messages within 24-48 hours during business days.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Contact Information & Support Options -->
+      <div class="space-y-8">
+        <!-- Contact Methods -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+          <h3 class="text-2xl font-bold text-gray-800 mb-6">Get in Touch</h3>
+          
+          <div class="space-y-6">
+            <div class="flex items-start">
+              <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-1">Email Support</h4>
+                <p class="text-gray-600 mb-2">For general inquiries and support</p>
+                <a href="mailto:support@naijaforum.com" class="text-green-600 hover:text-green-800 font-medium">support@naijaforum.com</a>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-2M9 7a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V7z" />
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-1">Community Support</h4>
+                <p class="text-gray-600 mb-2">Get help from fellow community members</p>
+                <%= link_to "Join Community Discussions", root_path, class: "text-blue-600 hover:text-blue-800 font-medium" %>
+              </div>
+            </div>
+            
+            <div class="flex items-start">
+              <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4 flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2h8zM12 10h.01" />
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-1">Partnership Inquiries</h4>
+                <p class="text-gray-600 mb-2">Business partnerships and collaborations</p>
+                <a href="mailto:partnerships@naijaforum.com" class="text-purple-600 hover:text-purple-800 font-medium">partnerships@naijaforum.com</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+          <h3 class="text-2xl font-bold text-gray-800 mb-6">Frequently Asked Questions</h3>
+          
+          <div class="space-y-4">
+            <div class="border-b border-gray-200 pb-4">
+              <h4 class="text-lg font-semibold text-gray-800 mb-2">How do I create an account?</h4>
+              <p class="text-gray-600">Click on the "Join Community" button on our homepage and follow the simple registration process.</p>
+            </div>
+            
+            <div class="border-b border-gray-200 pb-4">
+              <h4 class="text-lg font-semibold text-gray-800 mb-2">Is Naija Forum free to use?</h4>
+              <p class="text-gray-600">Yes! Naija Forum is completely free for all users. Join and participate in discussions at no cost.</p>
+            </div>
+            
+            <div class="border-b border-gray-200 pb-4">
+              <h4 class="text-lg font-semibold text-gray-800 mb-2">How do I report inappropriate content?</h4>
+              <p class="text-gray-600">Use the report button on any post or comment, or contact our moderation team directly through this contact form.</p>
+            </div>
+            
+            <div>
+              <h4 class="text-lg font-semibold text-gray-800 mb-2">Can I suggest new features?</h4>
+              <p class="text-gray-600">Absolutely! We welcome feedback and feature suggestions. Use the contact form above to share your ideas.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Response Time -->
+        <div class="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl p-6 text-center">
+          <div class="flex items-center justify-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="text-xl font-bold">Quick Response Promise</h3>
+          </div>
+          <p class="text-green-100 mb-4">
+            We're committed to responding to all inquiries within 24-48 hours during business days.
+          </p>
+          <p class="text-sm text-green-200">
+            For urgent matters, please mark your subject accordingly and we'll prioritize your message.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

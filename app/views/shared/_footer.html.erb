@@ -28,11 +28,11 @@
         <div class="text-center md:text-left">
           <h3 class="text-lg font-semibold border-b border-green-500 pb-2 mb-3 inline-block">Quick Links</h3>
           <ul class="mt-4 space-y-2">
-            <li><a href="/" class="text-green-100 hover:text-white transition-colors">Home</a></li>
-            <li><a href="/categories" class="text-green-100 hover:text-white transition-colors">Categories</a></li>
-            <li><a href="/tags" class="text-green-100 hover:text-white transition-colors">Tags</a></li>
-            <li><a href="/about" class="text-green-100 hover:text-white transition-colors">About Us</a></li>
-            <li><a href="/contact" class="text-green-100 hover:text-white transition-colors">Contact</a></li>
+            <li><%= link_to "Home", root_path, class: "text-green-100 hover:text-white transition-colors" %></li>
+            <li><%= link_to "Categories", categories_path, class: "text-green-100 hover:text-white transition-colors" %></li>
+            <li><%= link_to "Tags", tags_path, class: "text-green-100 hover:text-white transition-colors" %></li>
+            <li><%= link_to "About Us", about_path, class: "text-green-100 hover:text-white transition-colors" %></li>
+            <li><%= link_to "Contact", contact_path, class: "text-green-100 hover:text-white transition-colors" %></li>
           </ul>
         </div>
         

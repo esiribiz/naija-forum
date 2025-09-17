@@ -31,6 +31,9 @@ end
   root "home#index"
 
   get "search", to: "search#index", as: "search"
+  get "about", to: "pages#about", as: "about"
+  get "contact", to: "pages#contact", as: "contact"
+  post "contact", to: "pages#submit_contact"
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

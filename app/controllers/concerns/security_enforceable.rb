@@ -16,8 +16,10 @@ module SecurityEnforceable
     private
   
     def enforce_security_headers
-      # Use Rails built-in CSP configuration instead of SecureHeaders
-      # Custom security headers can be added here if needed, but CSP is handled by Rails
+      # Only set basic security headers in development, no CSP
+      # CSP is handled by Rails configuration (disabled in development)
+      return if Rails.env.development? # Skip all security headers in development
+      
       response.headers['X-Frame-Options'] = 'SAMEORIGIN'
       response.headers['X-XSS-Protection'] = '1; mode=block'
       response.headers['X-Content-Type-Options'] = 'nosniff'

@@ -52,13 +52,11 @@
     <% end %>
     <!-- Navbar -->
     <%= render "shared/navbar" %>
-    <% unless controller_name == 'home' && action_name == 'index' %>
-      <%= render "shared/hero_header" %>
-    <% end %>
+    <%= render "shared/hero_header" %>
     <!-- Main Layout -->
     <div class="container mx-auto px-4 <%= (controller_name == 'home' && action_name == 'index') ? 'pt-6' : 'pt-60' %>">
       <!-- Content Wrapper -->
-      <div class="flex flex-col md:flex-row gap-6 min-h-screen mb-6">
+      <div class="flex flex-col md:flex-row gap-6 min-h-screen mb-6 bg-gray-100 relative" style="z-index: 5;">
         <!-- Sidebar -->
         <% if user_signed_in? && (controller_name == "users" && action_name == "show") %>
           <!-- Profile Dashboard Sidebar -->
@@ -80,7 +78,7 @@
           <%= render "shared/sidebar" %>
         <% end %>
         <!-- Main Content -->
-        <div class="flex-1 p-6 bg-white shadow-md border border-gray-300 rounded-2xl">
+        <div class="flex-1 p-6 bg-white shadow-md border border-gray-300 rounded-2xl relative" style="z-index: 10;">
           <%= yield %>
         </div>
       </div>

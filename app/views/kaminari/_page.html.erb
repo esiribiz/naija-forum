@@ -9,14 +9,14 @@
 %>
 <% if page.current? %>
 <li>
-    <span class="px-4 py-2 bg-blue-600 text-white border border-blue-600 hover:bg-blue-700 font-semibold rounded-lg mx-1">
+    <span class="px-4 py-2 bg-blue-600 text-white border border-blue-600 hover:bg-blue-700 font-semibold rounded-lg mx-1 shadow-md">
     <%= page %>
     </span>
 </li>
 <% else %>
 <li>
     <%= link_to page, url,
-    class: "px-4 py-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 hover:text-blue-600 rounded-lg mx-1",
+    class: "px-4 py-2 bg-gray-50 text-gray-800 border border-gray-300 hover:bg-blue-50 hover:text-blue-600 font-medium rounded-lg mx-1 shadow-sm",
     remote: remote %>
 </li>
 <% end %>

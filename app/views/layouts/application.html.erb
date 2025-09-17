@@ -56,29 +56,47 @@
     <!-- Main Layout -->
     <div class="container mx-auto px-4">
       <!-- Content Wrapper -->
-      <div class="flex flex-col md:flex-row gap-6 min-h-screen mb-6">
-        <!-- Sidebar -->
-        <% if user_signed_in? && (controller_name == "users" && action_name == "show") %>
-          <!-- Profile Dashboard Sidebar -->
-          <%= render "shared/profile_sidebar" %>
-        <% elsif user_signed_in? && controller_name == "posts" && ["new", "create", "edit", "update"].include?(action_name) %>
-          <!-- Profile Dashboard Sidebar -->
-          <%= render "shared/profile_sidebar" %>
-        <% elsif user_signed_in? && controller_name == "notifications" %>
-          <!-- Profile Dashboard Sidebar -->
-          <%= render "shared/profile_sidebar" %>
-        <% elsif user_signed_in? && controller_name == "registrations" && ["edit", "update"].include?(action_name) %>
-          <!-- Profile Dashboard Sidebar -->
-          <%= render "shared/profile_sidebar" %>
-        <% elsif user_signed_in? && controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user) %>
-          <!-- Profile Dashboard Sidebar -->
-          <%= render "shared/profile_sidebar" %>
-        <% else %>
-          <!-- Main Site Sidebar -->
-          <%= render "shared/sidebar" %>
+      <% 
+        # Determine if we should show a sidebar
+        show_sidebar = false
+        if user_signed_in?
+          if (controller_name == "users" && action_name == "show") ||
+             (controller_name == "posts" && ["new", "create", "edit", "update"].include?(action_name)) ||
+             (controller_name == "notifications") ||
+             (controller_name == "registrations" && ["edit", "update"].include?(action_name)) ||
+             (controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user)) ||
+             (controller_name == "home" && action_name == "index")
+            show_sidebar = true
+          end
+        end
+      %>
+      
+      <div class="<%= show_sidebar ? 'flex flex-col md:flex-row gap-6' : 'flex justify-center' %> min-h-screen mb-6">
+        <% if show_sidebar %>
+          <!-- Sidebar -->
+          <% if user_signed_in? && (controller_name == "users" && action_name == "show") %>
+            <!-- Profile Dashboard Sidebar -->
+            <%= render "shared/profile_sidebar" %>
+          <% elsif user_signed_in? && controller_name == "posts" && ["new", "create", "edit", "update"].include?(action_name) %>
+            <!-- Profile Dashboard Sidebar -->
+            <%= render "shared/profile_sidebar" %>
+          <% elsif user_signed_in? && controller_name == "notifications" %>
+            <!-- Profile Dashboard Sidebar -->
+            <%= render "shared/profile_sidebar" %>
+          <% elsif user_signed_in? && controller_name == "registrations" && ["edit", "update"].include?(action_name) %>
+            <!-- Profile Dashboard Sidebar -->
+            <%= render "shared/profile_sidebar" %>
+          <% elsif user_signed_in? && controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user) %>
+            <!-- Profile Dashboard Sidebar -->
+            <%= render "shared/profile_sidebar" %>
+          <% elsif user_signed_in? && controller_name == "home" && action_name == "index" %>
+            <!-- Main Site Sidebar - Only on homepage for logged-in users -->
+            <%= render "shared/sidebar" %>
+          <% end %>
         <% end %>
+        
         <!-- Main Content -->
-        <div class="flex-1 p-6 bg-white shadow-md border border-gray-300 rounded-2xl">
+        <div class="<%= show_sidebar ? 'flex-1' : 'w-full max-w-6xl' %> p-6 bg-white shadow-md border border-gray-300 rounded-2xl">
           <%= yield %>
         </div>
       </div>

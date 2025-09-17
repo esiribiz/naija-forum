@@ -69,8 +69,8 @@
           end
         end
         
-        # Show main sidebar on homepage for all users (logged-in and guests)
-        if controller_name == "home" && action_name == "index"
+        # Show main sidebar on homepage only for logged-in users (hidden for guests)
+        if user_signed_in? && controller_name == "home" && action_name == "index"
           show_sidebar = true
         end
       %>
@@ -93,8 +93,8 @@
           <% elsif user_signed_in? && controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user) %>
             <!-- Profile Dashboard Sidebar -->
             <%= render "shared/profile_sidebar" %>
-          <% elsif controller_name == "home" && action_name == "index" %>
-            <!-- Main Site Sidebar - On homepage for all users -->
+          <% elsif user_signed_in? && controller_name == "home" && action_name == "index" %>
+            <!-- Main Site Sidebar - On homepage for logged-in users only -->
             <%= render "shared/sidebar" %>
           <% end %>
         <% end %>

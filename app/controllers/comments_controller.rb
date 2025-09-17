@@ -17,7 +17,9 @@ def create
         message = @comment.parent_id.present? ? 'Reply was successfully added.' : 'Comment was successfully created.'
         format.html { redirect_to post_path(@post), notice: message }
         format.turbo_stream {
+        Rails.logger.info "Creating comment via Turbo Stream for comment ID: #{@comment.id}"
         if @comment.parent_id.present?
+            Rails.logger.info "Comment is a reply to parent #{@comment.parent_id}"
             render turbo_stream: [
             turbo_stream.append("comment_#{@comment.parent_id}_replies", 
                 partial: 'comments/comment',
@@ -29,10 +31,17 @@ def create
             )
             ]
         else
-            render turbo_stream: turbo_stream.append("post_comments",
-            partial: 'comments/comment',
-            locals: { comment: @comment }
+            Rails.logger.info "Comment is a top-level comment, appending to post_comments"
+            render turbo_stream: [
+            turbo_stream.append("post_comments",
+                partial: 'comments/comment',
+                locals: { comment: @comment }
+            ),
+            turbo_stream.replace("new_comment",
+                partial: "comments/form",
+                locals: { comment: Comment.new, post: @post }
             )
+            ]
         end
         }
     else

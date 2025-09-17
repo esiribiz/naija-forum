@@ -57,8 +57,24 @@
     <div class="container mx-auto px-4">
       <!-- Content Wrapper -->
       <div class="flex flex-col md:flex-row gap-6 min-h-screen mb-6">
-        <!-- Sidebar (Hidden on User Profile Pages) -->
-        <% unless controller_name == "users" && action_name == "show" %>
+        <!-- Sidebar -->
+        <% if user_signed_in? && (controller_name == "users" && action_name == "show") %>
+          <!-- Profile Dashboard Sidebar -->
+          <%= render "shared/profile_sidebar" %>
+        <% elsif user_signed_in? && controller_name == "posts" && ["new", "create", "edit", "update"].include?(action_name) %>
+          <!-- Profile Dashboard Sidebar -->
+          <%= render "shared/profile_sidebar" %>
+        <% elsif user_signed_in? && controller_name == "notifications" %>
+          <!-- Profile Dashboard Sidebar -->
+          <%= render "shared/profile_sidebar" %>
+        <% elsif user_signed_in? && controller_name == "registrations" && ["edit", "update"].include?(action_name) %>
+          <!-- Profile Dashboard Sidebar -->
+          <%= render "shared/profile_sidebar" %>
+        <% elsif user_signed_in? && controller_name == "posts" && action_name == "index" && params[:user].present? && (User.find_by(id: params[:user]) == current_user) %>
+          <!-- Profile Dashboard Sidebar -->
+          <%= render "shared/profile_sidebar" %>
+        <% else %>
+          <!-- Main Site Sidebar -->
           <%= render "shared/sidebar" %>
         <% end %>
         <!-- Main Content -->

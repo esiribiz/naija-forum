@@ -241,6 +241,34 @@ def recent_notifications(limit = 5)
   notifications.order(created_at: :desc).limit(limit)
 end
 
+# Get recent activity (posts and comments combined)
+def recent_activity(limit = 10)
+  activities = []
+  
+  # Get recent posts
+  recent_posts = posts.order(created_at: :desc).limit(limit)
+  recent_posts.each do |post|
+    activities << {
+      type: 'post',
+      object: post,
+      created_at: post.created_at
+    }
+  end
+  
+  # Get recent comments
+  recent_comments = comments.includes(:post).order(created_at: :desc).limit(limit)
+  recent_comments.each do |comment|
+    activities << {
+      type: 'comment',
+      object: comment,
+      created_at: comment.created_at
+    }
+  end
+  
+  # Sort by date and limit
+  activities.sort_by { |activity| activity[:created_at] }.reverse.first(limit)
+end
+
 # Get all unread notifications
 def unread_notifications
   notifications.where(read: false)

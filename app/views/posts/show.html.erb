@@ -240,7 +240,7 @@
       </div>
     <% end %>
 
-    <div id="comments" class="space-y-6">
+    <div id="post_comments" class="space-y-6">
       <% if @post.comments.top_level.any? %>
         <% @post.comments.top_level.includes(:user, :replies).order(created_at: :desc).each do |comment| %>
           <%= render partial: 'comments/comment', locals: { comment: comment, post: @post } %>
@@ -465,7 +465,7 @@
     
     // Comment navigation
     const commentsFab = document.getElementById('comments-fab');
-    const commentsSection = document.getElementById('comments');
+    const commentsSection = document.getElementById('post_comments');
     
     if (commentsFab && commentsSection) {
       commentsFab.addEventListener('click', function() {

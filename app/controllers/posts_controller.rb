@@ -5,6 +5,7 @@ class PostsController < ApplicationController
   before_action :set_security_headers
   before_action :validate_request_format
   before_action :set_post, only: %i[show edit update destroy]
+  before_action :set_user_for_sidebar, only: %i[new create edit update]
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_auth_token
@@ -102,6 +103,11 @@ authorize @post
   end
 
 private
+
+# Set @user for sidebar in user-focused pages
+def set_user_for_sidebar
+  @user = current_user if user_signed_in?
+end
 
 # Finds the post before performing actions
 def set_post

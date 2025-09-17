@@ -1,10 +1,12 @@
 <%= form_with(
   model: [@post, comment],
   class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form bg-green-50/50 p-4 rounded-lg' : ''}",
+  local: false,
   data: {
     controller: "reset-form comments",
     action: "turbo:submit-end->reset-form#reset turbo:submit-end->comments#formSuccess turbo:submit-error->comments#formError",
-    comments_target: "form"
+    comments_target: "form",
+    turbo_stream: true
   }
 ) do |f| %>
 

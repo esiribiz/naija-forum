@@ -3,6 +3,7 @@
 class NotificationsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_notification, only: [:mark_as_read, :destroy]
+  before_action :set_user_for_sidebar
 
   # GET /notifications
   def index
@@ -92,6 +93,11 @@ class NotificationsController < ApplicationController
   end
 
   private
+
+  # Set @user for sidebar
+  def set_user_for_sidebar
+    @user = current_user
+  end
 
   def set_notification
     @notification = current_user.notifications.find(params[:id])

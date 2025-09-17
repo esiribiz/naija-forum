@@ -1,7 +1,8 @@
 class PostsController < ApplicationController
   include HtmlProcessor
   protect_from_forgery with: :exception
-  before_action :authenticate_user!, except: %i[index show]
+  before_action :authenticate_user!, except: %i[index]
+  skip_after_action :verify_policy_scoped, only: [:index], unless: :user_signed_in?
   before_action :set_security_headers
   before_action :validate_request_format
   before_action :set_post, only: %i[show edit update destroy]
@@ -14,28 +15,50 @@ class PostsController < ApplicationController
 def index
 @categories = Category.all
 
-if params[:category_id]
-    @category = Category.find(params[:category_id])
-    @posts = policy_scope(@category.posts)
-    .includes(:user, :category)
-    .order(created_at: :desc)
-    .page(params[:page])
-    .per(10)
-elsif params[:user]
-    @user = User.find(params[:user])
-    @posts = policy_scope(@user.posts)
-        .includes(:user, :category)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(10)
-    else
-    @posts = policy_scope(Post)
-        .includes(:user, :category)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(10)
-    end
+if user_signed_in?
+  # Logged-in users: Use policy scope for authorized content
+  if params[:category_id]
+      @category = Category.find(params[:category_id])
+      @posts = policy_scope(@category.posts)
+      .includes(:user, :category)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(10)
+  elsif params[:user]
+      @user = User.find(params[:user])
+      @posts = policy_scope(@user.posts)
+          .includes(:user, :category)
+          .order(created_at: :desc)
+          .page(params[:page])
+          .per(10)
+      else
+      @posts = policy_scope(Post)
+          .includes(:user, :category)
+          .order(created_at: :desc)
+          .page(params[:page])
+          .per(10)
+      end
+else
+  # Guests: Show all posts but they can't view individual posts without login
+  if params[:category_id]
+      @category = Category.find(params[:category_id])
+      @posts = @category.posts
+      .includes(:user, :category)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(10)
+  elsif params[:user]
+      # Don't allow user-specific pages for guests
+      redirect_to new_user_session_path, alert: "Please sign in to view user profiles."
+      return
+  else
+      @posts = Post.includes(:user, :category)
+          .order(created_at: :desc)
+          .page(params[:page])
+          .per(10)
   end
+end
+end
 
   # GET /posts/1 or /posts/1.json
 def show

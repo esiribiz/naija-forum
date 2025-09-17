@@ -110,9 +110,16 @@
 
                 <!-- Post Content -->
                 <div class="flex-1">
-                  <a href="<%= post_path(post) %>" class="text-xl font-semibold text-gray-800 transition duration-200 hover:text-green-700 group-hover:text-green-700 inline-block">
-                    <%= post.title %>
-                  </a>
+                  <% if user_signed_in? %>
+                    <a href="<%= post_path(post) %>" class="text-xl font-semibold text-gray-800 transition duration-200 hover:text-green-700 group-hover:text-green-700 inline-block">
+                      <%= post.title %>
+                    </a>
+                  <% else %>
+                    <a href="<%= new_user_session_path %>" class="text-xl font-semibold text-gray-800 transition duration-200 hover:text-green-700 group-hover:text-green-700 inline-block">
+                      <%= post.title %>
+                      <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
+                    </a>
+                  <% end %>
                   <p class="text-sm text-gray-500 mt-1">
                     Posted by <span class="font-medium text-green-700"><%= post.user&.email.to_s.split('@').first || 'Anonymous' %></span>
                   </p>
@@ -152,9 +159,15 @@
       <% end %>
 
             <div class="text-base text-gray-600 mt-4 line-clamp-2 group-hover:text-gray-800 transition-colors duration-200">
-              <a href="<%= post_path(post) %>" class="hover:text-green-700">
-                <%= truncate(post.body, length: 200) %>
-              </a>
+              <% if user_signed_in? %>
+                <a href="<%= post_path(post) %>" class="hover:text-green-700">
+                  <%= truncate(post.body, length: 200) %>
+                </a>
+              <% else %>
+                <a href="<%= new_user_session_path %>" class="hover:text-green-700">
+                  <%= truncate(post.body, length: 200) %>
+                </a>
+              <% end %>
             </div>
             </div>
 
@@ -163,11 +176,19 @@
 
             <!-- Replies Count -->
             <td class="px-6 py-4 text-center w-1/6">
-              <a href="<%= post_path(post) %>" class="flex flex-col items-center justify-center gap-1 text-green-600 hover:text-green-800 transition-colors p-3 rounded-full hover:bg-green-50 group-hover:bg-green-50">
-                <span class="text-xl">💬</span>
-                <span class="font-semibold text-lg"><%= post.comments.count %></span>
-                <span class="text-xs text-gray-500">replies</span>
-              </a>
+              <% if user_signed_in? %>
+                <a href="<%= post_path(post) %>" class="flex flex-col items-center justify-center gap-1 text-green-600 hover:text-green-800 transition-colors p-3 rounded-full hover:bg-green-50 group-hover:bg-green-50">
+                  <span class="text-xl">💬</span>
+                  <span class="font-semibold text-lg"><%= post.comments.count %></span>
+                  <span class="text-xs text-gray-500">replies</span>
+                </a>
+              <% else %>
+                <a href="<%= new_user_session_path %>" class="flex flex-col items-center justify-center gap-1 text-green-600 hover:text-green-800 transition-colors p-3 rounded-full hover:bg-green-50 group-hover:bg-green-50">
+                  <span class="text-xl">🔒</span>
+                  <span class="font-semibold text-lg"><%= post.comments.count %></span>
+                  <span class="text-xs text-gray-500">sign in</span>
+                </a>
+              <% end %>
             </td>
 
             <!-- Post Time Ago - Enhanced -->

@@ -1,8 +1,8 @@
 class PostsController < ApplicationController
   include HtmlProcessor
   protect_from_forgery with: :exception
-  before_action :authenticate_user!, except: %i[index]
-  skip_after_action :verify_policy_scoped, only: [:index], unless: :user_signed_in?
+  before_action :authenticate_user!, except: %i[index latest popular]
+  skip_after_action :verify_policy_scoped, only: [:index, :latest, :popular], unless: :user_signed_in?
   before_action :set_security_headers
   before_action :validate_request_format
   before_action :set_post, only: %i[show edit update destroy]
@@ -122,6 +122,46 @@ authorize @post
     respond_to do |format|
       format.html { redirect_to posts_path, status: :see_other, notice: "Post was successfully destroyed." }
       format.json { head :no_content }
+    end
+  end
+
+  # GET /latest - Shows latest posts (chronological order)
+  def latest
+    @categories = Category.all
+    
+    if user_signed_in?
+      @posts = policy_scope(Post)
+        .includes(:user, :category)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(20)
+    else
+      @posts = Post.includes(:user, :category)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(20)
+    end
+  end
+  
+  # GET /popular - Shows popular posts (by comment count and recent activity)
+  def popular
+    @categories = Category.all
+    
+    if user_signed_in?
+      @posts = policy_scope(Post)
+        .includes(:user, :category, :comments)
+        .left_joins(:comments)
+        .group('posts.id')
+        .order('COUNT(comments.id) DESC, posts.created_at DESC')
+        .page(params[:page])
+        .per(20)
+    else
+      @posts = Post.includes(:user, :category, :comments)
+        .left_joins(:comments)
+        .group('posts.id')
+        .order('COUNT(comments.id) DESC, posts.created_at DESC')
+        .page(params[:page])
+        .per(20)
     end
   end
 

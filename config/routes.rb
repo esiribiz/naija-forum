@@ -31,6 +31,8 @@ end
   root "home#index"
 
   get "search", to: "search#index", as: "search"
+  get "latest", to: "posts#latest", as: "latest_posts"
+  get "popular", to: "posts#popular", as: "popular_posts"
   get "about", to: "pages#about", as: "about"
   get "contact", to: "pages#contact", as: "contact"
   post "contact", to: "pages#submit_contact"

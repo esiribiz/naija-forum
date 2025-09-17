@@ -3,6 +3,7 @@ class PostsController < ApplicationController
   protect_from_forgery with: :exception
   before_action :authenticate_user!, except: %i[index latest popular]
   skip_after_action :verify_policy_scoped, only: [:index, :latest, :popular], unless: :user_signed_in?
+  skip_after_action :verify_authorized, only: [:latest, :popular]
   before_action :set_security_headers
   before_action :validate_request_format
   before_action :set_post, only: %i[show edit update destroy]

@@ -79,15 +79,23 @@ class << self
 
     # Content Security Policy
     def content_security_policy_headers
+    script_src = %w['self']
+    
+    # Allow unsafe-inline and unsafe-eval in development for Stimulus and debugging
+    if Rails.env.development?
+        script_src += %w['unsafe-inline' 'unsafe-eval']
+    end
+    
     {
         'Content-Security-Policy' => [
         "default-src 'self'",
-        "img-src 'self' data: https:",
-        "script-src 'self'",
+        "img-src 'self' data: blob: https:",
+        "script-src #{script_src.join(' ')}",
         "style-src 'self' 'unsafe-inline'",
-        "font-src 'self'",
+        "font-src 'self' data:",
         "form-action 'self'",
-        "frame-ancestors 'none'"
+        "frame-ancestors 'none'",
+        "connect-src 'self' ws: wss:"
         ].join('; ')
     }
     end

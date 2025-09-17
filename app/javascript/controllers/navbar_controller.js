@@ -5,11 +5,6 @@ export default class extends Controller {
 
   connect() {
     console.log("Navbar controller connected")
-    console.log("Available targets:", this.targets)
-    console.log("Profile dropdown target available:", this.hasProfileDropdownTarget)
-    if (this.hasProfileDropdownTarget) {
-      console.log("Profile dropdown element:", this.profileDropdownTarget)
-    }
     this.boundClickOutside = this.handleClickOutside.bind(this)
     document.addEventListener("click", this.boundClickOutside)
   }

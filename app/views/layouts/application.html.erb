@@ -52,9 +52,11 @@
     <% end %>
     <!-- Navbar -->
     <%= render "shared/navbar" %>
-    <%= render "shared/hero_header" %>
+    <% unless controller_name == 'home' && action_name == 'index' %>
+      <%= render "shared/hero_header" %>
+    <% end %>
     <!-- Main Layout -->
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto px-4 <%= (controller_name == 'home' && action_name == 'index') ? 'pt-6' : 'pt-60' %>">
       <!-- Content Wrapper -->
       <div class="flex flex-col md:flex-row gap-6 min-h-screen mb-6">
         <!-- Sidebar -->

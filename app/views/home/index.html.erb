@@ -199,7 +199,7 @@
         <nav class="pagination flex items-center space-x-1" role="navigation" aria-label="Pagination Navigation">
           <%= paginate @posts do |paginator| %>
             <% if paginator.prev_page %>
-              <%= link_to paginator.prev_page_url, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-white border border-gray-200 hover:bg-green-50 hover:border-green-300 transition-colors duration-200" do %>
+              <%= link_to paginator.prev_page_url, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-white border border-gray-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors duration-200" do %>
                 <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
                 </svg>
@@ -220,12 +220,12 @@
                   <%= number %>
                 </span>
               <% else %>
-                <%= link_to number, paginator.url_for_number(number), class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-200 hover:bg-green-50 hover:text-green-700 hover:border-green-300 transition-colors duration-200" %>
+                <%= link_to number, paginator.url_for_number(number), class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors duration-200" %>
               <% end %>
             <% end %>
 
             <% if paginator.next_page %>
-              <%= link_to paginator.next_page_url, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-white border border-gray-200 hover:bg-green-50 hover:border-green-300 transition-colors duration-200" do %>
+              <%= link_to paginator.next_page_url, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-white border border-gray-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors duration-200" do %>
                 Next
                 <svg class="h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />

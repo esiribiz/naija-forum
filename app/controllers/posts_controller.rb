@@ -20,6 +20,13 @@ if params[:category_id]
     .order(created_at: :desc)
     .page(params[:page])
     .per(10)
+elsif params[:user]
+    @user = User.find(params[:user])
+    @posts = policy_scope(@user.posts)
+        .includes(:user, :category)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(10)
     else
     @posts = policy_scope(Post)
         .includes(:user, :category)

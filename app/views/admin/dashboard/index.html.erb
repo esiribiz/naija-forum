@@ -1,10 +1,10 @@
 <% content_for :page_title, "Dashboard" %>
 <% content_for :page_subtitle, "Welcome back! Here's what's happening on your forum today." %>
 
-<!-- Dashboard Statistics Cards -->
+<!-- Enhanced Dashboard Statistics Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
   <!-- Users Stats -->
-  <div class="stat-card">
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
     <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
       <i class="fas fa-users"></i>
     </div>
@@ -14,15 +14,20 @@
       <i class="fas fa-arrow-up mr-1"></i>
       +<%= @stats[:users][:new_today] %> today
     </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:users][:new_today].to_f / [@stats[:users][:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
     <div class="mt-3">
-      <%= link_to admin_users_path, class: "btn btn-primary btn-sm" do %>
+      <%= link_to admin_users_path, class: "btn btn-primary btn-sm group-hover:shadow-lg transition-all" do %>
         <i class="fas fa-eye mr-1"></i> View All
       <% end %>
     </div>
   </div>
 
   <!-- Posts Stats -->
-  <div class="stat-card">
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
     <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
       <i class="fas fa-newspaper"></i>
     </div>
@@ -32,15 +37,20 @@
       <i class="fas fa-arrow-up mr-1"></i>
       +<%= @stats[:posts][:new_today] %> today
     </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-green-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:posts][:new_today].to_f / [@stats[:posts][:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
     <div class="mt-3">
-      <%= link_to admin_posts_path, class: "btn btn-success btn-sm" do %>
+      <%= link_to admin_posts_path, class: "btn btn-success btn-sm group-hover:shadow-lg transition-all" do %>
         <i class="fas fa-cog mr-1"></i> Manage
       <% end %>
     </div>
   </div>
 
   <!-- Comments Stats -->
-  <div class="stat-card">
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
     <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
       <i class="fas fa-comments"></i>
     </div>
@@ -50,15 +60,20 @@
       <i class="fas fa-arrow-up mr-1"></i>
       +<%= @stats[:comments][:new_today] %> today
     </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-yellow-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:comments][:new_today].to_f / [@stats[:comments][:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
     <div class="mt-3">
-      <%= link_to admin_comments_path, class: "btn btn-warning btn-sm" do %>
+      <%= link_to admin_comments_path, class: "btn btn-warning btn-sm group-hover:shadow-lg transition-all" do %>
         <i class="fas fa-shield-alt mr-1"></i> Moderate
       <% end %>
     </div>
   </div>
 
   <!-- Categories Stats -->
-  <div class="stat-card">
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
     <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
       <i class="fas fa-tags"></i>
     </div>
@@ -68,9 +83,64 @@
       <i class="fas fa-check mr-1"></i>
       <%= @stats[:categories][:with_posts] %> active
     </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-purple-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:categories][:with_posts].to_f / [@stats[:categories][:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
     <div class="mt-3">
-      <%= link_to admin_categories_path, class: "btn btn-secondary btn-sm" do %>
+      <%= link_to admin_categories_path, class: "btn btn-secondary btn-sm group-hover:shadow-lg transition-all" do %>
         <i class="fas fa-list mr-1"></i> Manage
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions Section -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
+  <div class="px-6 py-4 border-b border-gray-100">
+    <h3 class="text-lg font-bold text-gray-900 flex items-center">
+      <i class="fas fa-bolt mr-2 text-yellow-500"></i>
+      Quick Actions
+    </h3>
+    <p class="text-sm text-gray-600 mt-1">Perform common admin tasks quickly</p>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <%= link_to new_admin_user_path, class: "quick-action-card group" do %>
+        <div class="p-4 text-center border-2 border-dashed border-gray-200 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all">
+          <div class="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200">
+            <i class="fas fa-user-plus text-blue-600"></i>
+          </div>
+          <p class="text-sm font-medium text-gray-700">Add User</p>
+        </div>
+      <% end %>
+      
+      <%= link_to admin_posts_path(published: false), class: "quick-action-card group" do %>
+        <div class="p-4 text-center border-2 border-dashed border-gray-200 rounded-lg hover:border-green-400 hover:bg-green-50 transition-all">
+          <div class="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200">
+            <i class="fas fa-edit text-green-600"></i>
+          </div>
+          <p class="text-sm font-medium text-gray-700">Draft Posts</p>
+        </div>
+      <% end %>
+      
+      <%= link_to new_admin_category_path, class: "quick-action-card group" do %>
+        <div class="p-4 text-center border-2 border-dashed border-gray-200 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all">
+          <div class="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200">
+            <i class="fas fa-tags text-purple-600"></i>
+          </div>
+          <p class="text-sm font-medium text-gray-700">New Category</p>
+        </div>
+      <% end %>
+      
+      <%= link_to admin_comments_path, class: "quick-action-card group" do %>
+        <div class="p-4 text-center border-2 border-dashed border-gray-200 rounded-lg hover:border-orange-400 hover:bg-orange-50 transition-all">
+          <div class="w-12 h-12 mx-auto mb-3 bg-orange-100 rounded-lg flex items-center justify-center group-hover:bg-orange-200">
+            <i class="fas fa-flag text-orange-600"></i>
+          </div>
+          <p class="text-sm font-medium text-gray-700">Moderate</p>
+        </div>
       <% end %>
     </div>
   </div>
@@ -112,15 +182,38 @@
 </div>
 
 <!-- Recent Activity Section -->
+<div class="mb-6">
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+      <i class="fas fa-clock mr-3 text-blue-500"></i>
+      Recent Activity
+    </h2>
+    <div class="flex space-x-2">
+      <button class="px-3 py-1.5 text-xs font-medium text-gray-600 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
+        Last 24h
+      </button>
+      <button class="px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-100 rounded-full hover:bg-blue-200 transition-colors">
+        Last Week
+      </button>
+    </div>
+  </div>
+  <p class="text-gray-600 mt-1">Stay updated with the latest forum activities and member engagement</p>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
   <!-- Recent Users -->
-  <div class="card">
-    <div class="card-header">
+  <div class="card group hover:shadow-xl transition-all duration-300">
+    <div class="card-header bg-gradient-to-r from-purple-50 to-blue-50 border-b border-purple-100">
       <h3 class="card-title">
         <i class="fas fa-user-plus mr-2" style="color: #8b5cf6;"></i>
         Recent Users
       </h3>
       <p class="card-subtitle">Latest member registrations</p>
+      <div class="absolute top-4 right-4">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+          <%= @recent_users.count %> new
+        </span>
+      </div>
     </div>
     <div class="card-body" style="padding: 0;">
       <div class="divide-y divide-gray-200">
@@ -159,13 +252,18 @@
   </div>
 
   <!-- Recent Posts -->
-  <div class="card">
-    <div class="card-header">
+  <div class="card group hover:shadow-xl transition-all duration-300">
+    <div class="card-header bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-100">
       <h3 class="card-title">
         <i class="fas fa-newspaper mr-2" style="color: #10b981;"></i>
         Recent Posts
       </h3>
       <p class="card-subtitle">Latest forum posts</p>
+      <div class="absolute top-4 right-4">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <%= @recent_posts.count %> new
+        </span>
+      </div>
     </div>
     <div class="card-body" style="padding: 0;">
       <div class="divide-y divide-gray-200">
@@ -201,13 +299,18 @@
   </div>
 
   <!-- Recent Comments -->
-  <div class="card">
-    <div class="card-header">
+  <div class="card group hover:shadow-xl transition-all duration-300">
+    <div class="card-header bg-gradient-to-r from-yellow-50 to-orange-50 border-b border-yellow-100">
       <h3 class="card-title">
         <i class="fas fa-comments mr-2" style="color: #f59e0b;"></i>
         Recent Comments
       </h3>
       <p class="card-subtitle">Latest forum discussions</p>
+      <div class="absolute top-4 right-4">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+          <%= @recent_comments.count %> new
+        </span>
+      </div>
     </div>
     <div class="card-body" style="padding: 0;">
       <div class="divide-y divide-gray-200">

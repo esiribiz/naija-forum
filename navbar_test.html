@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Navbar Test</title>
+    <script src="https://unpkg.com/@hotwired/stimulus@3.2.2/dist/stimulus.js"></script>
+    <style>
+        .navbar-test { 
+            background: green; 
+            padding: 1rem;
+            color: white;
+        }
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            color: black;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 1rem;
+            min-width: 200px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .hidden { display: none !important; }
+        .invisible { visibility: hidden !important; }
+        .opacity-0 { opacity: 0 !important; }
+    </style>
+</head>
+<body>
+    <div class="navbar-test" data-controller="navbar">
+        <button 
+            data-action="click->navbar#toggleProfileDropdown"
+            type="button">
+            Test Profile Button
+        </button>
+        
+        <div 
+            data-navbar-target="profileDropdown"
+            class="profile-dropdown hidden invisible opacity-0">
+            <p>Profile Dropdown Content</p>
+            <p>This should show when button is clicked</p>
+        </div>
+    </div>
+
+    <script>
+        const application = Stimulus.Application.start()
+
+        class NavbarController extends Stimulus.Controller {
+            static targets = ["profileDropdown"]
+            
+            toggleProfileDropdown(event) {
+                console.log("🚀 toggleProfileDropdown called!")
+                event.preventDefault()
+                event.stopPropagation()
+                
+                if (!this.hasProfileDropdownTarget) {
+                    console.error("❌ Profile dropdown target not found")
+                    return
+                }
+                
+                console.log("✅ Found dropdown target:", this.profileDropdownTarget)
+                
+                if (this.isDropdownHidden()) {
+                    this.showDropdown()
+                } else {
+                    this.hideDropdown()
+                }
+            }
+            
+            showDropdown() {
+                console.log("📦 Showing dropdown...")
+                this.profileDropdownTarget.classList.remove("hidden", "invisible", "opacity-0")
+                console.log("✅ Dropdown should be visible now!")
+            }
+            
+            hideDropdown() {
+                console.log("📦 Hiding dropdown...")
+                this.profileDropdownTarget.classList.add("hidden", "invisible", "opacity-0")
+            }
+            
+            isDropdownHidden() {
+                return this.profileDropdownTarget.classList.contains("hidden") || 
+                       this.profileDropdownTarget.classList.contains("invisible")
+            }
+        }
+
+        application.register("navbar", NavbarController)
+        console.log("🎯 Stimulus application started with navbar controller!")
+    </script>
+</body>
+</html>

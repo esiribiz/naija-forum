@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dropdown Test</title>
+    <script src="https://unpkg.com/@hotwired/stimulus/dist/stimulus.min.js"></script>
+    <style>
+        .navbar { background: green; padding: 20px; }
+        .profile-button { background: blue; color: white; padding: 10px; cursor: pointer; }
+        .dropdown { 
+            background: white; 
+            border: 1px solid #ccc; 
+            padding: 20px; 
+            margin-top: 10px;
+            display: none;
+        }
+        .dropdown.show { display: block; }
+    </style>
+</head>
+<body>
+    <div data-controller="navbar">
+        <div class="navbar">
+            <button data-action="click->navbar#toggleProfileDropdown" class="profile-button">
+                Click me to toggle dropdown
+            </button>
+            <div data-navbar-target="profileDropdown" class="dropdown">
+                <p>This is the dropdown content!</p>
+                <p>If you can see this, the navbar controller is working!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class NavbarController extends Stimulus.Controller {
+            static targets = ["profileDropdown"];
+
+            connect() {
+                console.log("✅ Navbar controller connected!");
+            }
+
+            toggleProfileDropdown() {
+                console.log("🎯 Toggle dropdown called!");
+                console.log("Dropdown element:", this.profileDropdownTarget);
+                
+                if (this.profileDropdownTarget.style.display === 'none' || !this.profileDropdownTarget.style.display) {
+                    this.profileDropdownTarget.style.display = 'block';
+                    console.log("✅ Dropdown shown");
+                } else {
+                    this.profileDropdownTarget.style.display = 'none';
+                    console.log("✅ Dropdown hidden");
+                }
+            }
+        }
+
+        Stimulus.register("navbar", NavbarController);
+    </script>
+</body>
+</html>

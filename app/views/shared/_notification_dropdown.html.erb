@@ -71,9 +71,23 @@
                   <%= time_ago_in_words(notification.created_at) %> ago
                 </p>
                 <div class="flex mt-2">
-                  <%= link_to "View", 
-                              polymorphic_path(notification.notifiable), 
-                              class: "text-xs text-blue-600 hover:text-blue-800 mr-3" %>
+                  <% if notification.notifiable.present? %>
+                    <% 
+                      view_path = case notification.notifiable
+                      when Comment
+                        post_path(notification.notifiable.post)
+                      else
+                        begin
+                          polymorphic_path(notification.notifiable)
+                        rescue
+                          "#"
+                        end
+                      end
+                    %>
+                    <%= link_to "View", 
+                                view_path, 
+                                class: "text-xs text-blue-600 hover:text-blue-800 mr-3" %>
+                  <% end %>
                   <%= button_to "Mark as read", 
                               mark_as_read_notification_path(notification), 
                               method: :post, 

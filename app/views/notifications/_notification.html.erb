@@ -58,8 +58,20 @@
     <% if show_actions %>
       <div class="flex mt-2 space-x-3">
         <% if notification.notifiable.present? %>
+          <% 
+            view_path = case notification.notifiable
+            when Comment
+              post_path(notification.notifiable.post)
+            else
+              begin
+                polymorphic_path(notification.notifiable)
+              rescue
+                "#"
+              end
+            end
+          %>
           <%= link_to "View", 
-                      polymorphic_path(notification.notifiable), 
+                      view_path, 
                       class: "text-xs text-blue-600 hover:text-blue-800" %>
         <% end %>
         

@@ -3,6 +3,9 @@ class Admin::BaseController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin_or_moderator
   
+  # Skip Pundit verification for admin controllers since they have custom authorization logic
+  skip_after_action :verify_policy_scoped, :verify_authorized
+  
   protected
   
   def ensure_admin_or_moderator

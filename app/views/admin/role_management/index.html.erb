@@ -1,90 +1,125 @@
 <% content_for :page_title, "Role Management" %>
 
-<div class="space-y-6">
+<div class="admin-container">
   <!-- Page Header -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Role Management</h1>
-      <p class="mt-1 text-sm text-gray-600">Manage user roles and permissions across the platform</p>
+  <div class="admin-page-header">
+    <div class="admin-page-header-content">
+      <div class="admin-page-title-wrapper">
+        <div class="admin-page-icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div>
+          <h1 class="admin-page-title">Role Management</h1>
+          <p class="admin-page-subtitle">Manage user roles and permissions across the platform</p>
+        </div>
+      </div>
+      <div class="admin-page-actions">
+        <button class="admin-btn admin-btn-secondary" onclick="exportUserRoles()">
+          <i class="fas fa-download mr-2"></i>
+          Export Data
+        </button>
+        <button class="admin-btn admin-btn-primary" onclick="showBulkActionsModal()">
+          <i class="fas fa-users-cog mr-2"></i>
+          Bulk Actions
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- Role Statistics Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-800 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Super Admins</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @role_counts[:admin] %></dd>
-            </dl>
-          </div>
+  <div class="admin-stats-grid">
+    <div class="admin-stat-card admin-stat-card-success">
+      <div class="admin-stat-icon">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-label">Super Admins</div>
+        <div class="admin-stat-value"><%= @role_counts[:admin] %></div>
+        <div class="admin-stat-change positive">Full Access</div>
+      </div>
+      <div class="admin-stat-chart">
+        <div class="admin-progress-bar">
+          <div class="admin-progress-fill" style="width: <%= (@role_counts[:admin].to_f / @users.count * 100).round(1) %>%"></div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Moderators</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @role_counts[:moderator] %></dd>
-            </dl>
-          </div>
+    <div class="admin-stat-card admin-stat-card-warning">
+      <div class="admin-stat-icon">
+        <i class="fas fa-user-tie"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-label">Moderators</div>
+        <div class="admin-stat-value"><%= @role_counts[:moderator] %></div>
+        <div class="admin-stat-change neutral">Content Management</div>
+      </div>
+      <div class="admin-stat-chart">
+        <div class="admin-progress-bar">
+          <div class="admin-progress-fill" style="width: <%= (@role_counts[:moderator].to_f / @users.count * 100).round(1) %>%"></div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Regular Users</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @role_counts[:user] %></dd>
-            </dl>
-          </div>
+    <div class="admin-stat-card admin-stat-card-info">
+      <div class="admin-stat-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-label">Regular Users</div>
+        <div class="admin-stat-value"><%= @role_counts[:user] %></div>
+        <div class="admin-stat-change positive">Standard Access</div>
+      </div>
+      <div class="admin-stat-chart">
+        <div class="admin-progress-bar">
+          <div class="admin-progress-fill" style="width: <%= (@role_counts[:user].to_f / @users.count * 100).round(1) %>%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-stat-card admin-stat-card-primary">
+      <div class="admin-stat-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-label">Total Users</div>
+        <div class="admin-stat-value"><%= @users.count %></div>
+        <div class="admin-stat-change positive">All Roles</div>
+      </div>
+      <div class="admin-stat-chart">
+        <div class="admin-progress-bar">
+          <div class="admin-progress-fill" style="width: 100%"></div>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Search and Filters -->
-  <div class="bg-white shadow rounded-lg">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <h2 class="text-lg font-medium text-gray-900">User Management</h2>
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">
+        <i class="fas fa-filter mr-2"></i>
+        User Management
+      </h2>
+      <div class="admin-card-header-actions">
+        <span class="admin-badge admin-badge-info"><%= @users.count %> users</span>
+      </div>
     </div>
-    <div class="p-6">
-      <%= form_with url: admin_role_management_path, method: :get, local: true, class: "space-y-4" do |form| %>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <%= form.text_field :search, placeholder: "Search users...", value: params[:search], 
-                class: "w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" %>
+    <div class="admin-card-body">
+      <%= form_with url: admin_role_management_path, method: :get, local: true, class: "admin-form" do |form| %>
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label class="admin-form-label">
+              <i class="fas fa-search mr-2"></i>
+              Search Users
+            </label>
+            <%= form.text_field :search, placeholder: "Search by name, username, or email...", value: params[:search], 
+                class: "admin-form-input" %>
           </div>
-          <div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">
+              <i class="fas fa-user-tag mr-2"></i>
+              Filter by Role
+            </label>
             <%= form.select :role, 
                 options_for_select([
                   ['All Roles', ''],
@@ -93,100 +128,233 @@
                   ['User', 'user']
                 ], params[:role]), 
                 {}, 
-                { class: "w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" } %>
+                { class: "admin-form-select" } %>
           </div>
-          <div class="flex space-x-2">
-            <%= form.submit "Filter", class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" %>
-            <%= link_to "Clear", admin_role_management_path, class: "bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500" %>
+          <div class="admin-form-group">
+            <label class="admin-form-label">
+              <i class="fas fa-calendar-alt mr-2"></i>
+              Date Range
+            </label>
+            <%= form.select :date_range, 
+                options_for_select([
+                  ['All Time', ''],
+                  ['Last 7 days', 'week'],
+                  ['Last 30 days', 'month'],
+                  ['Last 3 months', 'quarter'],
+                  ['Last year', 'year']
+                ], params[:date_range]), 
+                {}, 
+                { class: "admin-form-select" } %>
           </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">
+              <i class="fas fa-sort mr-2"></i>
+              Sort By
+            </label>
+            <%= form.select :sort_by, 
+                options_for_select([
+                  ['Name', 'name'],
+                  ['Join Date', 'created_at'],
+                  ['Role', 'role'],
+                  ['Activity', 'activity']
+                ], params[:sort_by] || 'name'), 
+                {}, 
+                { class: "admin-form-select" } %>
+          </div>
+        </div>
+        <div class="admin-form-actions">
+          <%= form.submit "Apply Filters", class: "admin-btn admin-btn-primary" %>
+          <%= link_to "Reset Filters", admin_role_management_path, class: "admin-btn admin-btn-secondary" %>
+          <button type="button" class="admin-btn admin-btn-outline" onclick="toggleAdvancedFilters()">
+            <i class="fas fa-cog mr-2"></i>
+            Advanced
+          </button>
         </div>
       <% end %>
     </div>
   </div>
 
   <!-- Users Table -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">
+        <i class="fas fa-users mr-2"></i>
+        Users & Roles
+      </h3>
+      <div class="admin-card-header-actions">
+        <div class="admin-toggle-wrapper">
+          <label class="admin-toggle">
+            <input type="checkbox" id="bulk-select-all" onchange="toggleBulkSelect()">
+            <span class="admin-toggle-slider"></span>
+            <span class="admin-toggle-label">Bulk Select</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead class="admin-table-header">
           <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="admin-table-cell admin-table-cell-checkbox" style="display: none;" id="bulk-header">
+              <input type="checkbox" class="admin-checkbox" id="select-all-users">
+            </th>
+            <th class="admin-table-cell admin-table-cell-sortable" onclick="sortTable('user')">
+              <i class="fas fa-user mr-2"></i>
               User
+              <i class="fas fa-sort ml-2"></i>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="admin-table-cell admin-table-cell-sortable" onclick="sortTable('role')">
+              <i class="fas fa-user-tag mr-2"></i>
               Role
+              <i class="fas fa-sort ml-2"></i>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Stats
+            <th class="admin-table-cell">
+              <i class="fas fa-chart-bar mr-2"></i>
+              Activity
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="admin-table-cell">
+              <i class="fas fa-clock mr-2"></i>
+              Last Active
+            </th>
+            <th class="admin-table-cell admin-table-cell-sortable" onclick="sortTable('joined')">
+              <i class="fas fa-calendar-plus mr-2"></i>
               Joined
+              <i class="fas fa-sort ml-2"></i>
             </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="admin-table-cell admin-table-cell-actions">
+              <i class="fas fa-cogs mr-2"></i>
               Actions
             </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="admin-table-body">
           <% @users.each do |user| %>
-            <tr id="user-row-<%= user.id %>">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10">
+            <tr id="user-row-<%= user.id %>" class="admin-table-row">
+              <td class="admin-table-cell admin-table-cell-checkbox" style="display: none;">
+                <input type="checkbox" class="admin-checkbox bulk-select-user" value="<%= user.id %>">
+              </td>
+              <td class="admin-table-cell">
+                <div class="admin-user-info">
+                  <div class="admin-user-avatar">
                     <% if user.avatar.attached? %>
-                      <%= image_tag user.avatar, class: "h-10 w-10 rounded-full object-cover" %>
+                      <%= image_tag user.avatar, class: "admin-user-avatar-img" %>
                     <% else %>
-                      <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                        <span class="text-sm font-medium text-gray-700"><%= user.username.first.upcase %></span>
+                      <div class="admin-user-avatar-placeholder">
+                        <span><%= user.username.first.upcase %></span>
                       </div>
                     <% end %>
+                    <div class="admin-user-status <%= user.updated_at > 1.hour.ago ? 'online' : 'offline' %>"></div>
                   </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900"><%= user.display_name %></div>
-                    <div class="text-sm text-gray-500">@<%= user.username %></div>
-                    <div class="text-sm text-gray-500"><%= user.email %></div>
+                  <div class="admin-user-details">
+                    <div class="admin-user-name"><%= user.display_name %></div>
+                    <div class="admin-user-username">@<%= user.username %></div>
+                    <div class="admin-user-email"><%= user.email %></div>
                   </div>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span id="role-badge-<%= user.id %>" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
-                  <% case user.role %>
-                    <% when 'admin' %>
-                    bg-green-100 text-green-800
-                    <% when 'moderator' %>
-                      bg-yellow-100 text-yellow-800
-                    <% else %>
-                    bg-green-100 text-green-800
-                  <% end %>">
-                  <%= user.role.capitalize %>
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <div class="space-y-1">
-                  <div><%= user.posts.count %> posts</div>
-                  <div><%= user.comments.count %> comments</div>
+              <td class="admin-table-cell">
+                <div class="admin-role-wrapper">
+                  <span id="role-badge-<%= user.id %>" class="admin-badge 
+                    <% case user.role %>
+                      <% when 'admin' %>
+                      admin-badge-success
+                      <% when 'moderator' %>
+                      admin-badge-warning
+                      <% else %>
+                      admin-badge-info
+                    <% end %>">
+                    <i class="fas fa-<%= case user.role
+                      when 'admin' then 'shield-alt'
+                      when 'moderator' then 'user-tie'
+                      else 'user'
+                    end %> mr-1"></i>
+                    <%= user.role.capitalize %>
+                  </span>
+                  <% if user.admin? && User.where(role: 'admin').count <= 1 %>
+                    <span class="admin-badge admin-badge-danger admin-badge-small">Last Admin</span>
+                  <% end %>
                 </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <%= user.created_at.strftime("%B %d, %Y") %>
+              <td class="admin-table-cell">
+                <div class="admin-activity-stats">
+                  <div class="admin-activity-item">
+                    <i class="fas fa-edit"></i>
+                    <span><%= user.posts.count %> posts</span>
+                  </div>
+                  <div class="admin-activity-item">
+                    <i class="fas fa-comments"></i>
+                    <span><%= user.comments.count %> comments</span>
+                  </div>
+                  <div class="admin-activity-score">
+                    Score: <%= (user.posts.count * 2 + user.comments.count).to_i %>
+                  </div>
+                </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <% if user != current_user %>
-                  <select 
-                    onchange="updateUserRole(<%= user.id %>, this.value)"
-                    class="rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm"
-                    <% if user.admin? && User.where(role: 'admin').count <= 1 %>disabled<% end %>>
-                    <% User::VALID_ROLES.each do |role| %>
-                      <option value="<%= role %>" 
-                              <%= 'selected' if user.role == role %>
-                              <% if role == 'admin' && user.admin? && User.where(role: 'admin').count <= 1 %>disabled<% end %>>
-                        <%= role.capitalize %>
-                      </option>
-                    <% end %>
-                  </select>
-                <% else %>
-                  <span class="text-gray-400 text-sm">Your account</span>
-                <% end %>
+              <td class="admin-table-cell">
+                <div class="admin-last-active">
+                  <% if user.updated_at > 1.hour.ago %>
+                    <span class="admin-status-online">Online now</span>
+                  <% elsif user.updated_at > 1.day.ago %>
+                    <span class="admin-status-recent"><%= time_ago_in_words(user.updated_at) %> ago</span>
+                  <% else %>
+                    <span class="admin-status-offline"><%= user.updated_at.strftime("%b %d, %Y") %></span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="admin-table-cell">
+                <div class="admin-join-date">
+                  <%= user.created_at.strftime("%b %d, %Y") %>
+                  <div class="admin-join-time"><%= time_ago_in_words(user.created_at) %> ago</div>
+                </div>
+              </td>
+              <td class="admin-table-cell admin-table-cell-actions">
+                <div class="admin-actions-wrapper">
+                  <% if user != current_user %>
+                    <div class="admin-role-selector">
+                      <select 
+                        onchange="updateUserRole(<%= user.id %>, this.value)"
+                        class="admin-form-select admin-form-select-small"
+                        <% if user.admin? && User.where(role: 'admin').count <= 1 %>disabled<% end %>>
+                        <% User::VALID_ROLES.each do |role| %>
+                          <option value="<%= role %>" 
+                                  <%= 'selected' if user.role == role %>
+                                  <% if role == 'admin' && user.admin? && User.where(role: 'admin').count <= 1 %>disabled<% end %>>
+                            <%= role.capitalize %>
+                          </option>
+                        <% end %>
+                      </select>
+                    </div>
+                    <div class="admin-actions-dropdown">
+                      <button class="admin-btn admin-btn-sm admin-btn-outline" onclick="toggleActionsDropdown(<%= user.id %>)">
+                        <i class="fas fa-ellipsis-v"></i>
+                      </button>
+                      <div class="admin-dropdown-menu" id="actions-menu-<%= user.id %>">
+                        <a href="#" class="admin-dropdown-item" onclick="viewUserDetails(<%= user.id %>)">
+                          <i class="fas fa-eye mr-2"></i>
+                          View Details
+                        </a>
+                        <a href="#" class="admin-dropdown-item" onclick="sendMessage(<%= user.id %>)">
+                          <i class="fas fa-envelope mr-2"></i>
+                          Send Message
+                        </a>
+                        <div class="admin-dropdown-divider"></div>
+                        <% unless user.admin? && User.where(role: 'admin').count <= 1 %>
+                          <a href="#" class="admin-dropdown-item admin-dropdown-item-danger" onclick="suspendUser(<%= user.id %>)">
+                            <i class="fas fa-ban mr-2"></i>
+                            Suspend User
+                          </a>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% else %>
+                    <div class="admin-current-user-indicator">
+                      <span class="admin-badge admin-badge-primary admin-badge-small">
+                        <i class="fas fa-user-check mr-1"></i>
+                        You
+                      </span>
+                    </div>
+                  <% end %>
+                </div>
               </td>
             </tr>
           <% end %>
@@ -195,43 +363,120 @@
     </div>
   </div>
 
+  <!-- Bulk Actions Bar (Hidden by default) -->
+  <div id="bulk-actions-bar" class="admin-bulk-actions" style="display: none;">
+    <div class="admin-bulk-actions-content">
+      <div class="admin-bulk-actions-info">
+        <span id="selected-count">0</span> users selected
+      </div>
+      <div class="admin-bulk-actions-buttons">
+        <button class="admin-btn admin-btn-sm admin-btn-warning" onclick="bulkUpdateRole()">
+          <i class="fas fa-user-edit mr-2"></i>
+          Change Role
+        </button>
+        <button class="admin-btn admin-btn-sm admin-btn-info" onclick="bulkSendMessage()">
+          <i class="fas fa-envelope mr-2"></i>
+          Send Message
+        </button>
+        <button class="admin-btn admin-btn-sm admin-btn-outline" onclick="exportSelected()">
+          <i class="fas fa-download mr-2"></i>
+          Export
+        </button>
+        <button class="admin-btn admin-btn-sm admin-btn-secondary" onclick="clearBulkSelection()">
+          <i class="fas fa-times mr-2"></i>
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Pagination -->
   <% if @users.respond_to?(:current_page) %>
-    <div class="flex items-center justify-between">
-      <div class="flex-1 flex justify-between sm:hidden">
-        <% if @users.prev_page %>
-          <%= link_to 'Previous', admin_role_management_path(page: @users.prev_page), 
-              class: "relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
-        <% end %>
-        <% if @users.next_page %>
-          <%= link_to 'Next', admin_role_management_path(page: @users.next_page), 
-              class: "ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" %>
-        <% end %>
+    <div class="admin-pagination-wrapper">
+      <div class="admin-pagination-info">
+        <p class="admin-pagination-text">
+          Showing <span class="font-medium"><%= (@users.current_page - 1) * @users.limit_value + 1 %></span>
+          to <span class="font-medium"><%= [@users.current_page * @users.limit_value, @users.total_count].min %></span>
+          of <span class="font-medium"><%= @users.total_count %></span> results
+        </p>
+        <div class="admin-pagination-controls">
+          <select class="admin-form-select admin-form-select-small" onchange="changePageSize(this.value)">
+            <option value="10" <%= 'selected' if params[:per_page] == '10' %>>10 per page</option>
+            <option value="25" <%= 'selected' if params[:per_page] == '25' || params[:per_page].blank? %>>25 per page</option>
+            <option value="50" <%= 'selected' if params[:per_page] == '50' %>>50 per page</option>
+            <option value="100" <%= 'selected' if params[:per_page] == '100' %>>100 per page</option>
+          </select>
+        </div>
       </div>
-      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-        <div>
-          <p class="text-sm text-gray-700">
-            Showing
-            <span class="font-medium"><%= (@users.current_page - 1) * @users.limit_value + 1 %></span>
-            to
-            <span class="font-medium"><%= [@users.current_page * @users.limit_value, @users.total_count].min %></span>
-            of
-            <span class="font-medium"><%= @users.total_count %></span>
-            results
-          </p>
-        </div>
-        <div>
-          <%= paginate @users %>
-        </div>
+      <div class="admin-pagination-nav">
+        <%= paginate @users, theme: 'admin' %>
       </div>
     </div>
   <% end %>
 </div>
 
 <!-- Success/Error Messages -->
-<div id="flash-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+<div id="flash-container" class="admin-flash-container"></div>
+
+<!-- Bulk Actions Modal -->
+<div id="bulk-actions-modal" class="admin-modal" style="display: none;">
+  <div class="admin-modal-overlay" onclick="closeBulkActionsModal()"></div>
+  <div class="admin-modal-content">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title">
+        <i class="fas fa-users-cog mr-2"></i>
+        Bulk User Actions
+      </h3>
+      <button class="admin-modal-close" onclick="closeBulkActionsModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="admin-modal-body">
+      <div class="admin-form-group">
+        <label class="admin-form-label">Select Action</label>
+        <select id="bulk-action-type" class="admin-form-select" onchange="updateBulkActionForm()">
+          <option value="">Choose an action...</option>
+          <option value="change_role">Change Role</option>
+          <option value="send_message">Send Message</option>
+          <option value="export">Export Data</option>
+        </select>
+      </div>
+      <div id="bulk-action-form" style="display: none;"></div>
+    </div>
+    <div class="admin-modal-footer">
+      <button class="admin-btn admin-btn-secondary" onclick="closeBulkActionsModal()">Cancel</button>
+      <button id="bulk-action-submit" class="admin-btn admin-btn-primary" onclick="executeBulkAction()" disabled>
+        Execute Action
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- User Details Modal -->
+<div id="user-details-modal" class="admin-modal" style="display: none;">
+  <div class="admin-modal-overlay" onclick="closeUserDetailsModal()"></div>
+  <div class="admin-modal-content admin-modal-large">
+    <div class="admin-modal-header">
+      <h3 class="admin-modal-title">
+        <i class="fas fa-user-circle mr-2"></i>
+        User Details
+      </h3>
+      <button class="admin-modal-close" onclick="closeUserDetailsModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="admin-modal-body" id="user-details-content">
+      <!-- User details will be loaded here -->
+    </div>
+  </div>
+</div>
 
 <script>
+// Role Management JavaScript
+let selectedUsers = new Set();
+let sortDirection = {};
+
+// Update user role function
 function updateUserRole(userId, newRole) {
   const formData = new FormData();
   formData.append('user_id', userId);
@@ -240,6 +485,13 @@ function updateUserRole(userId, newRole) {
   // Add CSRF token
   const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   formData.append('authenticity_token', token);
+
+  // Show loading state
+  const roleSelector = document.querySelector(`select[onchange*="${userId}"]`);
+  const originalValue = roleSelector.value;
+  roleSelector.disabled = true;
+  
+  showFlashMessage('Updating user role...', 'info');
 
   fetch('<%= admin_role_management_update_role_path %>', {
     method: 'POST',
@@ -253,57 +505,309 @@ function updateUserRole(userId, newRole) {
     if (data.success) {
       // Update the role badge
       const roleBadge = document.getElementById(`role-badge-${userId}`);
-      roleBadge.textContent = data.new_role;
+      const iconClass = newRole === 'admin' ? 'fa-shield-alt' : newRole === 'moderator' ? 'fa-user-tie' : 'fa-user';
+      const badgeClass = newRole === 'admin' ? 'admin-badge-success' : newRole === 'moderator' ? 'admin-badge-warning' : 'admin-badge-info';
       
-      // Update badge styling
-      roleBadge.className = 'inline-flex px-2 py-1 text-xs font-semibold rounded-full ';
-      switch(newRole) {
-        case 'admin':
-          roleBadge.className += 'bg-green-100 text-green-800';
-          break;
-        case 'moderator':
-          roleBadge.className += 'bg-yellow-100 text-yellow-800';
-          break;
-        default:
-          roleBadge.className += 'bg-green-100 text-green-800';
-      }
+      roleBadge.innerHTML = `<i class="fas ${iconClass} mr-1"></i>${data.new_role}`;
+      roleBadge.className = `admin-badge ${badgeClass}`;
       
-      showFlashMessage(data.message, 'success');
+      showFlashMessage(data.message || `User role updated to ${newRole}`, 'success');
+      
+      // Update statistics if needed
+      setTimeout(() => {
+        location.reload(); // Reload to update stats
+      }, 1500);
     } else {
-      showFlashMessage(data.error, 'error');
-      // Reset the select to its previous value
-      location.reload();
+      showFlashMessage(data.error || 'Failed to update role', 'error');
+      roleSelector.value = originalValue;
     }
   })
   .catch(error => {
     console.error('Error:', error);
     showFlashMessage('An error occurred while updating the role', 'error');
-    location.reload();
+    roleSelector.value = originalValue;
+  })
+  .finally(() => {
+    roleSelector.disabled = false;
   });
 }
 
+// Bulk selection functions
+function toggleBulkSelect() {
+  const bulkMode = document.getElementById('bulk-select-all').checked;
+  const checkboxCells = document.querySelectorAll('.admin-table-cell-checkbox');
+  const bulkBar = document.getElementById('bulk-actions-bar');
+  
+  checkboxCells.forEach(cell => {
+    cell.style.display = bulkMode ? 'table-cell' : 'none';
+  });
+  
+  if (!bulkMode) {
+    selectedUsers.clear();
+    document.querySelectorAll('.bulk-select-user').forEach(cb => cb.checked = false);
+    bulkBar.style.display = 'none';
+  }
+  
+  updateBulkSelectionCount();
+}
+
+function updateBulkSelectionCount() {
+  const selectedCount = selectedUsers.size;
+  document.getElementById('selected-count').textContent = selectedCount;
+  
+  const bulkBar = document.getElementById('bulk-actions-bar');
+  const bulkMode = document.getElementById('bulk-select-all').checked;
+  
+  if (bulkMode && selectedCount > 0) {
+    bulkBar.style.display = 'flex';
+  } else if (bulkMode) {
+    bulkBar.style.display = 'flex';
+    bulkBar.style.opacity = '0.6';
+  } else {
+    bulkBar.style.display = 'none';
+  }
+}
+
+// Event listeners for bulk selection
+document.addEventListener('DOMContentLoaded', function() {
+  // Select all checkbox
+  const selectAllCheckbox = document.getElementById('select-all-users');
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', function() {
+      const checkboxes = document.querySelectorAll('.bulk-select-user');
+      checkboxes.forEach(cb => {
+        cb.checked = this.checked;
+        if (this.checked) {
+          selectedUsers.add(cb.value);
+        } else {
+          selectedUsers.delete(cb.value);
+        }
+      });
+      updateBulkSelectionCount();
+    });
+  }
+  
+  // Individual user checkboxes
+  document.querySelectorAll('.bulk-select-user').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      if (this.checked) {
+        selectedUsers.add(this.value);
+      } else {
+        selectedUsers.delete(this.value);
+        document.getElementById('select-all-users').checked = false;
+      }
+      updateBulkSelectionCount();
+    });
+  });
+});
+
+// Actions dropdown functions
+function toggleActionsDropdown(userId) {
+  const dropdown = document.getElementById(`actions-menu-${userId}`);
+  const allDropdowns = document.querySelectorAll('.admin-dropdown-menu');
+  
+  // Close all other dropdowns
+  allDropdowns.forEach(menu => {
+    if (menu !== dropdown) {
+      menu.style.display = 'none';
+    }
+  });
+  
+  // Toggle current dropdown
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.admin-actions-dropdown')) {
+    document.querySelectorAll('.admin-dropdown-menu').forEach(menu => {
+      menu.style.display = 'none';
+    });
+  }
+});
+
+// User action functions
+function viewUserDetails(userId) {
+  // Show user details modal
+  showFlashMessage('Loading user details...', 'info');
+  // Here you would typically make an AJAX call to fetch user details
+  document.getElementById('user-details-modal').style.display = 'flex';
+}
+
+function sendMessage(userId) {
+  showFlashMessage('Message feature coming soon...', 'info');
+}
+
+function suspendUser(userId) {
+  if (confirm('Are you sure you want to suspend this user?')) {
+    showFlashMessage('User suspension feature coming soon...', 'warning');
+  }
+}
+
+// Modal functions
+function showBulkActionsModal() {
+  document.getElementById('bulk-actions-modal').style.display = 'flex';
+}
+
+function closeBulkActionsModal() {
+  document.getElementById('bulk-actions-modal').style.display = 'none';
+  document.getElementById('bulk-action-type').value = '';
+  document.getElementById('bulk-action-form').style.display = 'none';
+}
+
+function closeUserDetailsModal() {
+  document.getElementById('user-details-modal').style.display = 'none';
+}
+
+function updateBulkActionForm() {
+  const actionType = document.getElementById('bulk-action-type').value;
+  const formContainer = document.getElementById('bulk-action-form');
+  const submitButton = document.getElementById('bulk-action-submit');
+  
+  if (actionType) {
+    formContainer.style.display = 'block';
+    submitButton.disabled = false;
+    
+    let formHTML = '';
+    switch (actionType) {
+      case 'change_role':
+        formHTML = `
+          <div class="admin-form-group">
+            <label class="admin-form-label">New Role</label>
+            <select id="bulk-new-role" class="admin-form-select">
+              <option value="user">User</option>
+              <option value="moderator">Moderator</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        `;
+        break;
+      case 'send_message':
+        formHTML = `
+          <div class="admin-form-group">
+            <label class="admin-form-label">Message Subject</label>
+            <input type="text" id="bulk-message-subject" class="admin-form-input" placeholder="Enter message subject...">
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Message Content</label>
+            <textarea id="bulk-message-content" class="admin-form-textarea" rows="4" placeholder="Enter your message..."></textarea>
+          </div>
+        `;
+        break;
+      case 'export':
+        formHTML = `
+          <div class="admin-form-group">
+            <label class="admin-form-label">Export Format</label>
+            <select id="bulk-export-format" class="admin-form-select">
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+              <option value="xlsx">Excel (XLSX)</option>
+            </select>
+          </div>
+        `;
+        break;
+    }
+    formContainer.innerHTML = formHTML;
+  } else {
+    formContainer.style.display = 'none';
+    submitButton.disabled = true;
+  }
+}
+
+function executeBulkAction() {
+  const actionType = document.getElementById('bulk-action-type').value;
+  
+  if (selectedUsers.size === 0) {
+    showFlashMessage('Please select users first', 'warning');
+    return;
+  }
+  
+  switch (actionType) {
+    case 'change_role':
+      bulkUpdateRole();
+      break;
+    case 'send_message':
+      bulkSendMessage();
+      break;
+    case 'export':
+      exportSelected();
+      break;
+  }
+  
+  closeBulkActionsModal();
+}
+
+// Bulk action implementations
+function bulkUpdateRole() {
+  const newRole = document.getElementById('bulk-new-role').value;
+  showFlashMessage(`Updating ${selectedUsers.size} users to ${newRole} role...`, 'info');
+  // Implementation for bulk role update
+}
+
+function bulkSendMessage() {
+  const subject = document.getElementById('bulk-message-subject').value;
+  const content = document.getElementById('bulk-message-content').value;
+  showFlashMessage(`Sending message to ${selectedUsers.size} users...`, 'info');
+  // Implementation for bulk message sending
+}
+
+function exportSelected() {
+  const format = document.getElementById('bulk-export-format')?.value || 'csv';
+  showFlashMessage(`Exporting ${selectedUsers.size} users as ${format.toUpperCase()}...`, 'info');
+  // Implementation for export
+}
+
+function exportUserRoles() {
+  showFlashMessage('Exporting all user data...', 'info');
+  // Implementation for full export
+}
+
+function clearBulkSelection() {
+  selectedUsers.clear();
+  document.querySelectorAll('.bulk-select-user').forEach(cb => cb.checked = false);
+  document.getElementById('select-all-users').checked = false;
+  updateBulkSelectionCount();
+}
+
+// Table sorting
+function sortTable(column) {
+  showFlashMessage(`Sorting by ${column}...`, 'info');
+  // Implementation for table sorting
+}
+
+// Page size change
+function changePageSize(perPage) {
+  const url = new URL(window.location);
+  url.searchParams.set('per_page', perPage);
+  window.location.href = url.toString();
+}
+
+// Advanced filters toggle
+function toggleAdvancedFilters() {
+  showFlashMessage('Advanced filters coming soon...', 'info');
+}
+
+// Enhanced flash message function
 function showFlashMessage(message, type) {
   const container = document.getElementById('flash-container');
   const div = document.createElement('div');
   
-  const bgColor = type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800';
-  const iconColor = type === 'success' ? 'text-green-400' : 'text-red-400';
-  const icon = type === 'success' ? 
-    'M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' :
-    'M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z';
+  const typeStyles = {
+    success: { bg: 'admin-flash-success', icon: 'fa-check-circle' },
+    error: { bg: 'admin-flash-error', icon: 'fa-exclamation-circle' },
+    warning: { bg: 'admin-flash-warning', icon: 'fa-exclamation-triangle' },
+    info: { bg: 'admin-flash-info', icon: 'fa-info-circle' }
+  };
   
+  const style = typeStyles[type] || typeStyles.info;
+  
+  div.className = `admin-flash ${style.bg}`;
   div.innerHTML = `
-    <div class="flex items-center p-4 gap-3 rounded-lg shadow-lg border ${bgColor}">
-      <div class="flex-shrink-0">
-        <svg class="w-5 h-5 ${iconColor}" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="${icon}" clip-rule="evenodd"/>
-        </svg>
-      </div>
-      <p class="flex-1">${message}</p>
-      <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-gray-600">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
+    <div class="admin-flash-content">
+      <i class="fas ${style.icon} admin-flash-icon"></i>
+      <span class="admin-flash-message">${message}</span>
+      <button class="admin-flash-close" onclick="this.parentElement.parentElement.remove()">
+        <i class="fas fa-times"></i>
       </button>
     </div>
   `;

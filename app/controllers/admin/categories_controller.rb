@@ -49,9 +49,17 @@ class Admin::CategoriesController < Admin::BaseController
   end
   
   def destroy
-    if @category.posts.exists?
-      redirect_to admin_categories_path, alert: 'Cannot delete category with posts.'
+    posts_count = @category.posts.count
+    
+    if posts_count > 0 && params[:force] != 'true'
+      redirect_to admin_categories_path, 
+                  alert: "Cannot delete category with #{posts_count} posts. Use force delete if you want to remove it anyway."
     else
+      # If force delete, we'll need to handle the posts (either reassign or delete)
+      if params[:force] == 'true' && posts_count > 0
+        @category.posts.update_all(category_id: nil) # Unassign posts from category
+      end
+      
       @category.destroy
       redirect_to admin_categories_path, notice: 'Category deleted successfully.'
     end
@@ -64,6 +72,6 @@ class Admin::CategoriesController < Admin::BaseController
   end
   
   def category_params
-    params.require(:category).permit(:name, :description, :color)
+    params.require(:category).permit(:name, :description, :color, :image)
   end
 end

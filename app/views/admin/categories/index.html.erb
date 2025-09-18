@@ -1,121 +1,255 @@
 <% content_for :page_title, "Categories Management" %>
+<% content_for :page_subtitle, "Manage forum categories and organization" %>
 
-<div class="space-y-6">
-  <!-- Page Header -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Categories Management</h1>
-      <p class="mt-1 text-sm text-gray-600">Manage forum categories and organization</p>
+<!-- Enhanced Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <!-- Total Categories -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+      <i class="fas fa-tags"></i>
     </div>
-    <div>
-      <%= link_to "New Category", new_admin_category_path, 
-          class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" %>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:total]) %></div>
+    <div class="stat-label">Total Categories</div>
+    <div class="stat-change mt-2" style="color: #6b7280;">
+      <i class="fas fa-list mr-1"></i>
+      Organizing content
+    </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-green-500 h-1.5 rounded-full transition-all duration-1000" style="width: 100%"></div>
+      </div>
+    </div>
+    <div class="mt-3">
+      <%= link_to new_admin_category_path, class: "btn btn-success btn-sm group-hover:shadow-lg transition-all" do %>
+        <i class="fas fa-plus mr-1"></i> Add New
+      <% end %>
     </div>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-7H3a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Categories</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:total] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
+  <!-- Categories with Posts -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
+      <i class="fas fa-newspaper"></i>
     </div>
-
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-700 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">With Posts</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:with_posts] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:with_posts]) %></div>
+    <div class="stat-label">With Posts</div>
+    <div class="stat-change positive mt-2">
+      <i class="fas fa-check mr-1"></i>
+      <%= ((@stats[:with_posts].to_f / [@stats[:total], 1].max) * 100).round(1) %>% active
     </div>
-
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Empty</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:empty] %></dd>
-            </dl>
-          </div>
-        </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:with_posts].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
       </div>
     </div>
   </div>
+
+  <!-- Empty Categories -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:empty]) %></div>
+    <div class="stat-label">Empty Categories</div>
+    <div class="stat-change mt-2" style="color: #6b7280;">
+      <i class="fas fa-warning mr-1"></i>
+      Need content
+    </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-yellow-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:empty].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search/Filter Bar -->
+<div class="card mb-8">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="fas fa-search mr-2" style="color: #10b981;"></i>
+      Search Categories
+    </h3>
+    <p class="card-subtitle">Find categories by name or description</p>
+  </div>
+  <div class="card-body">
+    <%= form_with url: admin_categories_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
+      <div class="flex-1 min-w-0">
+        <%= form.text_field :search, placeholder: "Search categories...", 
+            value: params[:search],
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all" %>
+      </div>
+      <div class="flex gap-2">
+        <%= form.submit "Search", class: "btn btn-primary btn-sm" %>
+        <%= link_to "Clear", admin_categories_path, class: "btn btn-secondary btn-sm" %>
+      </div>
+    <% end %>
+  </div>
+</div>
 
   <!-- Categories Table -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posts</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
+  <div class="table-container mb-8">
+    <div class="card-header">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="card-title">
+            <i class="fas fa-tags mr-2" style="color: #10b981;"></i>
+            All Categories
+          </h3>
+          <p class="card-subtitle mt-1">Manage forum categories and their properties</p>
+        </div>
+        <div class="flex space-x-2">
+          <%= link_to new_admin_category_path, class: "btn btn-primary btn-sm" do %>
+            <i class="fas fa-plus mr-1"></i> Add Category
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <table class="table admin-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th class="hidden md:table-cell">Description</th>
+            <th>Posts</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
         <% @categories.each do |category| %>
           <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <% if category.color.present? %>
-                  <div class="flex-shrink-0 h-4 w-4 rounded-full mr-3" style="background-color: <%= category.color %>"></div>
-                <% end %>
-                <div class="text-sm font-medium text-gray-900"><%= category.name %></div>
+            <td>
+              <div class="flex items-center space-x-3">
+                <div class="flex-shrink-0">
+                  <% if category.image.attached? %>
+                    <%= image_tag category.image, class: "w-10 h-10 rounded-lg object-cover shadow-sm", alt: category.name %>
+                  <% elsif category.color.present? %>
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm" style="background-color: <%= category.color %>">
+                      <%= category.name.first.upcase %>
+                    </div>
+                  <% else %>
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                      <%= category.name.first.upcase %>
+                    </div>
+                  <% end %>
+                </div>
+                <div>
+                  <div class="font-semibold text-gray-900"><%= category.name %></div>
+                  <% if category.description.present? %>
+                    <div class="text-sm text-gray-500 md:hidden"><%= truncate(category.description, length: 50) %></div>
+                  <% end %>
+                </div>
               </div>
             </td>
-            <td class="px-6 py-4">
+            <td class="hidden md:table-cell">
               <div class="text-sm text-gray-900">
                 <%= truncate(category.description, length: 100) if category.description %>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= category.posts.count %>
+            <td>
+              <div class="flex items-center space-x-1">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  <%= category.posts.count %>
+                </span>
+                <span class="text-xs text-gray-500">posts</span>
+              </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <%= link_to "View", admin_category_path(category), class: "text-green-600 hover:text-green-900 mr-2" %>
-              <%= link_to "Edit", edit_admin_category_path(category), class: "text-blue-600 hover:text-blue-900 mr-2" %>
-              <%= link_to "Delete", admin_category_path(category), method: :delete,
-                  data: { confirm: "Are you sure?" },
-                  class: "text-red-600 hover:text-red-900" %>
+            <td class="text-right">
+              <div class="flex items-center justify-end space-x-2">
+                <%= link_to admin_category_path(category), class: "btn btn-secondary btn-sm", title: "View category" do %>
+                  <i class="fas fa-eye"></i>
+                <% end %>
+                <%= link_to edit_admin_category_path(category), class: "btn btn-primary btn-sm", title: "Edit category" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <% if category.posts.count == 0 %>
+                  <%= link_to admin_category_path(category), method: :delete,
+                      data: { confirm: "Are you sure?" },
+                      class: "btn btn-danger btn-sm",
+                      title: "Delete category" do %>
+                    <i class="fas fa-trash"></i>
+                  <% end %>
+                <% else %>
+                  <div class="relative inline-block">
+                    <button type="button" class="btn btn-danger btn-sm category-delete-toggle" data-category-id="<%= category.id %>" title="Delete category (has posts)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <div id="delete-menu-<%= category.id %>" class="hidden absolute right-0 z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-gray-200 focus:outline-none">
+                      <div class="py-1">
+                        <div class="px-4 py-2 text-xs text-gray-500 border-b border-gray-200">
+                          <i class="fas fa-warning mr-1 text-yellow-500"></i>
+                          <%= category.posts.count %> posts in this category
+                        </div>
+                        <%= link_to admin_category_path(category, force: true), 
+                            method: :delete,
+                            data: { confirm: "This will unassign #{category.posts.count} posts from this category. Continue?" },
+                            class: "block px-4 py-2 text-sm text-red-600 hover:bg-red-50" do %>
+                          <i class="fas fa-exclamation-triangle mr-2"></i> Force Delete
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
+
+  <% if @categories.empty? %>
+    <div class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-7H3a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No categories found</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating a new category.</p>
+      <div class="mt-6">
+        <%= link_to "New Category", new_admin_category_path, 
+            class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700" %>
+      </div>
+    </div>
+  <% end %>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Handle category delete dropdown
+  const deleteToggleButtons = document.querySelectorAll('.category-delete-toggle');
+  const deleteMenus = document.querySelectorAll('[id^="delete-menu-"]');
+  
+  deleteToggleButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const categoryId = this.getAttribute('data-category-id');
+      const menu = document.getElementById(`delete-menu-${categoryId}`);
+      
+      // Hide all other menus
+      deleteMenus.forEach(m => {
+        if (m !== menu) {
+          m.classList.add('hidden');
+        }
+      });
+      
+      // Toggle current menu
+      menu.classList.toggle('hidden');
+    });
+  });
+  
+  // Close menus when clicking outside
+  document.addEventListener('click', function() {
+    deleteMenus.forEach(menu => {
+      menu.classList.add('hidden');
+    });
+  });
+  
+  // Prevent menu from closing when clicking inside it
+  deleteMenus.forEach(menu => {
+    menu.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  });
+});
+</script>

@@ -1425,13 +1425,385 @@ video, iframe, embed, object {
 }
 
 /* =================================
+   ADMIN FLASH MESSAGES
+   ================================= */
+
+.admin-flash-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-3);
+  max-width: 24rem;
+}
+
+.admin-flash {
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-xl);
+  border: 1px solid transparent;
+  overflow: hidden;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.admin-flash-content {
+  display: flex;
+  align-items: center;
+  padding: var(--admin-space-4);
+  gap: var(--admin-space-3);
+}
+
+.admin-flash-icon {
+  flex-shrink: 0;
+  font-size: 1.25rem;
+}
+
+.admin-flash-message {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.admin-flash-close {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.admin-flash-close:hover {
+  opacity: 1;
+}
+
+.admin-flash-success {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border-color: #22c55e;
+  color: #166534;
+}
+
+.admin-flash-error {
+  background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+.admin-flash-warning {
+  background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 100%);
+  border-color: #f59e0b;
+  color: #b45309;
+}
+
+.admin-flash-info {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #3b82f6;
+  color: #1d4ed8;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* =================================
+   ADMIN BULK ACTIONS
+   ================================= */
+
+.admin-bulk-actions {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: white;
+  border-radius: var(--admin-radius-xl);
+  box-shadow: var(--admin-shadow-2xl);
+  border: 1px solid var(--admin-gray-200);
+  animation: slideInUp 0.3s ease-out;
+}
+
+.admin-bulk-actions-content {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-6);
+  padding: var(--admin-space-4) var(--admin-space-8);
+}
+
+.admin-bulk-actions-info {
+  font-weight: 600;
+  color: var(--admin-gray-700);
+  font-size: 0.875rem;
+}
+
+.admin-bulk-actions-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-3);
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translate(-50%, 100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* =================================
+   ADMIN MODALS
+   ================================= */
+
+.admin-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--admin-space-4);
+}
+
+.admin-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.admin-modal-content {
+  position: relative;
+  background: white;
+  border-radius: var(--admin-radius-xl);
+  box-shadow: var(--admin-shadow-2xl);
+  max-width: 32rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.admin-modal-large {
+  max-width: 48rem;
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--admin-space-6) var(--admin-space-8);
+  border-bottom: 1px solid var(--admin-gray-200);
+  background: linear-gradient(135deg, var(--admin-gray-50) 0%, white 100%);
+}
+
+.admin-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--admin-gray-900);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.admin-modal-close {
+  background: none;
+  border: none;
+  color: var(--admin-gray-500);
+  cursor: pointer;
+  font-size: 1.25rem;
+  padding: var(--admin-space-2);
+  border-radius: var(--admin-radius-md);
+  transition: var(--admin-transition-fast);
+}
+
+.admin-modal-close:hover {
+  color: var(--admin-gray-700);
+  background: var(--admin-gray-100);
+}
+
+.admin-modal-body {
+  padding: var(--admin-space-8);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.admin-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--admin-space-3);
+  padding: var(--admin-space-6) var(--admin-space-8);
+  border-top: 1px solid var(--admin-gray-200);
+  background: var(--admin-gray-50);
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: scale(0.9) translateY(-2rem);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* =================================
+   ADMIN PAGINATION STYLES
+   ================================= */
+
+.admin-pagination {
+  display: flex;
+  justify-content: center;
+  margin: var(--admin-space-8) 0;
+}
+
+.admin-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  background: white;
+  padding: var(--admin-space-4);
+  border-radius: var(--admin-radius-xl);
+  box-shadow: var(--admin-shadow-md);
+  border: 1px solid var(--admin-gray-200);
+}
+
+.admin-pagination-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--admin-radius-lg);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: var(--admin-transition-fast);
+  text-decoration: none;
+}
+
+.admin-pagination-page-current {
+  background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+  color: white;
+  box-shadow: var(--admin-shadow-lg);
+  border: 2px solid transparent;
+}
+
+.admin-pagination-page-link {
+  color: var(--admin-gray-600);
+  background: var(--admin-gray-50);
+  border: 1px solid var(--admin-gray-200);
+}
+
+.admin-pagination-page-link:hover {
+  color: var(--admin-primary);
+  background: var(--admin-gray-100);
+  border-color: var(--admin-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.admin-pagination-nav {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--admin-space-3) var(--admin-space-5);
+  color: var(--admin-gray-600);
+  background: white;
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-lg);
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: var(--admin-transition-fast);
+  margin: 0 var(--admin-space-1);
+}
+
+.admin-pagination-nav:hover {
+  color: var(--admin-primary);
+  background: var(--admin-primary-light);
+  border-color: var(--admin-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--admin-shadow-md);
+  color: white;
+}
+
+.admin-pagination-prev {
+  margin-right: var(--admin-space-4);
+}
+
+.admin-pagination-next {
+  margin-left: var(--admin-space-4);
+}
+
+.admin-pagination-first,
+.admin-pagination-last {
+  font-size: 0.8125rem;
+}
+
+.admin-pagination-gap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--admin-gray-400);
+  font-size: 1rem;
+  margin: 0 var(--admin-space-1);
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+  .admin-pagination-pages {
+    padding: var(--admin-space-2);
+    gap: var(--admin-space-1);
+  }
+  
+  .admin-pagination-page {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.8125rem;
+  }
+  
+  .admin-pagination-nav {
+    padding: var(--admin-space-2) var(--admin-space-3);
+    font-size: 0.8125rem;
+  }
+  
+  .admin-pagination-first,
+  .admin-pagination-last {
+    display: none;
+  }
+}
+
+/* =================================
    PRINT STYLES
    ================================= */
 
 @media print {
   .admin-sidebar,
   .top-nav,
-  .btn {
+  .btn,
+  .admin-pagination {
     display: none !important;
   }
   

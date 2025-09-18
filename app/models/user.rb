@@ -34,7 +34,7 @@ end
 # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
 devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :validatable,
-    :password_expirable, :password_archivable
+    :trackable, :password_expirable, :password_archivable
 
 # Keep the association but make security questions optional
 has_many :security_questions, dependent: :destroy

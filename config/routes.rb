@@ -47,11 +47,11 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
     resources :posts, only: [ :index ]  # Nest posts under categories
   end
 
-resources :posts do
-resources :comments do
-    resources :replies, only: [:create], controller: 'comments'
-end
-end
+  resources :posts do
+    resources :comments do
+      resources :replies, only: [:create], controller: 'comments'
+    end
+  end
 
   resources :tags, only: [ :index, :show ]
 

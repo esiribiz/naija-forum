@@ -1,133 +1,216 @@
 <% content_for :page_title, "Comments Management" %>
+<% content_for :page_subtitle, "Manage and moderate forum comments" %>
 
-<div class="space-y-6">
-  <!-- Page Header -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Comments Management</h1>
-      <p class="mt-1 text-sm text-gray-600">Manage and moderate forum comments</p>
+<!-- Enhanced Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <!-- Total Comments -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+      <i class="fas fa-comments"></i>
     </div>
-  </div>
-
-  <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Comments</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:total] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:total]) %></div>
+    <div class="stat-label">Total Comments</div>
+    <div class="stat-change positive mt-2">
+      <i class="fas fa-arrow-up mr-1"></i>
+      +<%= @stats[:today] %> today
     </div>
-
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Today</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:today] %></dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-green-700 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">This Week</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:this_week] %></dd>
-            </dl>
-          </div>
-        </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-yellow-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:today].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
       </div>
     </div>
   </div>
 
-  <!-- Search and Filters -->
-  <div class="bg-white shadow rounded-lg">
-    <div class="px-6 py-4 border-b border-gray-200">
-      <h2 class="text-lg font-medium text-gray-900">Search Comments</h2>
+  <!-- Today's Comments -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+      <i class="fas fa-calendar-day"></i>
     </div>
-    <div class="p-6">
-      <%= form_with url: admin_comments_path, method: :get, local: true, class: "flex space-x-4" do |form| %>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:today]) %></div>
+    <div class="stat-label">Today</div>
+    <div class="stat-change positive mt-2">
+      <i class="fas fa-clock mr-1"></i>
+      Last 24 hours
+    </div>
+  </div>
+
+  <!-- This Week -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
+      <i class="fas fa-chart-line"></i>
+    </div>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:this_week]) %></div>
+    <div class="stat-label">This Week</div>
+    <div class="stat-change positive mt-2">
+      <i class="fas fa-trending-up mr-1"></i>
+      Weekly activity
+    </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:this_week].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filters -->
+<div class="card mb-8">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="fas fa-search mr-2" style="color: #f59e0b;"></i>
+      Search Comments
+    </h3>
+    <p class="card-subtitle">Find comments by content, author, or post</p>
+  </div>
+  <div class="card-body">
+    <%= form_with url: admin_comments_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
+      <div class="flex-1 min-w-0">
         <%= form.text_field :search, placeholder: "Search by content, author, or post...", value: params[:search], 
-            class: "flex-1 rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500" %>
-        <%= form.submit "Search", class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700" %>
-        <%= link_to "Clear", admin_comments_path, class: "bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400" %>
-      <% end %>
+            class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all" %>
+      </div>
+      <div class="flex gap-2">
+        <%= form.submit "Search", class: "btn btn-primary btn-sm" %>
+        <%= link_to "Clear", admin_comments_path, class: "btn btn-secondary btn-sm" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Comments Table -->
+<div class="table-container mb-8">
+  <div class="card-header">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="card-title">
+          <i class="fas fa-comments mr-2" style="color: #f59e0b;"></i>
+          All Comments
+        </h3>
+        <p class="card-subtitle mt-1">Manage and moderate forum discussions</p>
+      </div>
     </div>
   </div>
-
-  <!-- Comments Table -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
+  
+  <div class="overflow-x-auto">
+    <table class="table admin-table">
+      <thead>
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comment</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Post</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          <th>Comment Content</th>
+          <th>Author</th>
+          <th class="hidden md:table-cell">Post</th>
+          <th class="hidden lg:table-cell">Date</th>
+          <th class="text-right">Actions</th>
         </tr>
       </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
+      <tbody>
         <% @comments.each do |comment| %>
           <tr>
-            <td class="px-6 py-4">
-              <div class="text-sm text-gray-900">
-                <%= truncate(strip_tags(comment.content), length: 100) %>
+            <td>
+              <div class="space-y-2">
+                <div class="text-gray-900 line-clamp-3">
+                  <%= truncate(strip_tags(comment.content), length: 120) %>
+                </div>
+                <div class="md:hidden flex items-center space-x-2">
+                  <span class="text-xs text-gray-500">on</span>
+                  <%= link_to truncate(comment.post.title, length: 30), comment.post, 
+                      class: "text-blue-600 hover:text-blue-800 text-xs font-medium", target: "_blank" %>
+                </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900"><%= comment.user.username %></div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-gray-900">
-                <%= link_to truncate(comment.post.title, length: 50), comment.post, 
-                    class: "text-green-600 hover:text-green-900", target: "_blank" %>
+            <td>
+              <div class="flex items-center space-x-3">
+                <div class="flex-shrink-0">
+                  <% if comment.user.avatar.attached? %>
+                    <%= image_tag comment.user.avatar, class: "admin-avatar" %>
+                  <% else %>
+                    <div class="admin-avatar bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center">
+                      <span class="text-sm font-bold text-white"><%= comment.user.username&.first&.upcase || 'U' %></span>
+                    </div>
+                  <% end %>
+                </div>
+                <div>
+                  <div class="font-medium text-gray-900"><%= comment.user.username %></div>
+                  <div class="text-sm text-gray-500"><%= comment.user.role.humanize %></div>
+                </div>
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= comment.created_at.strftime("%B %d, %Y") %>
+            <td class="hidden md:table-cell">
+              <div class="space-y-1">
+                <%= link_to comment.post, 
+                    class: "text-blue-600 hover:text-blue-800 font-medium line-clamp-2", target: "_blank" do %>
+                  <%= truncate(comment.post.title, length: 60) %>
+                <% end %>
+                <div class="text-xs text-gray-500">
+                  in <span class="font-medium"><%= comment.post.category.name %></span>
+                </div>
+              </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <%= link_to "View", comment.post, class: "text-green-600 hover:text-green-900 mr-2", target: "_blank" %>
-              <%= link_to "Delete", admin_comment_path(comment), method: :delete,
-                  data: { confirm: "Are you sure?" },
-                  class: "text-red-600 hover:text-red-900" %>
+            <td class="hidden lg:table-cell">
+              <div class="text-sm text-gray-900"><%= time_ago_in_words(comment.created_at) %> ago</div>
+              <div class="text-xs text-gray-500"><%= comment.created_at.strftime('%b %d, %Y') %></div>
+            </td>
+            <td class="text-right">
+              <div class="flex items-center justify-end space-x-2">
+                <%= link_to comment.post, class: "btn btn-secondary btn-sm", target: "_blank", title: "View post" do %>
+                  <i class="fas fa-external-link-alt"></i>
+                <% end %>
+                <%= link_to admin_comment_path(comment), method: :delete,
+                    data: { confirm: "Are you sure you want to delete this comment?" },
+                    class: "btn btn-danger btn-sm",
+                    title: "Delete comment" do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              </div>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
+  
+    <!-- Table Footer -->
+    <div class="card-footer">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center text-sm text-gray-600">
+          <span>Showing <%= @comments.respond_to?(:count) ? @comments.count : @comments.size %> comments</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <% if @comments.respond_to?(:current_page) %>
+            <div class="pagination-info text-sm text-gray-500">
+              Page <%= @comments.current_page %> of <%= @comments.total_pages %>
+            </div>
+            <div class="pagination-controls flex space-x-2">
+              <% if @comments.prev_page %>
+                <%= link_to "Previous", admin_comments_path(page: @comments.prev_page, search: params[:search]), 
+                      class: "btn btn-secondary btn-sm" %>
+              <% end %>
+              <% if @comments.next_page %>
+                <%= link_to "Next", admin_comments_path(page: @comments.next_page, search: params[:search]), 
+                      class: "btn btn-primary btn-sm" %>
+              <% end %>
+            </div>
+          <% else %>
+            <span class="text-sm text-gray-500">Page 1 of 1</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<% if @comments.empty? %>
+  <div class="text-center py-12">
+    <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+      <i class="fas fa-comments text-gray-400 text-3xl"></i>
+    </div>
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No comments found</h3>
+    <p class="text-gray-500 mb-6">
+      <% if params[:search].present? %>
+        Try adjusting your search to see more results.
+      <% else %>
+        There are no comments in the system yet.
+      <% end %>
+    </p>
+    <% unless params[:search].present? %>
+      <%= link_to "View Posts", admin_posts_path, class: "btn btn-primary" %>
+    <% end %>
+  </div>
+<% end %>

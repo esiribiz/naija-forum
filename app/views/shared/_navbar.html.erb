@@ -64,9 +64,9 @@
         </button>
         
         <!-- Notifications Icon -->
-        <div class="hidden md:block relative">
+        <div class="hidden md:block relative mr-3">
           <% if user_signed_in? %>
-            <%= link_to notifications_path, class: "p-2 rounded-full text-white hover:text-green-100 hover:bg-green-700/30 focus:outline-none relative transition-all duration-300" do %>
+            <%= link_to notifications_path, class: "relative p-2 rounded-full text-white hover:text-green-100 hover:bg-green-700/30 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all duration-300" do %>
               <span class="sr-only">View notifications</span>
               <!-- Bell Icon -->
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -76,21 +76,26 @@
               <!-- Notification Counter Badge -->
               <% unread_count = current_user.notifications.unread.count if current_user.respond_to?(:notifications) %>
               <% if unread_count && unread_count > 0 %>
-                <span class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full transform -translate-y-1/2 translate-x-1/2 border-2 border-green-700">
-                  <%= unread_count > 9 ? '9+' : unread_count %>
+                <span class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold leading-none text-white bg-red-500 rounded-full border-2 border-white shadow-sm">
+                  <%= unread_count > 99 ? '99+' : unread_count %>
                 </span>
               <% end %>
             <% end %>
             
             <!-- Notifications dropdown menu -->
-            <div class="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 transition-all duration-300 transform opacity-0 scale-95 invisible z-[9999] hidden">
-              <div class="py-2 border-b border-gray-200">
-                <div class="flex items-center justify-between px-4">
-                  <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+            <div class="origin-top-right absolute right-0 mt-2 w-80 max-w-[90vw] rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 transition-all duration-300 transform opacity-0 scale-95 invisible z-[9999] hidden">
+              <div class="py-3 px-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-semibold text-gray-900 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    Notifications
+                  </h3>
                   <% if false && user_signed_in? %>
                   <%# Temporarily disabled notifications until association is added to User model %>
-                    <%= button_to mark_all_as_read_notifications_path, method: :post, class: "text-xs text-green-600 hover:text-green-800" do %>
-                      Mark all as read
+                    <%= button_to mark_all_as_read_notifications_path, method: :post, class: "text-xs text-green-600 hover:text-green-800 font-medium" do %>
+                      Mark all read
                     <% end %>
                   <% end %>
                 </div>
@@ -100,8 +105,8 @@
                 <%= render partial: "shared/notification_dropdown" %>
               </div>
               
-              <div class="py-1 border-t border-gray-200">
-                <%= link_to notifications_path, class: "block w-full text-center px-4 py-2 text-sm text-green-600 hover:bg-gray-100" do %>
+              <div class="py-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+                <%= link_to notifications_path, class: "block w-full text-center px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors duration-200" do %>
                   View all notifications
                 <% end %>
               </div>
@@ -110,22 +115,22 @@
         </div>
         
         <!-- Profile dropdown -->
-        <div class="hidden md:block ml-3 relative">
+        <div class="hidden md:block relative">
           <% if user_signed_in? %>
             <div>
               <button 
                 data-action="click->navbar#toggleProfileDropdown"
                 type="button" 
-                class="flex items-center space-x-2 text-white focus:outline-none">
+                class="flex items-center space-x-2 text-white focus:outline-none focus:ring-2 focus:ring-green-300 rounded-full p-1 transition-all duration-300 hover:bg-green-700/20">
                 <% if current_user.avatar.attached? %>
                   <%= image_tag url_for(current_user.avatar), class: "h-8 w-8 rounded-full border-2 border-white shadow-sm object-cover", style: "width: 32px; height: 32px; max-width: 32px; max-height: 32px;" %>
                 <% else %>
                   <img src="https://via.placeholder.com/40" class="h-8 w-8 rounded-full border-2 border-white shadow-sm" alt="Default avatar">
                 <% end %>
-                <span class="text-white font-medium"><%= current_user.username || "User" %></span>
+                <span class="text-white font-medium hidden lg:inline-block"><%= current_user.username || "User" %></span>
                 <svg 
                   data-navbar-target="dropdownArrow" 
-                  class="h-5 w-5 text-white transition-transform duration-300" 
+                  class="h-4 w-4 text-white transition-transform duration-300" 
                   xmlns="http://www.w3.org/2000/svg" 
                   viewBox="0 0 20 20" 
                   fill="currentColor">
@@ -278,17 +283,20 @@
         
         <!-- Mobile Notifications Link -->
         <div class="pt-3">
-          <%= link_to notifications_path, class: "flex items-center px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-600 hover:text-green-100 transition-all duration-300" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span>Notifications</span>
-            <% unread_count = 0 %>
-            <%# Temporarily disabled notifications until association is added to User model %>
-            <% if false && unread_count > 0 %>
-              <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
-                <%= unread_count > 9 ? '9+' : unread_count %>
-              </span>
+          <%= link_to notifications_path, class: "flex items-center justify-between px-3 py-2 rounded-md text-base font-medium text-white hover:bg-green-600 hover:text-green-100 transition-all duration-300" do %>
+            <div class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span>Notifications</span>
+            </div>
+            <% if user_signed_in? %>
+              <% unread_count = current_user.notifications.unread.count if current_user.respond_to?(:notifications) %>
+              <% if unread_count && unread_count > 0 %>
+                <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-2 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+                  <%= unread_count > 99 ? '99+' : unread_count %>
+                </span>
+              <% end %>
             <% end %>
           <% end %>
         </div>

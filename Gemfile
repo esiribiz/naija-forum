@@ -84,7 +84,7 @@ gem 'fast_jsonapi'                # Fast JSON serialization
 gem 'pagy', '~> 6.2'              # Fast pagination for APIs
 
 # Analytics and Tracking
-gem 'ahoy_matey', '~> 5.0'        # User analytics and visit tracking
+# gem 'ahoy_matey', '~> 5.0'        # User analytics and visit tracking (temporarily disabled)
 
 # Enhanced Admin Interface
 gem 'administrate', '~> 0.18'     # Better admin interface

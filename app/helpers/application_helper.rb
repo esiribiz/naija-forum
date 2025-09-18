@@ -1,4 +1,23 @@
 module ApplicationHelper
+  # Safely generate avatar URL, handling cases where signed_id cannot be generated
+  def safe_avatar_url(user)
+    return nil unless user&.persisted? && user.avatar&.attached?
+    
+    begin
+      # Use polymorphic_url which is more reliable in different contexts
+      if user.avatar.blob&.persisted?
+        url_for(user.avatar)
+      else
+        nil
+      end
+    rescue ArgumentError => e
+      Rails.logger.warn "Failed to generate avatar URL for user #{user.id}: #{e.message}"
+      nil
+    rescue => e
+      Rails.logger.warn "Unexpected error generating avatar URL for user #{user.id}: #{e.message}"
+      nil
+    end
+  end
   def time_in_hours_ago(time)
     # Get the time difference in words
     time_ago = distance_of_time_in_words(Time.current, time)

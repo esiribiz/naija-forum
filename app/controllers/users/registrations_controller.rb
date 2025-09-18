@@ -21,9 +21,25 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # PUT /resource
-  # def update
-  #   super
-  # end
+  def update
+    self.resource = resource_class.to_adapter.get!(send(:"#{resource_name}_signed_in_resource_key"))
+    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
+
+    resource_updated = update_resource(resource, account_update_params)
+    yield resource if block_given?
+    if resource_updated
+      set_flash_message_for_update(resource, prev_unconfirmed_email)
+      bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
+
+      respond_with resource, location: after_update_path_for(resource)
+    else
+      # Ensure @user is set properly for the sidebar on error
+      @user = resource
+      clean_up_passwords resource
+      set_minimum_password_length
+      respond_with resource
+    end
+  end
 
   # DELETE /resource
   # def destroy
@@ -56,7 +72,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     # Make security questions attributes optional but still permitted
     # This ensures users can update their profile without requiring security questions
     devise_parameter_sanitizer.permit(:account_update, keys: [
-      :username, 
+      :username, :avatar,
       { security_questions_attributes: [:id, :question, :answer, :_destroy] }
     ])
   end

@@ -2,8 +2,9 @@
 <div class="w-64 bg-gradient-to-b from-green-50 to-green-100 shadow-lg rounded-2xl border border-green-200 p-6 sticky top-6">
   <!-- Profile Header -->
   <div class="text-center mb-6 pb-4 border-b border-green-200">
-    <% if @user.persisted? && @user.avatar.attached? %>
-      <%= image_tag url_for(@user.avatar), class: "w-16 h-16 rounded-full border-4 border-green-400 shadow-lg mx-auto mb-3 object-cover", style: "width: 64px; height: 64px; max-width: 64px; max-height: 64px;" %>
+    <% avatar_url = safe_avatar_url(@user) %>
+    <% if avatar_url.present? %>
+      <%= image_tag avatar_url, class: "w-16 h-16 rounded-full border-4 border-green-400 shadow-lg mx-auto mb-3 object-cover", style: "width: 64px; height: 64px; max-width: 64px; max-height: 64px;" %>
     <% else %>
       <div class="w-16 h-16 rounded-full bg-green-600 flex items-center justify-center mx-auto mb-3 shadow-lg">
         <span class="text-white font-bold text-lg"><%= @user.username&.first&.upcase || 'U' %></span>

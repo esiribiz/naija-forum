@@ -65,12 +65,11 @@ class Admin::DashboardController < Admin::BaseController
                         .count
     
     # Generate data for all dates, filling in zeros where needed
-    (start_date..end_date).map do |date|
-      {
-        date: date.strftime('%m/%d'),
-        count: counts_by_date[date.to_s] || 0
-      }
+    data = {}
+    (start_date..end_date).each do |date|
+      data[date.strftime('%m/%d')] = counts_by_date[date.to_s] || 0
     end
+    data
   end
   
   def post_activity_data
@@ -84,12 +83,11 @@ class Admin::DashboardController < Admin::BaseController
                         .count
     
     # Generate data for all dates, filling in zeros where needed
-    (start_date..end_date).map do |date|
-      {
-        date: date.strftime('%m/%d'),
-        count: counts_by_date[date.to_s] || 0
-      }
+    data = {}
+    (start_date..end_date).each do |date|
+      data[date.strftime('%m/%d')] = counts_by_date[date.to_s] || 0
     end
+    data
   end
   
   def comment_activity_data
@@ -103,11 +101,10 @@ class Admin::DashboardController < Admin::BaseController
                            .count
     
     # Generate data for all dates, filling in zeros where needed
-    (start_date..end_date).map do |date|
-      {
-        date: date.strftime('%m/%d'),
-        count: counts_by_date[date.to_s] || 0
-      }
+    data = {}
+    (start_date..end_date).each do |date|
+      data[date.strftime('%m/%d')] = counts_by_date[date.to_s] || 0
     end
+    data
   end
 end

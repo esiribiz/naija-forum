@@ -86,9 +86,7 @@ gem 'pagy', '~> 6.2'              # Fast pagination for APIs
 # Analytics and Tracking
 # gem 'ahoy_matey', '~> 5.0'        # User analytics and visit tracking (temporarily disabled)
 
-# Enhanced Admin Interface
-gem 'administrate', '~> 0.18'     # Better admin interface
-gem 'administrate-field-active_storage', '~> 1.0' # File upload support for admin
+# Enhanced Admin Interface - Custom Built
 
 group :development, :test do
 # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

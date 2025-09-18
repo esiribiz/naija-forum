@@ -1,8 +1,5 @@
 class Admin::UsersController < Admin::BaseController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_admin]
-  skip_after_action :verify_policy_scoped, only: :index
-  # Option 2: Skip authorization check entirely (uncomment if using this approach instead of authorize calls)
-  # skip_after_action :verify_authorized
 
   def index
     @users = User.includes(:posts, :comments).order(created_at: :desc).page(params[:page])
@@ -18,19 +15,17 @@ class Admin::UsersController < Admin::BaseController
   end
   
   def show
-    @user = User.find(params[:id])
-    authorize @user
+    # Admin access is already validated by Admin::BaseController
     @user_posts = @user.posts.includes(:category).order(created_at: :desc).limit(10)
     @user_comments = @user.comments.includes(:post).order(created_at: :desc).limit(10)
   end
 
   def edit
-    # The user is already set by the before_action
-    authorize @user
+    # Admin access is already validated by Admin::BaseController
   end
 
   def update
-    authorize @user
+    # Admin access is already validated by Admin::BaseController
     if @user.update(user_params)
       redirect_to admin_users_path, notice: "User was successfully updated."
     else
@@ -39,7 +34,7 @@ class Admin::UsersController < Admin::BaseController
   end
   
   def destroy
-    authorize @user
+    # Admin access is already validated by Admin::BaseController
     if @user == current_user
       redirect_to admin_users_path, alert: 'You cannot delete yourself.'
       return
@@ -50,7 +45,7 @@ class Admin::UsersController < Admin::BaseController
   end
   
   def toggle_admin
-    authorize @user
+    # Admin access is already validated by Admin::BaseController
     if @user == current_user
       redirect_to admin_users_path, alert: 'You cannot change your own admin status.'
       return

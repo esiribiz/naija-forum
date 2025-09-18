@@ -76,60 +76,61 @@ end
 
   get "up" => "rails/health#show", as: :rails_health_check
   
-  # API Routes
-  namespace :api do
-    namespace :v1 do
-      # Posts API
-      resources :posts do
-        member do
-          post :like
-        end
-        collection do
-          get :latest
-          get :popular
-        end
-      end
-      
-      # Users API
-      resources :users, only: [:index, :show, :update] do
-        member do
-          get :posts
-          get :comments
-        end
-      end
-      
-      # Categories API
-      resources :categories, only: [:index, :show] do
-        member do
-          get :posts
-        end
-      end
-      
-      # Comments API
-      resources :comments, only: [:create, :update, :destroy]
-      
-      # Search API
-      get :search, to: 'search#index'
-      
-      # Tags API
-      resources :tags, only: [:index, :show]
-      
-      # Notifications API
-      resources :notifications, only: [] do
-        collection do
-          get :unread_count
-        end
-      end
-    end
-  end
-  
-  # Notifications API (non-versioned for simplicity)
-  namespace :api do
-    resources :notifications, only: [] do
-      collection do
-        get :unread_count
-      end
-    end
-  end
+  # API Routes - Currently disabled
+  # Uncomment and implement controllers when API is needed
+  # namespace :api do
+  #   namespace :v1 do
+  #     # Posts API
+  #     resources :posts do
+  #       member do
+  #         post :like
+  #       end
+  #       collection do
+  #         get :latest
+  #         get :popular
+  #       end
+  #     end
+  #     
+  #     # Users API
+  #     resources :users, only: [:index, :show, :update] do
+  #       member do
+  #         get :posts
+  #         get :comments
+  #       end
+  #     end
+  #     
+  #     # Categories API
+  #     resources :categories, only: [:index, :show] do
+  #       member do
+  #         get :posts
+  #       end
+  #     end
+  #     
+  #     # Comments API
+  #     resources :comments, only: [:create, :update, :destroy]
+  #     
+  #     # Search API
+  #     get :search, to: 'search#index'
+  #     
+  #     # Tags API
+  #     resources :tags, only: [:index, :show]
+  #     
+  #     # Notifications API
+  #     resources :notifications, only: [] do
+  #       collection do
+  #         get :unread_count
+  #       end
+  #     end
+  #   end
+  # end
+  # 
+  # # Notifications API (non-versioned for simplicity)
+  # namespace :api do
+  #   resources :notifications, only: [] do
+  #     collection do
+  #       get :unread_count
+  #     end
+  #   end
+  # end
 end
 

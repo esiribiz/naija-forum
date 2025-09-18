@@ -1,33 +1,42 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["replyForm", "replyButton"]
+  static targets = ["replyForm", "replyButton", "repliesContainer"]
   static values = { }
-  static params = ["commentId"]
+
   toggleReplyForm(event) {
     event.preventDefault()
-    const commentId = this.commentIdParam
     
-    // Find the reply form for this comment using the ID
-    const replyForm = this.replyFormTargets.find(form => form.id === `reply_form_${commentId}`)
+    // Get comment ID from the button's data attribute
+    const button = event.currentTarget
+    const commentId = button.dataset.commentsCommentIdParam
     
+    console.log("Toggle reply form for comment:", commentId)
+    
+    // Find the reply form for this specific comment
+    const replyForm = document.getElementById(`reply_form_${commentId}`)
+    
+    if (!replyForm) {
+      console.error("Reply form not found for comment:", commentId)
+      return
+    }
+
     // Hide all other visible reply forms first
-    this.replyFormTargets.forEach(form => {
+    document.querySelectorAll('.reply-form').forEach(form => {
       if (form !== replyForm && !form.classList.contains('hidden')) {
         form.classList.add('hidden')
       }
     })
 
     // Toggle the clicked reply form
-    if (replyForm) {
-      replyForm.classList.toggle('hidden')
-      
-      // Focus the textarea when showing the form
-      if (!replyForm.classList.contains('hidden')) {
-        const textarea = replyForm.querySelector('textarea')
-        if (textarea) {
-          textarea.focus()
-        }
+    replyForm.classList.toggle('hidden')
+    
+    // Focus the textarea when showing the form
+    if (!replyForm.classList.contains('hidden')) {
+      const textarea = replyForm.querySelector('textarea')
+      if (textarea) {
+        textarea.focus()
+        textarea.scrollIntoView({ behavior: 'smooth', block: 'center' })
       }
     }
   }

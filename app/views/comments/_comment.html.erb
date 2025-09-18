@@ -1,4 +1,4 @@
-<div id="comment_<%= comment.id %>" class="bg-white p-5 rounded-xl shadow-md mb-5 border-l-4 border-l-[#008751] <%= comment.parent_id.present? ? 'ml-10' : '' %> transition-all duration-300 hover:shadow-lg" data-controller="comments">
+<div id="comment_<%= comment.id %>" class="bg-white p-5 rounded-xl shadow-md mb-5 border-l-4 border-l-[#008751] <%= comment.parent_id.present? ? 'ml-10' : '' %> transition-all duration-300 hover:shadow-lg">
     <div class="flex items-start space-x-4">
     <div class="flex-shrink-0">
         <% if comment.user.avatar.attached? %>
@@ -49,7 +49,7 @@
         <% unless comment.parent_id.present? %>
             <button type="button"
                     class="inline-flex items-center px-3 py-1.5 rounded-full text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all duration-200"
-                    data-comments-target="replyButton"
+                    data-controller="comments"
                     data-action="click->comments#toggleReplyForm"
                     data-comments-comment-id-param="<%= comment.id %>">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">

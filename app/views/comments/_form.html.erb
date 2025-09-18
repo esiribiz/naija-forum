@@ -41,7 +41,8 @@
     <% if comment.parent_id.present? %>
       <button type="button"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md border border-gray-200 hover:bg-gray-200 transition-all duration-200 shadow-sm flex items-center gap-1 text-sm font-medium"
-              data-action="comments#toggleReplyForm"
+              data-controller="comments"
+              data-action="click->comments#toggleReplyForm"
               data-comments-comment-id-param="<%= comment.parent_id %>">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -51,7 +52,7 @@
     <% end %>
 
     <%= f.submit comment.parent_id.present? ? "Reply" : "Post Comment", 
-      class: "px-5 py-2 bg-naija-green text-green rounded-md hover:bg-naija-green/90 transition-all duration-200 shadow-sm flex items-center gap-1 text-sm font-medium" %>
+      class: "px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all duration-200 shadow-sm flex items-center gap-1 text-sm font-medium" %>
   </div>
 
 <% end %>

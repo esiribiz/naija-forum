@@ -24,20 +24,20 @@ if user_signed_in?
       .includes(:user, :category)
       .order(created_at: :desc)
       .page(params[:page])
-      .per(10)
+      .per(20)
   elsif params[:user]
       @user = User.find(params[:user])
       @posts = policy_scope(@user.posts)
           .includes(:user, :category)
           .order(created_at: :desc)
           .page(params[:page])
-          .per(10)
+          .per(20)
       else
       @posts = policy_scope(Post)
           .includes(:user, :category)
           .order(created_at: :desc)
           .page(params[:page])
-          .per(10)
+          .per(20)
       end
 else
   # Guests: Show all posts but they can't view individual posts without login
@@ -47,7 +47,7 @@ else
       .includes(:user, :category)
       .order(created_at: :desc)
       .page(params[:page])
-      .per(10)
+      .per(20)
   elsif params[:user]
       # Don't allow user-specific pages for guests
       redirect_to new_user_session_path, alert: "Please sign in to view user profiles."
@@ -56,7 +56,7 @@ else
       @posts = Post.includes(:user, :category)
           .order(created_at: :desc)
           .page(params[:page])
-          .per(10)
+          .per(20)
   end
 end
 end

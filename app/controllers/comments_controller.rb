@@ -4,7 +4,10 @@ before_action :set_post
 before_action :set_comment, only: [:edit, :update, :destroy]
 
 def index
-    @comments = policy_scope(@post.comments).includes(:user).top_level
+    @comments = policy_scope(@post.comments)
+      .includes(:user, :children)
+      .top_level
+      .order(created_at: :desc)
 end
 
 def create
@@ -89,7 +92,7 @@ end
 private
 
 def set_post
-    @post = Post.find(params[:post_id])
+    @post = Post.includes(:user, :category, :comments).find(params[:post_id])
 end
 
 def set_comment

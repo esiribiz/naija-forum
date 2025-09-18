@@ -2,12 +2,15 @@
 service: naija_forum
 
 # Name of the container image.
-image: your-user/naija_forum
+# TODO: Update with your actual Docker registry and username
+image: YOUR_DOCKER_REGISTRY/naija_forum
 
 # Deploy to these servers.
+# TODO: Replace with your actual server IP addresses
 servers:
   web:
-    - 192.168.0.1
+    - YOUR_SERVER_IP_1
+    # - YOUR_SERVER_IP_2  # Add more servers for load balancing
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -19,13 +22,15 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: true
-  host: app.example.com
+  # TODO: Replace with your actual domain name
+  host: YOUR_DOMAIN.com
 
 # Credentials for your image host.
 registry:
   # Specify the registry server, if you're not using Docker Hub
   # server: registry.digitalocean.com / ghcr.io / ...
-  username: your-user
+  # TODO: Replace with your Docker registry username
+  username: YOUR_DOCKER_USERNAME
 
   # Always use an access token rather than real password when possible.
   password:
@@ -35,23 +40,35 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
+    - NAIJA_FORUM_DATABASE_PASSWORD
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - SMTP_USERNAME
+    - SMTP_PASSWORD
+    - SENTRY_DSN
   clear:
-    # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
-    # When you start using multiple servers, you should split out job processing to a dedicated machine.
+    # Application configuration
+    APPLICATION_HOST: YOUR_DOMAIN.com
+    
+    # Database configuration
+    DATABASE_URL: postgresql://naija_forum:$NAIJA_FORUM_DATABASE_PASSWORD@YOUR_DB_HOST:5432/naija_forum_production
+    
+    # Storage configuration
+    AWS_REGION: us-east-1
+    AWS_S3_BUCKET: naija-forum-production
+    
+    # Email configuration
+    SMTP_ADDRESS: smtp.gmail.com
+    SMTP_PORT: 587
+    
+    # Performance settings
     SOLID_QUEUE_IN_PUMA: true
-
-    # Set number of processes dedicated to Solid Queue (default: 1)
-    # JOB_CONCURRENCY: 3
-
-    # Set number of cores available to the application on each server (default: 1).
-    # WEB_CONCURRENCY: 2
-
-    # Match this to any external database server to configure Active Record correctly
-    # Use naija_forum-db for a db accessory server on same machine via local kamal docker network.
-    # DB_HOST: 192.168.0.2
-
-    # Log everything from Rails
-    # RAILS_LOG_LEVEL: debug
+    WEB_CONCURRENCY: 2
+    JOB_CONCURRENCY: 3
+    
+    # Logging
+    RAILS_LOG_LEVEL: info
+    RAILS_LOG_TO_STDOUT: true
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.

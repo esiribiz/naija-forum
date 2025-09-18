@@ -9,7 +9,13 @@ end
 
 # GET /categories/1
 def show
-authorize @category
+  authorize @category
+  # Load posts for this category with proper includes to avoid N+1
+  @posts = @category.posts
+    .includes(:user, :category, :tags, :comments)
+    .order(created_at: :desc)
+    .page(params[:page])
+    .per(10)
 end
 
 # GET /categories/new

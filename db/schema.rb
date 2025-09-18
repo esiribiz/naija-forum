@@ -10,9 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_18_194613) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
+  enable_extension "unaccent"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -42,6 +44,49 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "ahoy_events", force: :cascade do |t|
+    t.bigint "visit_id"
+    t.bigint "user_id"
+    t.string "name"
+    t.jsonb "properties"
+    t.datetime "time"
+    t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time"
+    t.index ["properties"], name: "index_ahoy_events_on_properties", opclass: :jsonb_path_ops, using: :gin
+    t.index ["user_id"], name: "index_ahoy_events_on_user_id"
+    t.index ["visit_id"], name: "index_ahoy_events_on_visit_id"
+  end
+
+  create_table "ahoy_visits", force: :cascade do |t|
+    t.string "visit_token"
+    t.string "visitor_token"
+    t.bigint "user_id"
+    t.string "ip"
+    t.text "user_agent"
+    t.text "referrer"
+    t.string "referring_domain"
+    t.text "landing_page"
+    t.string "browser"
+    t.string "os"
+    t.string "device_type"
+    t.string "country"
+    t.string "region"
+    t.string "city"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "utm_source"
+    t.string "utm_medium"
+    t.string "utm_term"
+    t.string "utm_content"
+    t.string "utm_campaign"
+    t.string "app_version"
+    t.string "os_version"
+    t.string "platform"
+    t.datetime "started_at"
+    t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
+    t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
+    t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -49,6 +94,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.datetime "updated_at", null: false
     t.string "color"
     t.string "image"
+    t.string "slug"
+    t.index ["name"], name: "index_categories_on_name"
+    t.index ["slug"], name: "index_categories_on_slug", unique: true
   end
 
   create_table "comments", force: :cascade do |t|
@@ -58,7 +106,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "parent_id"
+    t.index ["created_at"], name: "index_comments_on_created_at"
     t.index ["parent_id"], name: "index_comments_on_parent_id"
+    t.index ["post_id", "created_at"], name: "index_comments_on_post_and_created_at"
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
@@ -71,6 +121,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.index ["followed_id"], name: "index_follows_on_followed_id"
     t.index ["follower_id", "followed_id"], name: "index_follows_on_follower_id_and_followed_id", unique: true
     t.index ["follower_id"], name: "index_follows_on_follower_id"
+  end
+
+  create_table "friendly_id_slugs", force: :cascade do |t|
+    t.string "slug", null: false
+    t.integer "sluggable_id", null: false
+    t.string "sluggable_type", limit: 50
+    t.string "scope"
+    t.datetime "created_at"
+    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
+    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
+    t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -95,7 +156,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.text "failure_reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_login_activities_on_created_at"
     t.index ["ip_address"], name: "index_login_activities_on_ip_address"
+    t.index ["user_id", "created_at"], name: "index_login_activities_on_user_and_created_at"
     t.index ["user_id", "login_at"], name: "index_login_activities_on_user_id_and_login_at"
     t.index ["user_id"], name: "index_login_activities_on_user_id"
   end
@@ -120,6 +183,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["created_at"], name: "index_notifications_on_created_at"
     t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable"
     t.index ["notifiable_type", "notifiable_id"], name: "index_notifications_on_notifiable_type_and_notifiable_id"
     t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
@@ -139,6 +203,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.bigint "tag_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["post_id", "tag_id"], name: "index_post_tags_on_post_and_tag", unique: true
     t.index ["post_id"], name: "index_post_tags_on_post_id"
     t.index ["tag_id"], name: "index_post_tags_on_tag_id"
   end
@@ -152,7 +217,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.datetime "updated_at", null: false
     t.boolean "published", default: true
     t.integer "comments_count", default: 0
+    t.string "slug"
+    t.index ["category_id", "created_at"], name: "index_posts_on_category_and_created_at"
     t.index ["category_id"], name: "index_posts_on_category_id"
+    t.index ["created_at"], name: "index_posts_on_created_at"
+    t.index ["published", "created_at"], name: "index_posts_on_published_created"
+    t.index ["slug"], name: "index_posts_on_slug", unique: true
+    t.index ["user_id", "category_id", "created_at"], name: "index_posts_on_user_category_created"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
@@ -302,6 +373,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
+    t.index ["name"], name: "index_tags_on_name"
   end
 
   create_table "users", force: :cascade do |t|
@@ -339,12 +412,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_03_180856) do
     t.string "security_answer_3"
     t.datetime "security_questions_completed_at"
     t.integer "security_question_failed_attempts"
+    t.string "slug"
+    t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["last_active_at"], name: "index_users_on_last_active_at"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role"], name: "index_users_on_role"
     t.index ["security_answer_1"], name: "index_users_on_security_answer_1"
     t.index ["security_answer_2"], name: "index_users_on_security_answer_2"
     t.index ["security_answer_3"], name: "index_users_on_security_answer_3"
     t.index ["security_question_id"], name: "index_users_on_security_question_id"
+    t.index ["slug"], name: "index_users_on_slug", unique: true
+    t.index ["username"], name: "index_users_on_username_unique", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

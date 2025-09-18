@@ -2,16 +2,25 @@ class Admin::UsersController < Admin::BaseController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_admin]
 
   def index
-    @users = User.includes(:posts, :comments).order(created_at: :desc).page(params[:page])
+    @users = User.includes(:posts, :comments).order(created_at: :desc)
     
     # Apply filters if present
     @users = @users.where(role: params[:role]) if params[:role].present?
-    @users = @users.where('username ILIKE ?', "%#{params[:search]}%") if params[:search].present?
+    if params[:search].present?
+      search_term = "%#{params[:search]}%"
+      @users = @users.where('username ILIKE ? OR email ILIKE ? OR first_name ILIKE ? OR last_name ILIKE ?', 
+                           search_term, search_term, search_term, search_term)
+    end
+    
+    # Add pagination if kaminari is available
+    @users = @users.page(params[:page]).per(20) if @users.respond_to?(:page)
     
     # Stats for the dashboard
     @total_users = User.count
     @admin_users = User.where(role: 'admin').count
-    @new_users_today = User.where('created_at >= ?', Date.current).count
+    @users_today = User.where('created_at >= ?', Date.current).count
+    @moderator_users = User.where(role: 'moderator').count
+    @new_users_this_week = User.where('created_at >= ?', 1.week.ago).count
   end
   
   def show

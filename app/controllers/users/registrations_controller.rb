@@ -22,22 +22,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # PUT /resource
   def update
-    self.resource = resource_class.to_adapter.get!(send(:"#{resource_name}_signed_in_resource_key"))
-    prev_unconfirmed_email = resource.unconfirmed_email if resource.respond_to?(:unconfirmed_email)
-
-    resource_updated = update_resource(resource, account_update_params)
-    yield resource if block_given?
-    if resource_updated
-      set_flash_message_for_update(resource, prev_unconfirmed_email)
-      bypass_sign_in resource, scope: resource_name if sign_in_after_change_password?
-
-      respond_with resource, location: after_update_path_for(resource)
-    else
-      # Ensure @user is set properly for the sidebar on error
-      @user = resource
-      clean_up_passwords resource
-      set_minimum_password_length
-      respond_with resource
+    # Ensure @user is set before calling super
+    @user = current_user
+    super do |resource|
+      # This block runs after the update attempt
+      # Ensure @user is set to the resource for error handling
+      @user = resource if resource.errors.any?
     end
   end
 
@@ -60,6 +50,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # Set @user for sidebar
   def set_user_for_sidebar
     @user = current_user
+  end
+  
+  # Override to ensure @user is available in error scenarios
+  def respond_with(resource, _opts = {})
+    @user = resource if resource.is_a?(User)
+    super
   end
 
   # If you have extra params to permit, append them to the sanitizer.

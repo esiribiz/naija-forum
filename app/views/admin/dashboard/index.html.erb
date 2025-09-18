@@ -128,9 +128,9 @@
           <div class="p-4 hover:bg-gray-50 transition-colors">
             <div class="flex items-center space-x-3">
               <% if user.avatar.attached? %>
-                <%= image_tag user.avatar, class: "w-10 h-10 rounded-full object-cover border-2 border-gray-200" %>
+                <%= image_tag user.avatar, class: "admin-avatar rounded-full object-cover border-2 border-gray-200" %>
               <% else %>
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-gray-200">
+                <div class="admin-avatar rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-gray-200">
                   <span class="text-sm font-bold text-white"><%= user.username&.first&.upcase || 'U' %></span>
                 </div>
               <% end %>

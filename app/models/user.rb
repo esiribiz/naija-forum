@@ -259,6 +259,10 @@ def staff?
     admin? || moderator?
 end
 
+def suspended?
+    suspended == true
+end
+
 def lock_access!
     super
     UserMailer.account_locked(self).deliver_later

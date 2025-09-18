@@ -63,6 +63,33 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# Cloud storage support for production
+gem "aws-sdk-s3", "~> 1.0", require: false
+
+# Error monitoring for production
+gem "sentry-rails", "~> 5.0"
+gem "sentry-ruby", "~> 5.0"
+
+# Performance and Search Improvements
+gem 'bullet'                      # N+1 query detection
+gem 'pg_search', '~> 2.3'         # PostgreSQL full-text search
+gem 'friendly_id', '~> 5.5'       # SEO-friendly URLs
+gem 'meta-tags', '~> 2.18'        # SEO meta tags
+gem 'sitemap_generator', '~> 6.3' # XML sitemaps
+
+# API Development
+gem 'jsonapi-serializer'          # JSON:API compliant serialization
+gem 'versionist', '~> 2.0'        # API versioning
+gem 'fast_jsonapi'                # Fast JSON serialization
+gem 'pagy', '~> 6.2'              # Fast pagination for APIs
+
+# Analytics and Tracking
+gem 'ahoy_matey', '~> 5.0'        # User analytics and visit tracking
+
+# Enhanced Admin Interface
+gem 'administrate', '~> 0.18'     # Better admin interface
+gem 'administrate-field-active_storage', '~> 1.0' # File upload support for admin
+
 group :development, :test do
 # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
 gem "debug", platforms: %i[ mri mingw x64_mingw ], require: "debug/prelude"
@@ -81,7 +108,13 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  gem "rails_live_reload"
+  # gem "rails_live_reload" # Temporarily disabled due to WebSocket issues
+  
+  # Performance monitoring
+  gem 'rack-mini-profiler'          # Performance profiling
+  gem 'memory_profiler'             # Memory usage profiling
+  gem 'stackprof'                   # Sampling call-stack profiler
+  gem 'letter_opener'               # Email preview in development
 end
 
 group :test do

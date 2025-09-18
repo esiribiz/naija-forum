@@ -1,5 +1,35 @@
 class User < ApplicationRecord
-include Redis::Objects
+  include Redis::Objects
+  extend FriendlyId
+  
+  # Include PgSearch::Model with error handling
+  begin
+    include PgSearch::Model
+  rescue NameError => e
+    Rails.logger.warn "PgSearch::Model not available: #{e.message}" if defined?(Rails)
+  end
+# FriendlyId configuration for SEO-friendly URLs
+friendly_id :username, use: [:slugged, :finders]
+
+# Full-text search configuration (only if PgSearch is available)
+if respond_to?(:pg_search_scope)
+  pg_search_scope :search_users,
+    against: {
+      username: 'A',
+      first_name: 'B',
+      last_name: 'B',
+      bio: 'C'
+    },
+    using: {
+      tsearch: {
+        prefix: true,
+        dictionary: 'english'
+      },
+      trigram: {
+        threshold: 0.3
+      }
+    }
+end
 # Include default devise modules. Others available are:
 # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
 devise :database_authenticatable, :registerable,
@@ -66,7 +96,7 @@ validates :password,
         password_strength: { min_entropy: 20 },
         length: { in: PASSWORD_MIN_LENGTH..PASSWORD_MAX_LENGTH },
         format: { 
-            with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[[:^alnum:]])/x,
+            with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[[:^alnum:]]).*\z/x,
             message: 'must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
         },
         if: :password_required?

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Admin Dashboard - Naija Forum" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+    <style>
+      /* Custom Admin Styles */
+      .admin-sidebar {
+        transition: transform 0.3s ease-in-out;
+      }
+      
+      .admin-sidebar.mobile-hidden {
+        transform: translateX(-100%);
+      }
+      
+      @media (min-width: 1024px) {
+        .admin-sidebar.mobile-hidden {
+          transform: translateX(0);
+        }
+      }
+      
+      .sidebar-link {
+        @apply flex items-center px-4 py-3 text-green-100 hover:text-white hover:bg-green-600 rounded-lg transition-colors duration-200 mx-2;
+      }
+      
+      .sidebar-link.active {
+        @apply bg-yellow-400 text-green-900 shadow-md;
+      }
+      
+      .sidebar-link.active:hover {
+        @apply bg-yellow-300 text-green-900;
+      }
+      
+      .sidebar-icon {
+        @apply w-5 h-5 mr-3;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <!-- Flash Messages -->
+    <% if notice || alert %>
+    <div data-controller="flash" 
+         data-flash-timeout-value="5000"
+         class="fixed top-4 right-4 z-50 w-full max-w-sm transition-all duration-300 ease-in-out">
+      <div class="flex items-center p-4 gap-3 rounded-lg shadow-lg border <%= notice ? 'bg-green-50 border-green-200 text-green-800' : 'bg-orange-50 border-orange-200 text-orange-800' %>">
+        <div class="flex-shrink-0">
+          <% if notice %>
+            <svg class="w-5 h-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+          <% else %>
+            <svg class="w-5 h-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+          <% end %>
+        </div>
+        <p class="flex-1"><%= notice || alert %></p>
+        <button data-action="click->flash#close" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <% end %>
+
+    <div class="flex h-screen bg-gray-100">
+      <!-- Sidebar -->
+      <div class="admin-sidebar fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-green-700 via-green-800 to-green-900 shadow-lg lg:static lg:inset-auto">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between h-16 px-4 bg-gradient-to-r from-green-800 to-green-900 relative overflow-hidden">
+          <!-- Nigerian-inspired decorative elements -->
+          <div class="absolute top-0 right-0 w-8 h-8 rounded-full bg-yellow-300 opacity-20 transform translate-x-2 -translate-y-2"></div>
+          <div class="absolute bottom-0 left-0 w-6 h-6 rounded-full bg-yellow-200 opacity-15 transform -translate-x-1 translate-y-1"></div>
+          <div class="flex items-center">
+            <div class="flex-shrink-0 relative z-10">
+              <h1 class="text-xl font-bold text-white">Naija Admin</h1>
+              <p class="text-xs text-green-200">Forum Management</p>
+            </div>
+          </div>
+          <button id="sidebar-close" class="text-green-200 hover:text-white lg:hidden relative z-10">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="mt-5 px-2 space-y-1">
+          <!-- Dashboard -->
+          <%= link_to admin_root_path, class: "sidebar-link #{'active' if controller_name == 'dashboard'}" do %>
+            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"/>
+            </svg>
+            Dashboard
+          <% end %>
+
+          <!-- Users -->
+          <%= link_to admin_users_path, class: "sidebar-link #{'active' if controller_name == 'users'}" do %>
+            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+            </svg>
+            Users
+          <% end %>
+
+          <!-- Posts -->
+          <%= link_to admin_posts_path, class: "sidebar-link #{'active' if controller_name == 'posts'}" do %>
+            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+            </svg>
+            Posts
+          <% end %>
+
+          <!-- Categories -->
+          <%= link_to admin_categories_path, class: "sidebar-link #{'active' if controller_name == 'categories'}" do %>
+            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-7H3a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
+            </svg>
+            Categories
+          <% end %>
+
+          <!-- Comments -->
+          <%= link_to admin_comments_path, class: "sidebar-link #{'active' if controller_name == 'comments'}" do %>
+            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            Comments
+          <% end %>
+
+          <!-- Tags -->
+          <%= link_to admin_tags_path, class: "sidebar-link #{'active' if controller_name == 'tags'}" do %>
+            <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5l5.83 5.83a2 2 0 010 2.83L12.83 16a2 2 0 01-2.83 0L4.17 10.17A2 2 0 014.17 7.34L9.17 2.34A2 2 0 0110.83 2H16a2 2 0 012 2v5"/>
+            </svg>
+            Tags
+          <% end %>
+
+          <!-- System Settings (Super Admin Only) -->
+          <% if current_user&.admin? %>
+            <div class="pt-4 mt-4 border-t border-green-600">
+              <p class="px-6 text-xs font-semibold text-green-300 uppercase tracking-wider">System</p>
+              
+              <%= link_to admin_role_management_path, class: "sidebar-link #{'active' if controller_name == 'role_management'}" do %>
+                <svg class="sidebar-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                Role Management
+              <% end %>
+            </div>
+          <% end %>
+        </nav>
+
+        <!-- User Profile -->
+        <div class="absolute bottom-0 w-full p-4">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <% if current_user&.avatar&.attached? %>
+                <%= image_tag current_user.avatar, class: "h-8 w-8 rounded-full object-cover" %>
+              <% else %>
+                <div class="h-8 w-8 rounded-full bg-green-600 flex items-center justify-center">
+                  <span class="text-sm font-medium text-white"><%= current_user&.username&.first&.upcase %></span>
+                </div>
+              <% end %>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-white"><%= current_user&.display_name %></p>
+              <p class="text-xs text-green-300"><%= current_user&.role&.capitalize %></p>
+            </div>
+          </div>
+          <div class="mt-3 space-y-1">
+            <%= link_to "Back to Site", root_path, class: "block px-3 py-1 text-sm text-green-100 hover:text-white" %>
+            <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "block px-3 py-1 text-sm text-green-100 hover:text-white" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col overflow-hidden lg:ml-0">
+        <!-- Top Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+          <div class="flex items-center justify-between h-16 px-4">
+            <div class="flex items-center">
+              <button id="sidebar-toggle" class="text-gray-500 hover:text-gray-600 lg:hidden">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+              </button>
+              <h1 class="ml-4 text-xl font-semibold text-gray-900">
+                <%= yield :page_title %>
+              </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+              <span class="text-sm text-gray-500">Welcome, <%= current_user&.display_name %></span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+          <div class="container mx-auto px-6 py-8">
+            <%= yield %>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden hidden"></div>
+
+    <script>
+      // Sidebar toggle functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebarClose = document.getElementById('sidebar-close');
+        const sidebar = document.querySelector('.admin-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function showSidebar() {
+          sidebar.classList.remove('mobile-hidden');
+          overlay.classList.remove('hidden');
+        }
+
+        function hideSidebar() {
+          sidebar.classList.add('mobile-hidden');
+          overlay.classList.add('hidden');
+        }
+
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', showSidebar);
+        }
+
+        if (sidebarClose) {
+          sidebarClose.addEventListener('click', hideSidebar);
+        }
+
+        if (overlay) {
+          overlay.addEventListener('click', hideSidebar);
+        }
+
+        // Close sidebar on window resize if large screen
+        window.addEventListener('resize', function() {
+          if (window.innerWidth >= 1024) {
+            hideSidebar();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

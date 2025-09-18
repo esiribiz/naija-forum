@@ -76,7 +76,7 @@
               <!-- Notification Counter Badge -->
               <% unread_count = current_user.notifications.unread.count if current_user.respond_to?(:notifications) %>
               <% if unread_count && unread_count > 0 %>
-                <span class="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold leading-none text-white bg-red-500 rounded-full border-2 border-white shadow-sm">
+                <span class="absolute top-0 right-0 inline-flex items-center justify-center min-w-[16px] h-[16px] text-[9px] font-bold leading-none text-white bg-red-500 rounded-full border border-green-700 shadow-sm transform -translate-y-1 translate-x-1">
                   <%= unread_count > 99 ? '99+' : unread_count %>
                 </span>
               <% end %>
@@ -293,7 +293,7 @@
             <% if user_signed_in? %>
               <% unread_count = current_user.notifications.unread.count if current_user.respond_to?(:notifications) %>
               <% if unread_count && unread_count > 0 %>
-                <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-2 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+                <span class="inline-flex items-center justify-center min-w-[18px] h-[18px] text-[10px] font-bold leading-none text-white bg-red-500 rounded-full border border-green-700 shadow-sm">
                   <%= unread_count > 99 ? '99+' : unread_count %>
                 </span>
               <% end %>

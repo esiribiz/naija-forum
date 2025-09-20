@@ -1564,6 +1564,280 @@ video, iframe, embed, object {
 }
 
 /* =================================
+   ADMIN USER INTERFACE COMPONENTS
+   ================================= */
+
+.admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-3);
+}
+
+.admin-user-avatar {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.admin-user-avatar-img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--admin-gray-200);
+}
+
+.admin-user-avatar-placeholder {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--admin-gray-300) 0%, var(--admin-gray-400) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: white;
+  border: 2px solid var(--admin-gray-200);
+}
+
+.admin-user-status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.admin-user-status.online {
+  background: var(--admin-success);
+}
+
+.admin-user-status.offline {
+  background: var(--admin-gray-400);
+}
+
+.admin-user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-user-name {
+  font-weight: 600;
+  color: var(--admin-gray-900);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.admin-user-username {
+  color: var(--admin-gray-500);
+  font-size: 0.8125rem;
+  line-height: 1rem;
+}
+
+.admin-user-email {
+  color: var(--admin-gray-600);
+  font-size: 0.8125rem;
+  line-height: 1rem;
+}
+
+.admin-role-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-2);
+}
+
+.admin-activity-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-1);
+}
+
+.admin-activity-item {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  font-size: 0.8125rem;
+  color: var(--admin-gray-600);
+}
+
+.admin-activity-item i {
+  width: 1rem;
+  color: var(--admin-gray-400);
+}
+
+.admin-activity-score {
+  font-size: 0.75rem;
+  color: var(--admin-gray-500);
+  font-weight: 500;
+  margin-top: var(--admin-space-1);
+}
+
+.admin-last-active {
+  font-size: 0.8125rem;
+}
+
+.admin-status-online {
+  color: var(--admin-success);
+  font-weight: 500;
+}
+
+.admin-status-recent {
+  color: var(--admin-info);
+}
+
+.admin-status-offline {
+  color: var(--admin-gray-500);
+}
+
+.admin-join-date {
+  font-size: 0.8125rem;
+  color: var(--admin-gray-600);
+}
+
+.admin-join-time {
+  font-size: 0.75rem;
+  color: var(--admin-gray-500);
+  margin-top: var(--admin-space-1);
+}
+
+.admin-actions-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+}
+
+.admin-role-selector {
+  min-width: 7rem;
+}
+
+.admin-actions-dropdown {
+  position: relative;
+}
+
+.admin-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+  min-width: 10rem;
+  background: white;
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-lg);
+  box-shadow: var(--admin-shadow-xl);
+  display: none;
+  overflow: hidden;
+  margin-top: var(--admin-space-1);
+}
+
+.admin-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: var(--admin-space-3) var(--admin-space-4);
+  text-decoration: none;
+  color: var(--admin-gray-700);
+  font-size: 0.875rem;
+  transition: var(--admin-transition-fast);
+}
+
+.admin-dropdown-item:hover {
+  background: var(--admin-gray-50);
+  color: var(--admin-gray-900);
+}
+
+.admin-dropdown-item-danger {
+  color: var(--admin-error);
+}
+
+.admin-dropdown-item-danger:hover {
+  background: #fef2f2;
+  color: var(--admin-error);
+}
+
+.admin-dropdown-divider {
+  height: 1px;
+  background: var(--admin-gray-200);
+  margin: var(--admin-space-2) 0;
+}
+
+.admin-current-user-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--admin-space-2);
+}
+
+.admin-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-3);
+}
+
+.admin-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.admin-toggle-slider {
+  width: 2.75rem;
+  height: 1.5rem;
+  background: var(--admin-gray-300);
+  border-radius: 0.75rem;
+  position: relative;
+  transition: var(--admin-transition-fast);
+}
+
+.admin-toggle-slider::after {
+  content: '';
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: white;
+  border-radius: 50%;
+  transition: var(--admin-transition-fast);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-toggle input:checked + .admin-toggle-slider {
+  background: var(--admin-primary);
+}
+
+.admin-toggle input:checked + .admin-toggle-slider::after {
+  transform: translateX(1.25rem);
+}
+
+.admin-toggle-label {
+  font-size: 0.875rem;
+  color: var(--admin-gray-700);
+  font-weight: 500;
+}
+
+.admin-checkbox {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--admin-gray-300);
+  border-radius: var(--admin-radius-sm);
+  background: white;
+  cursor: pointer;
+  transition: var(--admin-transition-fast);
+}
+
+.admin-checkbox:checked {
+  background: var(--admin-primary);
+  border-color: var(--admin-primary);
+}
+
+/* =================================
    ADMIN MODALS
    ================================= */
 

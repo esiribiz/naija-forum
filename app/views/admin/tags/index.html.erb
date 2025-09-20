@@ -1,153 +1,477 @@
 <% content_for :page_title, "Tags Management" %>
 
-<div class="space-y-6">
+<div class="admin-container">
   <!-- Page Header -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Tags Management</h1>
-      <p class="mt-1 text-sm text-gray-600">Manage forum tags and labels</p>
-    </div>
-    <div>
-      <%= link_to "New Tag", new_admin_tag_path, 
-          class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" %>
+  <div class="admin-page-header">
+    <div class="admin-page-header-content">
+      <div class="admin-page-title-wrapper">
+        <div class="admin-page-icon">
+          <i class="fas fa-tags"></i>
+        </div>
+        <div>
+          <h1 class="admin-page-title">Tags Management</h1>
+          <p class="admin-page-subtitle">Manage forum tags and labels</p>
+        </div>
+      </div>
+      <div class="admin-page-actions">
+        <button class="admin-btn admin-btn-secondary" onclick="bulkManageTags()">
+          <i class="fas fa-tasks mr-2"></i>
+          Bulk Actions
+        </button>
+        <%= link_to new_admin_tag_path, class: "admin-btn admin-btn-primary" do %>
+          <i class="fas fa-plus mr-2"></i>
+          New Tag
+        <% end %>
+      </div>
     </div>
   </div>
 
   <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Total Tags</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:total] %></dd>
-            </dl>
-          </div>
+  <div class="admin-stats-grid">
+    <div class="admin-stat-card admin-stat-card-info">
+      <div class="admin-stat-icon">
+        <i class="fas fa-tags"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-label">Total Tags</div>
+        <div class="admin-stat-value"><%= @stats[:total] %></div>
+        <div class="admin-stat-change neutral">All Tags</div>
+      </div>
+      <div class="admin-stat-chart">
+        <div class="admin-progress-bar">
+          <div class="admin-progress-fill" style="width: 100%"></div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-blue-700 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">With Posts</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:with_posts] %></dd>
-            </dl>
-          </div>
+    <div class="admin-stat-card admin-stat-card-success">
+      <div class="admin-stat-icon">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-label">With Posts</div>
+        <div class="admin-stat-value"><%= @stats[:with_posts] %></div>
+        <div class="admin-stat-change positive">Active Tags</div>
+      </div>
+      <div class="admin-stat-chart">
+        <div class="admin-progress-bar">
+          <div class="admin-progress-fill" style="width: <%= (@stats[:with_posts].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white overflow-hidden shadow rounded-lg">
-      <div class="p-5">
-        <div class="flex items-center">
-          <div class="flex-shrink-0">
-            <div class="w-8 h-8 bg-yellow-600 rounded-md flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-              </svg>
-            </div>
-          </div>
-          <div class="ml-5 w-0 flex-1">
-            <dl>
-              <dt class="text-sm font-medium text-gray-500 truncate">Unused</dt>
-              <dd class="text-lg font-medium text-gray-900"><%= @stats[:unused] %></dd>
-            </dl>
-          </div>
+    <div class="admin-stat-card admin-stat-card-warning">
+      <div class="admin-stat-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="admin-stat-content">
+        <div class="admin-stat-label">Unused</div>
+        <div class="admin-stat-value"><%= @stats[:unused] %></div>
+        <div class="admin-stat-change negative">Need Attention</div>
+      </div>
+      <div class="admin-stat-chart">
+        <div class="admin-progress-bar">
+          <div class="admin-progress-fill" style="width: <%= (@stats[:unused].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Search/Filter Bar -->
-  <div class="bg-white shadow rounded-lg p-6">
-    <%= form_with url: admin_tags_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
-      <div class="flex-1 min-w-0">
-        <%= form.text_field :search, placeholder: "Search tags...", 
-            value: params[:search],
-            class: "block w-full border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500" %>
+  <!-- Search and Filters -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">
+        <i class="fas fa-search mr-2"></i>
+        Search & Filter Tags
+      </h2>
+      <div class="admin-card-header-actions">
+        <span class="admin-badge admin-badge-info"><%= @stats[:total] %> total tags</span>
       </div>
-      <div class="flex gap-2">
-        <%= form.submit "Search", class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700" %>
-        <%= link_to "Clear", admin_tags_path, class: "bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400" %>
-      </div>
-    <% end %>
+    </div>
+    <div class="admin-card-body">
+      <%= form_with url: admin_tags_path, method: :get, local: true, class: "admin-form" do |form| %>
+        <div class="admin-form-grid">
+          <div class="admin-form-group">
+            <label class="admin-form-label">
+              <i class="fas fa-search mr-2"></i>
+              Search Tags
+            </label>
+            <%= form.text_field :search, placeholder: "Search by tag name or description...", 
+                value: params[:search], class: "admin-form-input" %>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">
+              <i class="fas fa-filter mr-2"></i>
+              Filter by Usage
+            </label>
+            <%= form.select :filter, 
+                options_for_select([
+                  ['All Tags', ''],
+                  ['Used Tags', 'used'],
+                  ['Unused Tags', 'unused'],
+                  ['Popular Tags', 'popular']
+                ], params[:filter]), 
+                {}, { class: "admin-form-select" } %>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">
+              <i class="fas fa-sort mr-2"></i>
+              Sort By
+            </label>
+            <%= form.select :sort, 
+                options_for_select([
+                  ['Name A-Z', 'name_asc'],
+                  ['Name Z-A', 'name_desc'],
+                  ['Most Used', 'usage_desc'],
+                  ['Least Used', 'usage_asc'],
+                  ['Newest', 'created_desc'],
+                  ['Oldest', 'created_asc']
+                ], params[:sort] || 'name_asc'), 
+                {}, { class: "admin-form-select" } %>
+          </div>
+        </div>
+        <div class="admin-form-actions">
+          <%= form.submit "Apply Filters", class: "admin-btn admin-btn-primary" %>
+          <%= link_to "Reset Filters", admin_tags_path, class: "admin-btn admin-btn-secondary" %>
+        </div>
+      <% end %>
+    </div>
   </div>
 
   <!-- Tags Table -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tag</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posts Count</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        <% @tags.each do |tag| %>
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">
+        <i class="fas fa-list mr-2"></i>
+        Tags Overview
+      </h3>
+      <div class="admin-card-header-actions">
+        <div class="admin-toggle-wrapper">
+          <label class="admin-toggle">
+            <input type="checkbox" id="bulk-select-tags" onchange="toggleBulkSelectTags()">
+            <span class="admin-toggle-slider"></span>
+            <span class="admin-toggle-label">Bulk Select</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="admin-table-container">
+      <table class="admin-table">
+        <thead class="admin-table-header">
           <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex items-center">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  <%= tag.name %>
-                </span>
-              </div>
-            </td>
-            <td class="px-6 py-4">
-              <div class="text-sm text-gray-900">
-                <%= truncate(tag.description, length: 80) if tag.description %>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= tag.posts.count %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              <%= tag.created_at.strftime("%b %d, %Y") %>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-              <%= link_to "View", admin_tag_path(tag), class: "text-green-600 hover:text-green-900 mr-2" %>
-              <%= link_to "Edit", edit_admin_tag_path(tag), class: "text-blue-600 hover:text-blue-900 mr-2" %>
-              <%= link_to "Delete", admin_tag_path(tag), method: :delete,
-                  data: { confirm: "Are you sure? This will remove the tag from all posts." },
-                  class: "text-red-600 hover:text-red-900" %>
-            </td>
+            <th class="admin-table-cell admin-table-cell-checkbox" style="display: none;" id="bulk-header-tags">
+              <input type="checkbox" class="admin-checkbox" id="select-all-tags">
+            </th>
+            <th class="admin-table-cell">
+              <i class="fas fa-tag mr-2"></i>
+              Tag Name
+            </th>
+            <th class="admin-table-cell">
+              <i class="fas fa-align-left mr-2"></i>
+              Description
+            </th>
+            <th class="admin-table-cell">
+              <i class="fas fa-chart-bar mr-2"></i>
+              Usage Stats
+            </th>
+            <th class="admin-table-cell">
+              <i class="fas fa-calendar-plus mr-2"></i>
+              Created
+            </th>
+            <th class="admin-table-cell admin-table-cell-actions">
+              <i class="fas fa-cogs mr-2"></i>
+              Actions
+            </th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody class="admin-table-body">
+          <% @tags.each do |tag| %>
+            <tr class="admin-table-row">
+              <td class="admin-table-cell admin-table-cell-checkbox" style="display: none;">
+                <input type="checkbox" class="admin-checkbox bulk-select-tag" value="<%= tag.id %>">
+              </td>
+              <td class="admin-table-cell">
+                <div class="admin-tag-info">
+                  <span class="admin-tag-badge admin-tag-badge-<%= tag.posts.count > 5 ? 'popular' : tag.posts.count > 0 ? 'used' : 'unused' %>">
+                    <i class="fas fa-tag mr-1"></i>
+                    <%= tag.name %>
+                  </span>
+                  <% if tag.posts.count > 10 %>
+                    <span class="admin-badge admin-badge-success admin-badge-small">Popular</span>
+                  <% elsif tag.posts.count == 0 %>
+                    <span class="admin-badge admin-badge-warning admin-badge-small">Unused</span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="admin-table-cell">
+                <div class="admin-tag-description">
+                  <%= truncate(tag.description, length: 80) if tag.description.present? %>
+                  <% unless tag.description.present? %>
+                    <span class="admin-text-muted">No description</span>
+                  <% end %>
+                </div>
+              </td>
+              <td class="admin-table-cell">
+                <div class="admin-usage-stats">
+                  <div class="admin-usage-count">
+                    <i class="fas fa-file-alt mr-1"></i>
+                    <%= pluralize(tag.posts.count, 'post') %>
+                  </div>
+                  <div class="admin-usage-bar">
+                    <div class="admin-usage-fill" style="width: <%= [tag.posts.count.to_f / [@tags.map{|t| t.posts.count}.max, 1].max * 100, 5].max %>%"></div>
+                  </div>
+                </div>
+              </td>
+              <td class="admin-table-cell">
+                <div class="admin-date-info">
+                  <div class="admin-date"><%= tag.created_at.strftime("%b %d, %Y") %></div>
+                  <div class="admin-date-relative"><%= time_ago_in_words(tag.created_at) %> ago</div>
+                </div>
+              </td>
+              <td class="admin-table-cell admin-table-cell-actions">
+                <div class="admin-actions-wrapper">
+                  <div class="admin-quick-actions">
+                    <%= link_to admin_tag_path(tag), class: "admin-btn admin-btn-sm admin-btn-outline", title: "View Tag" do %>
+                      <i class="fas fa-eye"></i>
+                    <% end %>
+                    <%= link_to edit_admin_tag_path(tag), class: "admin-btn admin-btn-sm admin-btn-primary", title: "Edit Tag" do %>
+                      <i class="fas fa-edit"></i>
+                    <% end %>
+                  </div>
+                  <div class="admin-actions-dropdown">
+                    <button class="admin-btn admin-btn-sm admin-btn-outline" onclick="toggleTagActionsDropdown(<%= tag.id %>)">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="admin-dropdown-menu" id="tag-actions-menu-<%= tag.id %>">
+                      <%= link_to admin_tag_path(tag), class: "admin-dropdown-item" do %>
+                        <i class="fas fa-eye mr-2"></i>
+                        View Details
+                      <% end %>
+                      <%= link_to edit_admin_tag_path(tag), class: "admin-dropdown-item" do %>
+                        <i class="fas fa-edit mr-2"></i>
+                        Edit Tag
+                      <% end %>
+                      <% if tag.posts.count > 0 %>
+                        <a href="#" class="admin-dropdown-item" onclick="showTagPosts(<%= tag.id %>)">
+                          <i class="fas fa-list mr-2"></i>
+                          View Posts (<%= tag.posts.count %>)
+                        </a>
+                      <% end %>
+                      <div class="admin-dropdown-divider"></div>
+                      <%= link_to admin_tag_path(tag), method: :delete,
+                          data: { confirm: "Are you sure? This will remove the tag from all posts." },
+                          class: "admin-dropdown-item admin-dropdown-item-danger" do %>
+                        <i class="fas fa-trash mr-2"></i>
+                        Delete Tag
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <% if @tags.empty? %>
-    <div class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-      </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">No tags found</h3>
-      <p class="mt-1 text-sm text-gray-500">Get started by creating a new tag.</p>
-      <div class="mt-6">
-        <%= link_to "New Tag", new_admin_tag_path, 
-            class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700" %>
+    <div class="admin-empty-state">
+      <div class="admin-empty-icon">
+        <i class="fas fa-tags"></i>
+      </div>
+      <h3 class="admin-empty-title">No tags found</h3>
+      <p class="admin-empty-description">Get started by creating your first tag to organize forum content.</p>
+      <div class="admin-empty-actions">
+        <%= link_to new_admin_tag_path, class: "admin-btn admin-btn-primary" do %>
+          <i class="fas fa-plus mr-2"></i>
+          Create Your First Tag
+        <% end %>
       </div>
     </div>
   <% end %>
 </div>
+
+<!-- Bulk Actions Bar (Hidden by default) -->
+<div id="bulk-actions-bar-tags" class="admin-bulk-actions" style="display: none;">
+  <div class="admin-bulk-actions-content">
+    <div class="admin-bulk-actions-info">
+      <span id="selected-tags-count">0</span> tags selected
+    </div>
+    <div class="admin-bulk-actions-buttons">
+      <button class="admin-btn admin-btn-sm admin-btn-danger" onclick="bulkDeleteTags()">
+        <i class="fas fa-trash mr-2"></i>
+        Delete Selected
+      </button>
+      <button class="admin-btn admin-btn-sm admin-btn-info" onclick="exportTags()">
+        <i class="fas fa-download mr-2"></i>
+        Export
+      </button>
+      <button class="admin-btn admin-btn-sm admin-btn-secondary" onclick="clearTagSelection()">
+        <i class="fas fa-times mr-2"></i>
+        Clear
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Flash Messages -->
+<div id="flash-container" class="admin-flash-container"></div>
+
+<script>
+// Tags management JavaScript
+let selectedTags = new Set();
+
+function toggleBulkSelectTags() {
+  const bulkMode = document.getElementById('bulk-select-tags').checked;
+  const checkboxCells = document.querySelectorAll('.admin-table-cell-checkbox');
+  const bulkBar = document.getElementById('bulk-actions-bar-tags');
+  
+  checkboxCells.forEach(cell => {
+    cell.style.display = bulkMode ? 'table-cell' : 'none';
+  });
+  
+  if (!bulkMode) {
+    selectedTags.clear();
+    document.querySelectorAll('.bulk-select-tag').forEach(cb => cb.checked = false);
+    bulkBar.style.display = 'none';
+  }
+  
+  updateTagSelectionCount();
+}
+
+function updateTagSelectionCount() {
+  const selectedCount = selectedTags.size;
+  document.getElementById('selected-tags-count').textContent = selectedCount;
+  
+  const bulkBar = document.getElementById('bulk-actions-bar-tags');
+  const bulkMode = document.getElementById('bulk-select-tags').checked;
+  
+  if (bulkMode && selectedCount > 0) {
+    bulkBar.style.display = 'flex';
+  } else if (bulkMode) {
+    bulkBar.style.display = 'flex';
+    bulkBar.style.opacity = '0.6';
+  } else {
+    bulkBar.style.display = 'none';
+  }
+}
+
+function toggleTagActionsDropdown(tagId) {
+  const dropdown = document.getElementById(`tag-actions-menu-${tagId}`);
+  const allDropdowns = document.querySelectorAll('.admin-dropdown-menu');
+  
+  allDropdowns.forEach(menu => {
+    if (menu !== dropdown) {
+      menu.style.display = 'none';
+    }
+  });
+  
+  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+function showTagPosts(tagId) {
+  showFlashMessage('Loading tag posts...', 'info');
+}
+
+function bulkDeleteTags() {
+  if (selectedTags.size === 0) {
+    showFlashMessage('Please select tags to delete', 'warning');
+    return;
+  }
+  
+  if (confirm(`Are you sure you want to delete ${selectedTags.size} selected tags?`)) {
+    showFlashMessage('Bulk delete functionality coming soon...', 'info');
+  }
+}
+
+function exportTags() {
+  showFlashMessage('Export functionality coming soon...', 'info');
+}
+
+function clearTagSelection() {
+  selectedTags.clear();
+  document.querySelectorAll('.bulk-select-tag').forEach(cb => cb.checked = false);
+  document.getElementById('select-all-tags').checked = false;
+  updateTagSelectionCount();
+}
+
+function bulkManageTags() {
+  showFlashMessage('Bulk management features coming soon...', 'info');
+}
+
+function showFlashMessage(message, type) {
+  const container = document.getElementById('flash-container');
+  const div = document.createElement('div');
+  
+  const typeStyles = {
+    success: { bg: 'admin-flash-success', icon: 'fa-check-circle' },
+    error: { bg: 'admin-flash-error', icon: 'fa-exclamation-circle' },
+    warning: { bg: 'admin-flash-warning', icon: 'fa-exclamation-triangle' },
+    info: { bg: 'admin-flash-info', icon: 'fa-info-circle' }
+  };
+  
+  const style = typeStyles[type] || typeStyles.info;
+  
+  div.className = `admin-flash ${style.bg}`;
+  div.innerHTML = `
+    <div class="admin-flash-content">
+      <i class="fas ${style.icon} admin-flash-icon"></i>
+      <span class="admin-flash-message">${message}</span>
+      <button class="admin-flash-close" onclick="this.parentElement.parentElement.remove()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `;
+  
+  container.appendChild(div);
+  
+  setTimeout(() => {
+    if (div.parentElement) {
+      div.remove();
+    }
+  }, 5000);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  // Select all checkbox
+  const selectAllCheckbox = document.getElementById('select-all-tags');
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener('change', function() {
+      const checkboxes = document.querySelectorAll('.bulk-select-tag');
+      checkboxes.forEach(cb => {
+        cb.checked = this.checked;
+        if (this.checked) {
+          selectedTags.add(cb.value);
+        } else {
+          selectedTags.delete(cb.value);
+        }
+      });
+      updateTagSelectionCount();
+    });
+  }
+  
+  // Individual tag checkboxes
+  document.querySelectorAll('.bulk-select-tag').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      if (this.checked) {
+        selectedTags.add(this.value);
+      } else {
+        selectedTags.delete(this.value);
+        document.getElementById('select-all-tags').checked = false;
+      }
+      updateTagSelectionCount();
+    });
+  });
+});
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.admin-actions-dropdown')) {
+    document.querySelectorAll('.admin-dropdown-menu').forEach(menu => {
+      menu.style.display = 'none';
+    });
+  }
+});
+</script>

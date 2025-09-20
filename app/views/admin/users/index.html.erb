@@ -1,305 +1,651 @@
 <% content_for :page_title, "User Management" %>
 <% content_for :page_subtitle, "Manage user accounts, roles, and permissions across your forum" %>
 
-<!-- Enhanced Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-  <!-- Total Users -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
-      <i class="fas fa-users"></i>
+<!-- Enhanced Stats Cards - Column Layout -->
+<div class="flex flex-col lg:flex-row gap-6 mb-8">
+  <!-- Left Column - Primary Stats -->
+  <div class="flex-1 space-y-4">
+    <!-- Total Users -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@total_users) %></div>
+          <div class="stat-label">Total Users</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +<%= @users_today %> today
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@users_today.to_f / [@total_users, 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="stat-number"><%= number_with_delimiter(@total_users) %></div>
-    <div class="stat-label">Total Users</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-arrow-up mr-1"></i>
-      +<%= @users_today %> today
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@users_today.to_f / [@total_users, 1].max * 100).round(1) %>%"></div>
+
+    <!-- New Today -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@users_today) %></div>
+          <div class="stat-label">New Today</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-calendar-day mr-1"></i>
+            Last 24 hours
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-green-500 h-2 rounded-full transition-all duration-1000" style="width: <%= @users_today > 0 ? 100 : 5 %>%"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Administrators -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
-      <i class="fas fa-shield-alt"></i>
+  <!-- Right Column - Role Distribution -->
+  <div class="flex-1 space-y-4">
+    <!-- Administrators -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@admin_users) %></div>
+          <div class="stat-label">Administrators</div>
+          <div class="stat-change mt-1 text-sm" style="color: #6b7280;">
+            <i class="fas fa-crown mr-1"></i>
+            <%= ((@admin_users.to_f / [@total_users, 1].max) * 100).round(1) %>% of users
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-red-500 h-2 rounded-full transition-all duration-1000" style="width: <%= ((@admin_users.to_f / [@total_users, 1].max) * 100).round(1) %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="stat-number"><%= number_with_delimiter(@admin_users) %></div>
-    <div class="stat-label">Administrators</div>
-    <div class="stat-change mt-2" style="color: #6b7280;">
-      <i class="fas fa-crown mr-1"></i>
-      <%= ((@admin_users.to_f / [@total_users, 1].max) * 100).round(1) %>% of users
-    </div>
-  </div>
 
-  <!-- Moderators -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-      <i class="fas fa-user-shield"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@moderator_users) %></div>
-    <div class="stat-label">Moderators</div>
-    <div class="stat-change mt-2" style="color: #6b7280;">
-      <i class="fas fa-gavel mr-1"></i>
-      <%= ((@moderator_users.to_f / [@total_users, 1].max) * 100).round(1) %>% of users
-    </div>
-  </div>
-
-  <!-- New Today -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
-      <i class="fas fa-user-plus"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@users_today) %></div>
-    <div class="stat-label">New Today</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-calendar-day mr-1"></i>
-      Last 24 hours
+    <!-- Moderators -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@moderator_users) %></div>
+          <div class="stat-label">Moderators</div>
+          <div class="stat-change mt-1 text-sm" style="color: #6b7280;">
+            <i class="fas fa-gavel mr-1"></i>
+            <%= ((@moderator_users.to_f / [@total_users, 1].max) * 100).round(1) %>% of users
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-yellow-500 h-2 rounded-full transition-all duration-1000" style="width: <%= ((@moderator_users.to_f / [@total_users, 1].max) * 100).round(1) %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Search and Filter Section -->
-<div class="card mb-8">
-  <div class="card-header">
-    <h3 class="card-title">
-      <i class="fas fa-search mr-2" style="color: #3b82f6;"></i>
-      Search & Filter
+<!-- Enhanced Search and Filter Section -->
+<div class="enhanced-search-container">
+  <div class="enhanced-search-header">
+    <h3 class="enhanced-search-title">
+      <i class="fas fa-search text-blue-500"></i>
+      Advanced User Search & Filters
     </h3>
-    <p class="card-subtitle">Find users by name, email, role, or other criteria</p>
+    <p class="enhanced-search-subtitle">Find users by name, email, role, activity, join date, or other criteria with powerful filtering options</p>
   </div>
-  <div class="card-body">
-    <%= form_with url: admin_users_path, method: :get, local: true, class: "space-y-4" do |form| %>
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div class="lg:col-span-2">
-          <%= form.text_field :search, placeholder: "Search users...", value: params[:search], 
-              class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" %>
+  <div class="enhanced-search-body">
+    <%= form_with url: admin_users_path, method: :get, local: true, class: "enhanced-search-form" do |form| %>
+      <!-- Main search row -->
+      <div class="enhanced-search-row">
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-search mr-2 text-blue-500"></i>
+            Search Users
+          </label>
+          <%= form.text_field :search, 
+              placeholder: "Search by name, username, email, or other details...", 
+              value: params[:search],
+              class: "enhanced-form-input",
+              data: { 
+                search_target: "input",
+                search_delay: "300"
+              } %>
         </div>
-        <div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-user-tag mr-2 text-green-500"></i>
+            User Role
+          </label>
           <%= form.select :role, 
               options_for_select([
                 ['All Roles', ''],
-                ['Admin', 'admin'],
-                ['Moderator', 'moderator'],
-                ['User', 'user']
+                ['👑 Administrators', 'admin'],
+                ['🛡️ Moderators', 'moderator'],
+                ['👤 Regular Users', 'user']
               ], params[:role]), 
               {}, 
-              { class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" } %>
+              { class: "enhanced-form-select" } %>
         </div>
-        <div class="flex space-x-2">
-          <%= form.submit "Search", class: "btn btn-primary btn-sm" %>
-          <%= link_to "Clear", admin_users_path, class: "btn btn-secondary btn-sm" %>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-clock mr-2 text-purple-500"></i>
+            Activity Status
+          </label>
+          <%= form.select :activity, 
+              options_for_select([
+                ['All Users', ''],
+                ['🟢 Currently Online', 'online'],
+                ['🔵 Recent (Last 24h)', 'recent'],
+                ['⚫ Inactive', 'inactive'],
+                ['👻 Never Logged In', 'never']
+              ], params[:activity]), 
+              {}, 
+              { class: "enhanced-form-select" } %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-calendar-plus mr-2 text-orange-500"></i>
+            Joined Period
+          </label>
+          <%= form.select :joined, 
+              options_for_select([
+                ['All Time', ''],
+                ['Today', 'today'],
+                ['This Week', 'week'],
+                ['This Month', 'month'],
+                ['Last 3 Months', '3months'],
+                ['This Year', 'year']
+              ], params[:joined]), 
+              {}, 
+              { class: "enhanced-form-select" } %>
+        </div>
+      </div>
+      
+      <!-- Advanced filters row -->
+      <div class="enhanced-search-row" style="opacity: 0.9;">
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-sort-amount-down mr-2 text-cyan-500"></i>
+            Sort By
+          </label>
+          <%= form.select :sort, 
+              options_for_select([
+                ['Recently Joined', 'newest'],
+                ['Oldest Members', 'oldest'],
+                ['Most Active', 'most_active'],
+                ['Most Posts', 'most_posts'],
+                ['Most Comments', 'most_comments'],
+                ['Alphabetical A-Z', 'alpha_asc'],
+                ['Alphabetical Z-A', 'alpha_desc']
+              ], params[:sort] || 'newest'), 
+              {}, 
+              { class: "enhanced-form-select" } %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-list-ol mr-2 text-pink-500"></i>
+            Results Per Page
+          </label>
+          <%= form.select :per_page, 
+              options_for_select([
+                ['10 users', '10'],
+                ['25 users', '25'],
+                ['50 users', '50'],
+                ['100 users', '100']
+              ], params[:per_page] || '25'), 
+              {}, 
+              { class: "enhanced-form-select" } %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-chart-bar mr-2 text-indigo-500"></i>
+            Min Posts Count
+          </label>
+          <%= form.number_field :min_posts, 
+              placeholder: "0", 
+              value: params[:min_posts],
+              min: 0,
+              class: "enhanced-form-input" %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-comments mr-2 text-teal-500"></i>
+            Min Comments Count
+          </label>
+          <%= form.number_field :min_comments, 
+              placeholder: "0", 
+              value: params[:min_comments],
+              min: 0,
+              class: "enhanced-form-input" %>
+        </div>
+      </div>
+      
+      <!-- Search actions -->
+      <div class="enhanced-search-actions">
+        <div class="enhanced-search-buttons">
+          <%= form.submit "🔍 Apply Filters", class: "enhanced-search-btn enhanced-search-btn-primary" %>
+          <%= link_to "🗑️ Clear All", admin_users_path, class: "enhanced-search-btn enhanced-search-btn-secondary" %>
+          <button type="button" id="advanced-toggle" class="enhanced-search-btn enhanced-search-btn-secondary">
+            <i class="fas fa-sliders-h mr-2"></i>
+            Advanced Options
+          </button>
+        </div>
+        
+        <div class="enhanced-search-results">
+          <% filter_params = ['search', 'role', 'activity', 'joined', 'sort', 'min_posts', 'min_comments'] %>
+          <% has_filters = filter_params.any? { |key| params[key].present? } %>
+          <% if has_filters %>
+            <div class="flex items-center space-x-2 text-sm">
+              <i class="fas fa-filter text-blue-500"></i>
+              <span class="text-slate-600">Active filters:</span>
+              <div class="flex items-center space-x-1 flex-wrap">
+                <% if params[:search].present? %>
+                  <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                    Search: "<%= params[:search] %>"
+                  </span>
+                <% end %>
+                <% if params[:role].present? %>
+                  <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                    Role: <%= params[:role].humanize %>
+                  </span>
+                <% end %>
+                <% if params[:activity].present? %>
+                  <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                    Activity: <%= params[:activity].humanize %>
+                  </span>
+                <% end %>
+                <% if params[:joined].present? %>
+                  <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                    Joined: <%= params[:joined].humanize %>
+                  </span>
+                <% end %>
+                <% if params[:sort].present? %>
+                  <span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
+                    Sort: <%= params[:sort].humanize %>
+                  </span>
+                <% end %>
+                <% if params[:min_posts].present? %>
+                  <span class="px-2 py-1 bg-cyan-100 text-cyan-700 rounded-full text-xs font-medium">
+                    Min Posts: <%= params[:min_posts] %>
+                  </span>
+                <% end %>
+                <% if params[:min_comments].present? %>
+                  <span class="px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-medium">
+                    Min Comments: <%= params[:min_comments] %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          
+          <div class="text-slate-500">
+            <i class="fas fa-users mr-1"></i>
+            Showing <%= @users.respond_to?(:count) ? @users.count : @users.size %> of <%= @total_users %> users
+            <% if ['search', 'role', 'activity', 'joined'].any? { |key| params[key].present? } %>
+              <span class="text-blue-600 font-medium">(filtered)</span>
+            <% end %>
+          </div>
         </div>
       </div>
     <% end %>
   </div>
 </div>
 
-<!-- Users Table -->
-<div class="table-container mb-8">
-  <div class="card-header">
+  <!-- Include Enhanced Table Styles -->
+  <%= render 'shared/enhanced_table_styles' unless @enhanced_styles_included %>
+  <% @enhanced_styles_included = true %>
+
+<!-- Enhanced Users Table with Column-based Data Display -->
+<div class="enhanced-table-container mb-8 enhanced-fade-in">
+  <div class="enhanced-table-header">
     <div class="flex items-center justify-between">
       <div>
-        <h3 class="card-title">
-          <i class="fas fa-users mr-2" style="color: #3b82f6;"></i>
-          All Users
-        </h3>
-        <p class="card-subtitle mt-1">Manage user accounts and permissions</p>
+        <h2 class="enhanced-table-title">
+          <i class="fas fa-users" style="color: #3b82f6;"></i>
+          User Management & Administration
+        </h2>
+        <p class="enhanced-table-subtitle">Manage user accounts, roles, permissions, and monitor community engagement - track user activity and growth</p>
       </div>
-      <div class="flex space-x-2">
-        <%= link_to new_admin_user_path, class: "btn btn-primary btn-sm" do %>
-          <i class="fas fa-plus mr-1"></i> Add User
+      <div class="flex items-center space-x-4">
+        <div class="enhanced-stats-group">
+          <div class="enhanced-stat-item">
+            <i class="fas fa-users"></i>
+            <span><%= @total_users %> Total Users</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-crown text-red-500"></i>
+            <span><%= @admin_users %> Admins</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-shield-alt text-yellow-500"></i>
+            <span><%= @moderator_users %> Moderators</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-user-plus text-green-500"></i>
+            <span><%= @users_today %> Today</span>
+          </div>
+        </div>
+        <%= link_to new_admin_user_path, class: "btn btn-primary hover:scale-105 transition-transform" do %>
+          <i class="fas fa-user-plus mr-2"></i> Add New User
         <% end %>
       </div>
     </div>
   </div>
-  
-  <div class="overflow-x-auto">
-    <table class="table admin-table">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Email & Activity</th>
-          <th>Role</th>
-          <th class="hidden md:table-cell">Statistics</th>
-          <th class="hidden lg:table-cell">Joined</th>
-          <th>Status</th>
-          <th class="text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @users.each do |user| %>
+    
+    <div class="overflow-x-auto">
+      <table class="enhanced-table">
+        <thead>
           <tr>
+            <th><i class="fas fa-user-circle mr-2"></i>User Profile & Identity</th>
+            <th><i class="fas fa-envelope mr-2"></i>Contact & Activity</th>
+            <th><i class="fas fa-user-tag mr-2"></i>Role & Permissions</th>
+            <th class="hidden lg:table-cell"><i class="fas fa-chart-bar mr-2"></i>Engagement & Stats</th>
+            <th class="text-right"><i class="fas fa-tools mr-2"></i>Management</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @users.each do |user| %>
+          <tr class="enhanced-fade-in">
+            <!-- User Profile & Identity Column -->
             <td>
-              <div class="flex items-center space-x-3">
+              <div class="enhanced-user-info">
                 <div class="flex-shrink-0">
                   <% if user.avatar.attached? %>
-                    <%= image_tag user.avatar, class: "admin-avatar" %>
+                    <%= image_tag user.avatar, class: "enhanced-avatar", alt: user.username %>
                   <% else %>
-                    <div class="admin-avatar bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                      <span class="text-sm font-bold text-white"><%= user.username&.first&.upcase || 'U' %></span>
+                    <div class="enhanced-avatar-placeholder bg-gradient-to-br from-blue-500 to-purple-600">
+                      <%= user.username&.first&.upcase || 'U' %>
                     </div>
                   <% end %>
                 </div>
-                <div>
-                  <div class="font-semibold text-gray-900"><%= user.username || 'Unknown User' %></div>
-                  <div class="text-sm text-gray-500"><%= "#{user.first_name} #{user.last_name}".strip.presence || 'No name set' %></div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div class="font-medium text-gray-900"><%= user.email %></div>
-              <div class="text-xs text-gray-500">
-                <%= user.last_sign_in_at.present? ? "Last active #{time_ago_in_words(user.last_sign_in_at)} ago" : 'Never logged in' %>
-              </div>
-            </td>
-            <td>
-              <% case user.role %>
-              <% when 'admin' %>
-                <span class="badge bg-red-500">
-                  <i class="fas fa-crown mr-1"></i> Admin
-                </span>
-              <% when 'moderator' %>
-                <span class="badge bg-yellow-500">
-                  <i class="fas fa-shield-alt mr-1"></i> Moderator
-                </span>
-              <% else %>
-                <span class="badge bg-blue-500">
-                  <i class="fas fa-user mr-1"></i> User
-                </span>
-              <% end %>
-            </td>
-            <td class="hidden md:table-cell">
-              <div class="flex flex-col space-y-1 text-sm">
-                <div class="flex items-center text-gray-600">
-                  <i class="fas fa-edit text-blue-500 mr-1"></i>
-                  <span><%= user.posts.count %> posts</span>
-                </div>
-                <div class="flex items-center text-gray-600">
-                  <i class="fas fa-comments text-green-500 mr-1"></i>
-                  <span><%= user.comments.count %> comments</span>
-                </div>
-              </div>
-            </td>
-            <td class="hidden lg:table-cell">
-              <div class="text-sm text-gray-900"><%= time_ago_in_words(user.created_at) %> ago</div>
-              <div class="text-xs text-gray-500"><%= user.created_at.strftime('%b %d, %Y') %></div>
-            </td>
-            <td>
-              <% if user.last_sign_in_at.present? && user.last_sign_in_at > 5.minutes.ago %>
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  <div class="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5 animate-pulse"></div>
-                  Online
-                </span>
-              <% elsif user.last_sign_in_at.present? && user.last_sign_in_at > 1.day.ago %>
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  <div class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-1.5"></div>
-                  Recent
-                </span>
-              <% elsif user.last_sign_in_at.present? %>
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                  <div class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></div>
-                  Inactive
-                </span>
-              <% else %>
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                  <div class="w-1.5 h-1.5 bg-gray-400 rounded-full mr-1.5"></div>
-                  New
-                </span>
-              <% end %>
-            </td>
-            <td class="text-right">
-              <div class="flex items-center justify-end space-x-2">
-                <%= link_to edit_admin_user_path(user), 
-                      class: "btn btn-secondary btn-sm",
-                      title: "Edit user" do %>
-                  <i class="fas fa-edit mr-1"></i> Edit
-                <% end %>
-                
-                <div class="relative inline-block text-left">
-                  <button type="button" class="btn btn-secondary btn-sm user-actions-toggle"
-                          data-user-id="<%= user.id %>">
-                    <i class="fas fa-ellipsis-v"></i>
-                  </button>
-                  
-                  <div class="user-actions-menu hidden absolute right-0 z-10 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-gray-200 focus:outline-none"
-                       data-user-id="<%= user.id %>">
-                    <div class="py-1">
-                      <%= link_to user_path(user), 
-                            class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50", 
-                            target: "_blank" do %>
-                        <i class="fas fa-eye mr-2 text-blue-500"></i> View Profile
-                      <% end %>
-                      <% unless user == current_user %>
-                        <% if user.role != 'admin' %>
-                          <%= link_to toggle_admin_admin_user_path(user), 
-                                method: :patch,
-                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50",
-                                data: { confirm: "Make this user an admin?" } do %>
-                            <i class="fas fa-crown mr-2 text-red-500"></i> Make Admin
-                          <% end %>
-                        <% end %>
-                        <% if user.role == 'user' %>
-                          <%= link_to admin_user_path(user), 
-                                method: :patch,
-                                params: { user: { role: 'moderator' } },
-                                class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50",
-                                data: { confirm: "Make this user a moderator?" } do %>
-                            <i class="fas fa-shield-alt mr-2 text-yellow-500"></i> Make Moderator
-                          <% end %>
-                        <% end %>
-                        <div class="border-t border-gray-200"></div>
-                        <%= link_to admin_user_path(user), 
-                              method: :delete,
-                              class: "block px-4 py-2 text-sm text-red-600 hover:bg-red-50",
-                              data: { confirm: "Are you sure? This action cannot be undone." } do %>
-                          <i class="fas fa-trash mr-2"></i> Delete User
-                        <% end %>
-                      <% else %>
-                        <span class="block px-4 py-2 text-sm text-gray-500">
-                          <i class="fas fa-user mr-2"></i> Your account
-                        </span>
-                      <% end %>
+                <div class="enhanced-user-details">
+                  <h4><%= user.username || 'Unknown User' %></h4>
+                  <div class="enhanced-content-meta">
+                    <span class="enhanced-stat-item text-xs">
+                      <i class="fas fa-id-card"></i>
+                      <span><%= "#{user.first_name} #{user.last_name}".strip.presence || 'No full name set' %></span>
+                    </span>
+                    <span class="enhanced-stat-item text-xs">
+                      <i class="fas fa-calendar-plus"></i>
+                      <span>Joined <%= time_ago_in_words(user.created_at) %> ago</span>
+                    </span>
+                    <div class="mt-2">
+                      <span class="enhanced-badge enhanced-badge-secondary text-xs">
+                        <i class="fas fa-hash mr-1"></i>
+                        ID: <%= user.id %>
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
             </td>
+            
+            <!-- Contact & Activity Column -->
+            <td>
+              <div class="space-y-3">
+                <div class="enhanced-content-preview">
+                  <div class="enhanced-content-meta">
+                    <span class="enhanced-stat-item">
+                      <i class="fas fa-envelope text-blue-500"></i>
+                      <span class="font-medium"><%= user.email %></span>
+                    </span>
+                    <span class="enhanced-stat-item">
+                      <i class="fas fa-clock text-green-500"></i>
+                      <span><%= user.created_at.strftime('%b %d, %Y') %></span>
+                    </span>
+                  </div>
+                  
+                  <!-- Activity Status -->
+                  <div class="mt-3">
+                    <% if user.last_sign_in_at.present? && user.last_sign_in_at > 5.minutes.ago %>
+                      <div class="enhanced-status-indicator enhanced-status-online">
+                        🟢 Currently Online
+                      </div>
+                      <div class="text-xs text-slate-500 mt-1">
+                        Active now
+                      </div>
+                    <% elsif user.last_sign_in_at.present? && user.last_sign_in_at > 1.day.ago %>
+                      <div class="enhanced-status-indicator enhanced-status-recent">
+                        🔵 Recently Active
+                      </div>
+                      <div class="text-xs text-slate-500 mt-1">
+                        Last seen <%= time_ago_in_words(user.last_sign_in_at) %> ago
+                      </div>
+                    <% elsif user.last_sign_in_at.present? %>
+                      <div class="enhanced-status-indicator enhanced-status-inactive">
+                        ⚫ Inactive User
+                      </div>
+                      <div class="text-xs text-slate-500 mt-1">
+                        Last seen <%= time_ago_in_words(user.last_sign_in_at) %> ago
+                      </div>
+                    <% else %>
+                      <div class="enhanced-status-indicator enhanced-status-inactive">
+                        👻 Never Logged In
+                      </div>
+                      <div class="text-xs text-slate-500 mt-1">
+                        Account created but never used
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </td>
+            
+            <!-- Role & Permissions Column -->
+            <td>
+              <div class="space-y-3">
+                <% case user.role %>
+                <% when 'admin' %>
+                  <div class="enhanced-badge enhanced-badge-danger">
+                    <i class="fas fa-crown mr-1"></i>
+                    Administrator
+                  </div>
+                  <div class="text-xs text-slate-500 mt-1">
+                    Full system access & control
+                  </div>
+                <% when 'moderator' %>
+                  <div class="enhanced-badge enhanced-badge-warning">
+                    <i class="fas fa-shield-alt mr-1"></i>
+                    Moderator
+                  </div>
+                  <div class="text-xs text-slate-500 mt-1">
+                    Content moderation privileges
+                  </div>
+                <% else %>
+                  <div class="enhanced-badge enhanced-badge-primary">
+                    <i class="fas fa-user mr-1"></i>
+                    Regular User
+                  </div>
+                  <div class="text-xs text-slate-500 mt-1">
+                    Standard community member
+                  </div>
+                <% end %>
+                
+                <!-- Role assignment buttons -->
+                <div class="mt-3 space-y-1">
+                  <% unless user == current_user %>
+                    <% if user.role != 'admin' %>
+                      <%= link_to toggle_admin_admin_user_path(user), 
+                            method: :patch,
+                            class: "enhanced-action-btn enhanced-action-btn-danger",
+                            title: "Promote to Admin",
+                            data: { confirm: "Grant administrator privileges to #{user.username}?" } do %>
+                        <i class="fas fa-crown"></i>
+                      <% end %>
+                    <% end %>
+                    <% if user.role == 'user' %>
+                      <%= link_to admin_user_path(user), 
+                            method: :patch,
+                            params: { user: { role: 'moderator' } },
+                            class: "enhanced-action-btn enhanced-action-btn-warning",
+                            title: "Promote to Moderator",
+                            data: { confirm: "Grant moderator privileges to #{user.username}?" } do %>
+                        <i class="fas fa-shield-alt"></i>
+                      <% end %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+            
+            <!-- Engagement & Stats Column (Desktop only) -->
+            <td class="hidden lg:table-cell">
+              <div class="space-y-3">
+                <div class="enhanced-stats-group flex-col items-start gap-2">
+                  <div class="enhanced-stat-item">
+                    <i class="fas fa-newspaper text-blue-500"></i>
+                    <span><%= user.posts.count %> Posts Published</span>
+                  </div>
+                  <div class="enhanced-stat-item">
+                    <i class="fas fa-comments text-green-500"></i>
+                    <span><%= user.comments.count %> Comments Made</span>
+                  </div>
+                  <div class="enhanced-stat-item">
+                    <i class="fas fa-thumbs-up text-purple-500"></i>
+                    <span><%= user.posts.count + user.comments.count %> Total Contributions</span>
+                  </div>
+                </div>
+                
+                <!-- Engagement level visualization -->
+                <div class="mt-3">
+                  <% engagement_level = (user.posts.count + user.comments.count) %>
+                  <% if engagement_level >= 50 %>
+                    <div class="text-xs text-green-600 font-medium mb-1">🌟 Highly Engaged</div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                  <% elsif engagement_level >= 10 %>
+                    <div class="text-xs text-blue-600 font-medium mb-1">⚡ Active Member</div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 70%"></div>
+                    </div>
+                  <% elsif engagement_level > 0 %>
+                    <div class="text-xs text-yellow-600 font-medium mb-1">🌱 Getting Started</div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-yellow-500 h-2 rounded-full transition-all duration-300" style="width: 30%"></div>
+                    </div>
+                  <% else %>
+                    <div class="text-xs text-gray-500 font-medium mb-1">😴 No Activity Yet</div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-gray-400 h-2 rounded-full transition-all duration-300" style="width: 5%"></div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+            
+            <!-- Management Column -->
+            <td class="text-right">
+              <div class="enhanced-action-buttons">
+                <%= link_to user_path(user), 
+                      class: "enhanced-action-btn enhanced-action-btn-view", 
+                      target: "_blank",
+                      title: "View user profile" do %>
+                  <i class="fas fa-eye"></i>
+                <% end %>
+                
+                <%= link_to edit_admin_user_path(user), 
+                      class: "enhanced-action-btn enhanced-action-btn-edit", 
+                      title: "Edit user details" do %>
+                  <i class="fas fa-user-edit"></i>
+                <% end %>
+                
+                <% unless user == current_user %>
+                  <%= link_to admin_user_path(user), 
+                        method: :delete,
+                        class: "enhanced-action-btn enhanced-action-btn-danger",
+                        title: "Delete user account",
+                        data: { confirm: "⚠️ WARNING: This will permanently delete #{user.username}'s account and all associated data.\n\nThis action cannot be undone. Are you absolutely sure?" } do %>
+                    <i class="fas fa-user-times"></i>
+                  <% end %>
+                <% else %>
+                  <div class="enhanced-action-btn enhanced-action-btn-secondary" title="Your account">
+                    <i class="fas fa-user-check"></i>
+                  </div>
+                <% end %>
+              </div>
+            </td>
           </tr>
         <% end %>
-      </tbody>
-    </table>
-  </div>
-  
-  <!-- Table Footer -->
-  <div class="card-footer">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center text-sm text-gray-600">
-        <span>Showing <%= @users.respond_to?(:count) ? @users.count : @users.size %> of <%= @total_users %> users</span>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Enhanced Table Footer -->
+    <div class="enhanced-table-footer">
+      <div class="enhanced-footer-stats">
+        <div class="enhanced-stat-item">
+          <i class="fas fa-users text-blue-500"></i>
+          <span><%= @users.respond_to?(:count) ? @users.count : @users.size %> Users Displayed</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-crown text-red-500"></i>
+          <span><%= @admin_users %> Administrators</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-shield-alt text-yellow-500"></i>
+          <span><%= @moderator_users %> Moderators</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-user-plus text-green-500"></i>
+          <span><%= @users_today %> New Today</span>
+        </div>
       </div>
-      <div class="flex items-center space-x-2">
-        <% if @users.respond_to?(:current_page) %>
-          <div class="pagination-info text-sm text-gray-500">
+      
+      <% if @users.respond_to?(:current_page) %>
+        <div class="enhanced-pagination">
+          <span class="enhanced-pagination-info">
             Page <%= @users.current_page %> of <%= @users.total_pages %>
-          </div>
-          <div class="pagination-controls flex space-x-2">
+          </span>
+          <div class="enhanced-pagination-controls">
             <% if @users.prev_page %>
-              <%= link_to "Previous", admin_users_path(page: @users.prev_page, search: params[:search], role: params[:role]), 
-                    class: "btn btn-secondary btn-sm" %>
+              <%= link_to admin_users_path(page: @users.prev_page, search: params[:search], role: params[:role], activity: params[:activity], joined: params[:joined]), 
+                    class: "enhanced-pagination-btn enhanced-pagination-prev" do %>
+                <i class="fas fa-chevron-left"></i> Previous
+              <% end %>
             <% end %>
             <% if @users.next_page %>
-              <%= link_to "Next", admin_users_path(page: @users.next_page, search: params[:search], role: params[:role]), 
-                    class: "btn btn-primary btn-sm" %>
+              <%= link_to admin_users_path(page: @users.next_page, search: params[:search], role: params[:role], activity: params[:activity], joined: params[:joined]), 
+                    class: "enhanced-pagination-btn enhanced-pagination-next" do %>
+                Next <i class="fas fa-chevron-right"></i>
+              <% end %>
             <% end %>
           </div>
-        <% else %>
-          <span class="text-sm text-gray-500">Page 1 of 1</span>
-        <% end %>
-      </div>
+        </div>
+      <% else %>
+        <div class="enhanced-pagination">
+          <span class="enhanced-pagination-info">Page 1 of 1</span>
+        </div>
+      <% end %>
     </div>
-  </div>
 </div>
 
 <!-- User Actions JavaScript -->
@@ -339,6 +685,231 @@ document.addEventListener('DOMContentLoaded', function() {
     menu.addEventListener('click', function(e) {
       e.stopPropagation();
     });
+  });
+});
+</script>
+
+<!-- Enhanced Search & Filter JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Advanced options toggle
+  const advancedToggle = document.getElementById('advanced-toggle');
+  const advancedRow = document.querySelector('.enhanced-search-row[style*="opacity: 0.9"]');
+  
+  if (advancedToggle && advancedRow) {
+    let isAdvancedVisible = false;
+    
+    // Initially hide advanced options
+    advancedRow.style.display = 'none';
+    
+    advancedToggle.addEventListener('click', function() {
+      isAdvancedVisible = !isAdvancedVisible;
+      
+      if (isAdvancedVisible) {
+        advancedRow.style.display = 'grid';
+        setTimeout(() => {
+          advancedRow.style.opacity = '1';
+          advancedRow.style.transform = 'translateY(0)';
+        }, 10);
+        this.innerHTML = '<i class="fas fa-sliders-v mr-2"></i>Hide Advanced';
+        this.classList.add('enhanced-search-btn-primary');
+        this.classList.remove('enhanced-search-btn-secondary');
+      } else {
+        advancedRow.style.opacity = '0.5';
+        advancedRow.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+          advancedRow.style.display = 'none';
+        }, 200);
+        this.innerHTML = '<i class="fas fa-sliders-h mr-2"></i>Advanced Options';
+        this.classList.remove('enhanced-search-btn-primary');
+        this.classList.add('enhanced-search-btn-secondary');
+      }
+    });
+    
+    // Set initial styles for smooth animation
+    advancedRow.style.transition = 'all 0.3s ease-in-out';
+    advancedRow.style.opacity = '0.5';
+    advancedRow.style.transform = 'translateY(-10px)';
+  }
+  
+  // Real-time search with debouncing
+  const searchInput = document.querySelector('input[data-search-target="input"]');
+  if (searchInput) {
+    let searchTimeout;
+    const delay = parseInt(searchInput.dataset.searchDelay) || 300;
+    
+    searchInput.addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      const query = this.value.trim();
+      
+      // Visual feedback
+      if (query.length > 0) {
+        this.classList.add('border-blue-500', 'ring-2', 'ring-blue-100');
+      } else {
+        this.classList.remove('border-blue-500', 'ring-2', 'ring-blue-100');
+      }
+      
+      if (query.length >= 3) {
+        searchTimeout = setTimeout(() => {
+          // Here you could implement live search results
+          console.log('Searching for:', query);
+          // For now, we'll just add visual feedback
+          showSearchFeedback(query);
+        }, delay);
+      }
+    });
+  }
+  
+  // Form validation and enhancement
+  const searchForm = document.querySelector('.enhanced-search-form');
+  if (searchForm) {
+    searchForm.addEventListener('submit', function(e) {
+      // Add loading state to submit button
+      const submitBtn = this.querySelector('input[type="submit"]');
+      if (submitBtn) {
+        const originalText = submitBtn.value;
+        submitBtn.value = '🔄 Searching...';
+        submitBtn.disabled = true;
+        
+        // Re-enable after a delay (in case of quick back navigation)
+        setTimeout(() => {
+          submitBtn.value = originalText;
+          submitBtn.disabled = false;
+        }, 3000);
+      }
+    });
+  }
+  
+  // Enhanced dropdown interactions
+  const selects = document.querySelectorAll('.enhanced-form-select');
+  selects.forEach(select => {
+    select.addEventListener('change', function() {
+      // Add visual feedback for active filters
+      if (this.value !== '') {
+        this.classList.add('border-blue-500', 'bg-blue-50');
+      } else {
+        this.classList.remove('border-blue-500', 'bg-blue-50');
+      }
+    });
+    
+    // Initialize state
+    if (select.value !== '') {
+      select.classList.add('border-blue-500', 'bg-blue-50');
+    }
+  });
+  
+  // Auto-submit form when certain filters change (optional)
+  const autoSubmitSelects = document.querySelectorAll('select[name="role"], select[name="activity"], select[name="sort"]');
+  autoSubmitSelects.forEach(select => {
+    select.addEventListener('change', function() {
+      // Uncomment the next line to enable auto-submit
+      // this.form.submit();
+    });
+  });
+  
+  // Enhanced table interactions
+  const tableRows = document.querySelectorAll('.enhanced-table tbody tr');
+  tableRows.forEach((row, index) => {
+    // Stagger animation delays
+    row.style.animationDelay = `${index * 50}ms`;
+    
+    // Add hover effects
+    row.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateX(4px)';
+    });
+    
+    row.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateX(0)';
+    });
+  });
+  
+  // Action button confirmations with enhanced styling
+  const dangerButtons = document.querySelectorAll('.enhanced-action-btn-danger');
+  dangerButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      if (this.dataset.confirm) {
+        e.preventDefault();
+        
+        // Create custom confirmation dialog
+        const confirmed = confirm(this.dataset.confirm);
+        if (confirmed) {
+          // Add loading state
+          const icon = this.querySelector('i');
+          if (icon) {
+            icon.className = 'fas fa-spinner fa-spin';
+          }
+          
+          // Navigate to the link
+          if (this.href) {
+            window.location.href = this.href;
+          } else if (this.dataset.method) {
+            // Handle Rails UJS links
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = this.href || this.dataset.url;
+            
+            const methodInput = document.createElement('input');
+            methodInput.type = 'hidden';
+            methodInput.name = '_method';
+            methodInput.value = this.dataset.method;
+            form.appendChild(methodInput);
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'authenticity_token';
+            csrfInput.value = document.querySelector('meta[name="csrf-token"]').content;
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+          }
+        }
+      }
+    });
+  });
+  
+  // Utility function for search feedback
+  function showSearchFeedback(query) {
+    // Remove existing feedback
+    const existingFeedback = document.querySelector('.search-feedback');
+    if (existingFeedback) {
+      existingFeedback.remove();
+    }
+    
+    // Create and show new feedback
+    const feedback = document.createElement('div');
+    feedback.className = 'search-feedback absolute top-full left-0 right-0 mt-1 p-2 bg-white border border-gray-200 rounded-lg shadow-lg text-sm text-gray-600 z-10';
+    feedback.innerHTML = `<i class="fas fa-search mr-2 text-blue-500"></i>Press Enter to search for "<strong>${query}</strong>" or continue typing...`;
+    
+    const searchContainer = searchInput.parentElement;
+    searchContainer.style.position = 'relative';
+    searchContainer.appendChild(feedback);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      if (feedback.parentElement) {
+        feedback.remove();
+      }
+    }, 3000);
+  }
+  
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    // Focus search on Ctrl/Cmd + F
+    if ((e.ctrlKey || e.metaKey) && e.key === 'f' && searchInput) {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+    
+    // Clear form on Ctrl/Cmd + R (when not refreshing page)
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'R') {
+      e.preventDefault();
+      const clearLink = document.querySelector('a[href*="admin_users_path"]');
+      if (clearLink && clearLink.textContent.includes('Clear')) {
+        window.location.href = clearLink.href;
+      }
+    }
   });
 });
 </script>

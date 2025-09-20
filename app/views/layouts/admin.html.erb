@@ -48,38 +48,290 @@
     </div>
     <% end %>
 
-    <!-- Admin Header -->
-    <header class="bg-gray-800 border-b border-gray-700 shadow-lg">
-      <div class="container mx-auto px-4 py-3">
+    <!-- Enhanced Admin Header -->
+    <header class="bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 border-b border-slate-700 shadow-2xl relative overflow-hidden">
+      <!-- Animated background elements -->
+      <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-1/3 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      </div>
+      
+      <div class="relative container mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <h1 class="text-xl font-bold text-white mr-4">Admin Dashboard</h1>
+          <!-- Left section with logo and title -->
+          <div class="flex items-center space-x-4">
+            <!-- Mobile menu toggle -->
+            <button id="mobile-menu-toggle" class="lg:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700 transition-all duration-200">
+              <i class="fas fa-bars text-lg"></i>
+            </button>
+            
+            <!-- Logo and title -->
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <i class="fas fa-shield-alt text-white text-xl"></i>
+              </div>
+              <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Admin Panel</h1>
+                <p class="text-slate-300 text-sm font-medium">Naija Forum Management</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <%= link_to "Back to Site", root_path, class: "text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium" %>
+          
+          <!-- Center section with search -->
+          <div class="hidden md:flex flex-1 max-w-lg mx-8">
+            <div class="relative w-full">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-slate-400"></i>
+              </div>
+              <input type="text" id="global-search" placeholder="Quick search users, posts, comments..." 
+                     class="block w-full pl-10 pr-4 py-2 border border-slate-600 rounded-xl bg-slate-700/50 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 backdrop-blur-sm">
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <kbd class="hidden sm:inline-block px-2 py-1 text-xs font-semibold text-slate-400 bg-slate-600 border border-slate-500 rounded">
+                  ⌘K
+                </kbd>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right section with user menu -->
+          <div class="flex items-center space-x-4">
+            <!-- Notifications -->
+            <div class="relative">
+              <button class="p-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-all duration-200 relative">
+                <i class="fas fa-bell text-lg"></i>
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">3</span>
+              </button>
+            </div>
+            
+            <!-- Quick actions -->
+            <div class="relative">
+              <button id="quick-actions-toggle" class="p-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-all duration-200">
+                <i class="fas fa-plus text-lg"></i>
+              </button>
+              
+              <!-- Quick actions dropdown -->
+              <div id="quick-actions-menu" class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 z-50 transform opacity-0 scale-95 transition-all duration-200 pointer-events-none">
+                <div class="p-2">
+                  <div class="grid grid-cols-2 gap-2">
+                    <%= link_to new_admin_user_path, class: "flex items-center p-3 text-slate-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition-all duration-150" do %>
+                      <i class="fas fa-user-plus text-lg mr-3"></i>
+                      <span class="font-medium">Add User</span>
+                    <% end %>
+                    <%= link_to admin_posts_path, class: "flex items-center p-3 text-slate-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-all duration-150" do %>
+                      <i class="fas fa-newspaper text-lg mr-3"></i>
+                      <span class="font-medium">Manage Posts</span>
+                    <% end %>
+                    <%= link_to new_admin_category_path, class: "flex items-center p-3 text-slate-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg transition-all duration-150" do %>
+                      <i class="fas fa-tags text-lg mr-3"></i>
+                      <span class="font-medium">Add Category</span>
+                    <% end %>
+                    <%= link_to admin_comments_path, class: "flex items-center p-3 text-slate-700 hover:bg-orange-50 hover:text-orange-700 rounded-lg transition-all duration-150" do %>
+                      <i class="fas fa-flag text-lg mr-3"></i>
+                      <span class="font-medium">Moderate</span>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- User profile menu -->
+            <div class="relative">
+              <button id="user-menu-toggle" class="flex items-center space-x-3 p-2 text-slate-300 hover:text-white hover:bg-slate-700 rounded-lg transition-all duration-200">
+                <% if current_user&.avatar&.attached? %>
+                  <%= image_tag current_user.avatar, class: "w-8 h-8 rounded-lg object-cover border-2 border-slate-600" %>
+                <% else %>
+                  <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center border-2 border-slate-600">
+                    <span class="text-white font-bold text-sm"><%= current_user&.username&.first&.upcase || 'A' %></span>
+                  </div>
+                <% end %>
+                <div class="hidden sm:block text-left">
+                  <p class="text-sm font-semibold text-white"><%= current_user&.username || 'Admin' %></p>
+                  <p class="text-xs text-slate-300">Administrator</p>
+                </div>
+                <i class="fas fa-chevron-down text-xs ml-2"></i>
+              </button>
+              
+              <!-- User dropdown menu -->
+              <div id="user-menu" class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-slate-200 z-50 transform opacity-0 scale-95 transition-all duration-200 pointer-events-none">
+                <div class="p-2">
+                  <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-2">
+                    Account
+                  </div>
+                  <% if current_user %>
+                    <%= link_to user_path(current_user), target: "_blank", class: "flex items-center px-3 py-2 text-slate-700 hover:bg-slate-50 rounded-lg transition-all duration-150" do %>
+                      <i class="fas fa-user text-blue-500 mr-3"></i>
+                      <span>View Profile</span>
+                      <i class="fas fa-external-link-alt text-xs ml-auto text-slate-400"></i>
+                    <% end %>
+                    <%= link_to edit_user_registration_path, target: "_blank", class: "flex items-center px-3 py-2 text-slate-700 hover:bg-slate-50 rounded-lg transition-all duration-150" do %>
+                      <i class="fas fa-cog text-slate-500 mr-3"></i>
+                      <span>Account Settings</span>
+                      <i class="fas fa-external-link-alt text-xs ml-auto text-slate-400"></i>
+                    <% end %>
+                  <% end %>
+                  
+                  <div class="my-2 border-t border-slate-100"></div>
+                  
+                  <%= link_to root_path, target: "_blank", class: "flex items-center px-3 py-2 text-slate-700 hover:bg-green-50 hover:text-green-700 rounded-lg transition-all duration-150" do %>
+                    <i class="fas fa-home text-green-500 mr-3"></i>
+                    <span>Visit Site</span>
+                    <i class="fas fa-external-link-alt text-xs ml-auto text-slate-400"></i>
+                  <% end %>
+                  
+                  <div class="my-2 border-t border-slate-100"></div>
+                  
+                  <%= link_to destroy_user_session_path, method: :delete, class: "flex items-center px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-150" do %>
+                    <i class="fas fa-sign-out-alt text-red-500 mr-3"></i>
+                    <span>Sign Out</span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- Admin Navigation -->
-    <nav class="bg-gray-800 py-3 border-b border-gray-700">
-      <div class="container mx-auto px-4">
-        <div class="flex space-x-4 overflow-x-auto">
-          <%= link_to "Dashboard", admin_root_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap #{'bg-gray-700 text-white' if controller_name == 'dashboard'}" %>
-          <%= link_to "Users", admin_users_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap #{'bg-gray-700 text-white' if controller_name == 'users'}" %>
-          <%= link_to "Posts", admin_posts_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap #{'bg-gray-700 text-white' if controller_name == 'posts'}" %>
-          <%= link_to "Categories", admin_categories_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap #{'bg-gray-700 text-white' if controller_name == 'categories'}" %>
-          <%= link_to "Comments", admin_comments_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap #{'bg-gray-700 text-white' if controller_name == 'comments'}" %>
-          <%= link_to "Tags", admin_tags_path, class: "text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap #{'bg-gray-700 text-white' if controller_name == 'tags'}" %>
+    <!-- Enhanced Admin Navigation -->
+    <nav class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-b border-slate-700/50 shadow-lg relative">
+      <!-- Navigation background accent -->
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-cyan-500/5"></div>
+      
+      <div class="relative container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <!-- Main navigation -->
+          <div class="flex items-center space-x-1">
+            <!-- Dashboard -->
+            <%= link_to admin_root_path, 
+                class: "group flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 #{
+                  if controller_name == 'dashboard'
+                    'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 transform scale-105'
+                  else
+                    'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                  end
+                }" do %>
+              <i class="fas fa-tachometer-alt mr-3 text-lg transition-transform duration-200 group-hover:scale-110"></i>
+              <span>Dashboard</span>
+              <% if controller_name == 'dashboard' %>
+                <div class="ml-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <% end %>
+            <% end %>
+            
+            <!-- Users -->
+            <%= link_to admin_users_path, 
+                class: "group flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 #{
+                  if controller_name == 'users'
+                    'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25 transform scale-105'
+                  else
+                    'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                  end
+                }" do %>
+              <i class="fas fa-users mr-3 text-lg transition-transform duration-200 group-hover:scale-110"></i>
+              <span>Users</span>
+              <% if controller_name == 'users' %>
+                <div class="ml-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <% end %>
+            <% end %>
+            
+            <!-- Posts -->
+            <%= link_to admin_posts_path, 
+                class: "group flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 #{
+                  if controller_name == 'posts'
+                    'bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25 transform scale-105'
+                  else
+                    'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                  end
+                }" do %>
+              <i class="fas fa-newspaper mr-3 text-lg transition-transform duration-200 group-hover:scale-110"></i>
+              <span>Posts</span>
+              <% if controller_name == 'posts' %>
+                <div class="ml-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <% end %>
+            <% end %>
+            
+            <!-- Categories -->
+            <%= link_to admin_categories_path, 
+                class: "group flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 #{
+                  if controller_name == 'categories'
+                    'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/25 transform scale-105'
+                  else
+                    'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                  end
+                }" do %>
+              <i class="fas fa-tags mr-3 text-lg transition-transform duration-200 group-hover:scale-110"></i>
+              <span>Categories</span>
+              <% if controller_name == 'categories' %>
+                <div class="ml-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <% end %>
+            <% end %>
+            
+            <!-- Comments -->
+            <%= link_to admin_comments_path, 
+                class: "group flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 #{
+                  if controller_name == 'comments'
+                    'bg-gradient-to-r from-cyan-500 to-teal-600 text-white shadow-lg shadow-cyan-500/25 transform scale-105'
+                  else
+                    'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                  end
+                }" do %>
+              <i class="fas fa-comments mr-3 text-lg transition-transform duration-200 group-hover:scale-110"></i>
+              <span>Comments</span>
+              <% if controller_name == 'comments' %>
+                <div class="ml-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <% end %>
+            <% end %>
+            
+            <!-- Tags -->
+            <%= link_to admin_tags_path, 
+                class: "group flex items-center px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 #{
+                  if controller_name == 'tags'
+                    'bg-gradient-to-r from-pink-500 to-rose-600 text-white shadow-lg shadow-pink-500/25 transform scale-105'
+                  else
+                    'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                  end
+                }" do %>
+              <i class="fas fa-hashtag mr-3 text-lg transition-transform duration-200 group-hover:scale-110"></i>
+              <span>Tags</span>
+              <% if controller_name == 'tags' %>
+                <div class="ml-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <% end %>
+            <% end %>
+          </div>
+          
+          <!-- Right section with breadcrumb and actions -->
+          <div class="hidden lg:flex items-center space-x-4">
+            <!-- Breadcrumb -->
+            <div class="flex items-center space-x-2 text-sm text-slate-400">
+              <i class="fas fa-home"></i>
+              <i class="fas fa-chevron-right text-xs"></i>
+              <span class="text-slate-300 font-medium">
+                <%= content_for(:page_title) || controller_name.humanize %>
+              </span>
+            </div>
+            
+            <!-- View toggle -->
+            <div class="flex items-center bg-slate-700/50 rounded-lg p-1">
+              <button class="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-600 rounded-md transition-all duration-150 #{'bg-slate-600 text-white' if params[:view] != 'compact'}">
+                <i class="fas fa-th-large mr-1"></i>
+                Card View
+              </button>
+              <button class="px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-600 rounded-md transition-all duration-150 #{'bg-slate-600 text-white' if params[:view] == 'compact'}">
+                <i class="fas fa-list mr-1"></i>
+                List View
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
 
     <!-- Main Layout -->
-    <div class="container mx-auto my-6 px-4">
-      <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-6">
-        <%= yield %>
+    <div class="container mx-auto my-6 px-4 max-w-full overflow-x-hidden">
+      <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-6 w-full max-w-full box-border">
+        <div class="w-full max-w-full overflow-x-hidden">
+          <%= yield %>
+        </div>
       </div>
     </div>
 
@@ -98,6 +350,329 @@
         </div>
       </div>
     </footer>
+    <!-- Enhanced Admin Header JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const nav = document.querySelector('nav');
+        
+        if (mobileMenuToggle) {
+          mobileMenuToggle.addEventListener('click', function() {
+            nav.classList.toggle('mobile-menu-open');
+          });
+        }
+        
+        // Quick actions dropdown
+        const quickActionsToggle = document.getElementById('quick-actions-toggle');
+        const quickActionsMenu = document.getElementById('quick-actions-menu');
+        
+        if (quickActionsToggle && quickActionsMenu) {
+          quickActionsToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleDropdown(quickActionsMenu);
+            // Close user menu if open
+            const userMenu = document.getElementById('user-menu');
+            if (userMenu && !userMenu.classList.contains('pointer-events-none')) {
+              closeDropdown(userMenu);
+            }
+          });
+        }
+        
+        // User menu dropdown
+        const userMenuToggle = document.getElementById('user-menu-toggle');
+        const userMenu = document.getElementById('user-menu');
+        
+        if (userMenuToggle && userMenu) {
+          userMenuToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleDropdown(userMenu);
+            // Close quick actions if open
+            if (quickActionsMenu && !quickActionsMenu.classList.contains('pointer-events-none')) {
+              closeDropdown(quickActionsMenu);
+            }
+          });
+        }
+        
+        // Global search functionality
+        const globalSearch = document.getElementById('global-search');
+        if (globalSearch) {
+          // Handle keyboard shortcut Cmd+K or Ctrl+K
+          document.addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+              e.preventDefault();
+              globalSearch.focus();
+            }
+            
+            // Handle Escape key to blur search
+            if (e.key === 'Escape' && document.activeElement === globalSearch) {
+              globalSearch.blur();
+            }
+          });
+          
+          // Add search functionality (basic implementation)
+          globalSearch.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            if (query.length > 2) {
+              // Here you would implement actual search functionality
+              console.log('Searching for:', query);
+              // You could make an AJAX call to search endpoint
+            }
+          });
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+          if (quickActionsMenu && !quickActionsMenu.classList.contains('pointer-events-none')) {
+            if (!quickActionsToggle.contains(e.target) && !quickActionsMenu.contains(e.target)) {
+              closeDropdown(quickActionsMenu);
+            }
+          }
+          
+          if (userMenu && !userMenu.classList.contains('pointer-events-none')) {
+            if (!userMenuToggle.contains(e.target) && !userMenu.contains(e.target)) {
+              closeDropdown(userMenu);
+            }
+          }
+        });
+        
+        // Dropdown utility functions
+        function toggleDropdown(dropdown) {
+          if (dropdown.classList.contains('pointer-events-none')) {
+            openDropdown(dropdown);
+          } else {
+            closeDropdown(dropdown);
+          }
+        }
+        
+        function openDropdown(dropdown) {
+          dropdown.classList.remove('pointer-events-none', 'opacity-0', 'scale-95');
+          dropdown.classList.add('opacity-100', 'scale-100');
+        }
+        
+        function closeDropdown(dropdown) {
+          dropdown.classList.add('pointer-events-none', 'opacity-0', 'scale-95');
+          dropdown.classList.remove('opacity-100', 'scale-100');
+        }
+        
+        // Navigation active state animation
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+          link.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('scale-105')) {
+              this.style.transform = 'translateY(-1px)';
+            }
+          });
+          
+          link.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('scale-105')) {
+              this.style.transform = 'translateY(0)';
+            }
+          });
+        });
+        
+        // Add loading states to action buttons
+        const actionButtons = document.querySelectorAll('a[href], button[type="submit"]');
+        actionButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            if (this.getAttribute('data-confirm')) return; // Skip for confirmation dialogs
+            
+            const icon = this.querySelector('i');
+            if (icon && !icon.classList.contains('fa-spin')) {
+              const originalClass = icon.className;
+              icon.className = 'fas fa-spinner fa-spin mr-1';
+              
+              setTimeout(() => {
+                icon.className = originalClass;
+              }, 2000);
+            }
+          });
+        });
+      });
+    </script>
+    
+    <!-- Enhanced Admin Styles -->
+    <style>
+      /* Blob animation for header background */
+      @keyframes blob {
+        0% {
+          transform: translate(0px, 0px) scale(1);
+        }
+        33% {
+          transform: translate(30px, -50px) scale(1.1);
+        }
+        66% {
+          transform: translate(-20px, 20px) scale(0.9);
+        }
+        100% {
+          transform: translate(0px, 0px) scale(1);
+        }
+      }
+      
+      .animate-blob {
+        animation: blob 7s infinite;
+      }
+      
+      .animation-delay-2000 {
+        animation-delay: 2s;
+      }
+      
+      .animation-delay-4000 {
+        animation-delay: 4s;
+      }
+      
+      /* Enhanced hover effects */
+      .group:hover .group-hover\\:scale-110 {
+        transform: scale(1.1);
+      }
+      
+      /* Mobile menu styles */
+      @media (max-width: 1023px) {
+        nav.mobile-menu-open .flex.items-center.space-x-1 {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          flex-direction: column;
+          align-items: stretch;
+          padding: 1rem;
+          space-x: 0;
+          gap: 0.5rem;
+          box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+          border-radius: 0 0 1rem 1rem;
+          z-index: 1000;
+        }
+        
+        nav.mobile-menu-open .flex.items-center.space-x-1 a {
+          justify-content: flex-start;
+          width: 100%;
+        }
+      }
+      
+      /* Smooth transitions for dropdowns */
+      #quick-actions-menu,
+      #user-menu {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      /* Custom scrollbar for dropdowns */
+      #quick-actions-menu::-webkit-scrollbar,
+      #user-menu::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      #quick-actions-menu::-webkit-scrollbar-track,
+      #user-menu::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 2px;
+      }
+      
+      #quick-actions-menu::-webkit-scrollbar-thumb,
+      #user-menu::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 2px;
+      }
+      
+      #quick-actions-menu::-webkit-scrollbar-thumb:hover,
+      #user-menu::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      
+      /* Enhanced focus styles */
+      #global-search:focus {
+        box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1), 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        background: rgba(30, 41, 59, 0.8);
+      }
+      
+      /* Notification badge animation */
+      @keyframes notification-pulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.1);
+          opacity: 0.8;
+        }
+      }
+      
+      .animate-pulse {
+        animation: notification-pulse 2s infinite;
+      }
+      
+      /* Additional container and responsive fixes */
+      * {
+        box-sizing: border-box;
+      }
+      
+      html {
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      body {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      /* Fix for admin layout container */
+      .bg-gray-800.border.border-gray-700.rounded-lg.shadow-xl {
+        max-width: 100%;
+        overflow-x: auto;
+        box-sizing: border-box;
+      }
+      
+      /* Grid and flex container fixes */
+      .grid {
+        min-width: 0;
+      }
+      
+      .flex {
+        min-width: 0;
+      }
+      
+      /* Specific fixes for enhanced search */
+      .enhanced-search-container {
+        overflow-x: hidden;
+      }
+      
+      /* Additional mobile fixes */
+      @media (max-width: 640px) {
+        .container {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+        
+        header .container {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        
+        nav .container {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+        
+        .enhanced-search-row {
+          grid-template-columns: 1fr !important;
+        }
+        
+        .enhanced-form-group {
+          width: 100%;
+          max-width: 100%;
+        }
+        
+        .enhanced-form-input, .enhanced-form-select {
+          width: 100% !important;
+          max-width: 100% !important;
+          min-width: 0 !important;
+        }
+      }
+    </style>
   </body>
 </html>
 

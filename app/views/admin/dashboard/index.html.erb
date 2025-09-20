@@ -1,97 +1,119 @@
 <% content_for :page_title, "Dashboard" %>
 <% content_for :page_subtitle, "Welcome back! Here's what's happening on your forum today." %>
 
-<!-- Enhanced Dashboard Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-  <!-- Users Stats -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
-      <i class="fas fa-users"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@stats[:users][:total]) %></div>
-    <div class="stat-label">Total Users</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-arrow-up mr-1"></i>
-      +<%= @stats[:users][:new_today] %> today
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:users][:new_today].to_f / [@stats[:users][:total], 1].max * 100).round(1) %>%"></div>
+<!-- Enhanced Dashboard Statistics Cards - Column Layout -->
+<div class="flex flex-col lg:flex-row gap-6 mb-8">
+  <!-- Left Column - User & Content Stats -->
+  <div class="flex-1 space-y-4">
+    <!-- Users Stats -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@stats[:users][:total]) %></div>
+          <div class="stat-label">Total Users</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +<%= @stats[:users][:new_today] %> today
+          </div>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-end space-y-2">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@stats[:users][:new_today].to_f / [@stats[:users][:total], 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+          <%= link_to admin_users_path, class: "btn btn-primary btn-sm group-hover:shadow-lg transition-all" do %>
+            <i class="fas fa-eye mr-1"></i> View All
+          <% end %>
+        </div>
       </div>
     </div>
-    <div class="mt-3">
-      <%= link_to admin_users_path, class: "btn btn-primary btn-sm group-hover:shadow-lg transition-all" do %>
-        <i class="fas fa-eye mr-1"></i> View All
-      <% end %>
+
+    <!-- Posts Stats -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <i class="fas fa-newspaper"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
+          <div class="stat-label">Total Posts</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +<%= @stats[:posts][:new_today] %> today
+          </div>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-end space-y-2">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-green-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@stats[:posts][:new_today].to_f / [@stats[:posts][:total], 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+          <%= link_to admin_posts_path, class: "btn btn-success btn-sm group-hover:shadow-lg transition-all" do %>
+            <i class="fas fa-cog mr-1"></i> Manage
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Posts Stats -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
-      <i class="fas fa-newspaper"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
-    <div class="stat-label">Total Posts</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-arrow-up mr-1"></i>
-      +<%= @stats[:posts][:new_today] %> today
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-green-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:posts][:new_today].to_f / [@stats[:posts][:total], 1].max * 100).round(1) %>%"></div>
+  <!-- Right Column - Engagement & Organization -->
+  <div class="flex-1 space-y-4">
+    <!-- Comments Stats -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <i class="fas fa-comments"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
+          <div class="stat-label">Total Comments</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +<%= @stats[:comments][:new_today] %> today
+          </div>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-end space-y-2">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-yellow-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@stats[:comments][:new_today].to_f / [@stats[:comments][:total], 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+          <%= link_to admin_comments_path, class: "btn btn-warning btn-sm group-hover:shadow-lg transition-all" do %>
+            <i class="fas fa-shield-alt mr-1"></i> Moderate
+          <% end %>
+        </div>
       </div>
     </div>
-    <div class="mt-3">
-      <%= link_to admin_posts_path, class: "btn btn-success btn-sm group-hover:shadow-lg transition-all" do %>
-        <i class="fas fa-cog mr-1"></i> Manage
-      <% end %>
-    </div>
-  </div>
 
-  <!-- Comments Stats -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-      <i class="fas fa-comments"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
-    <div class="stat-label">Total Comments</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-arrow-up mr-1"></i>
-      +<%= @stats[:comments][:new_today] %> today
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-yellow-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:comments][:new_today].to_f / [@stats[:comments][:total], 1].max * 100).round(1) %>%"></div>
+    <!-- Categories Stats -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+          <i class="fas fa-tags"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
+          <div class="stat-label">Categories</div>
+          <div class="stat-change mt-1 text-sm" style="color: #6b7280;">
+            <i class="fas fa-check mr-1"></i>
+            <%= @stats[:categories][:with_posts] %> active
+          </div>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-end space-y-2">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-purple-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@stats[:categories][:with_posts].to_f / [@stats[:categories][:total], 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+          <%= link_to admin_categories_path, class: "btn btn-secondary btn-sm group-hover:shadow-lg transition-all" do %>
+            <i class="fas fa-list mr-1"></i> Manage
+          <% end %>
+        </div>
       </div>
-    </div>
-    <div class="mt-3">
-      <%= link_to admin_comments_path, class: "btn btn-warning btn-sm group-hover:shadow-lg transition-all" do %>
-        <i class="fas fa-shield-alt mr-1"></i> Moderate
-      <% end %>
-    </div>
-  </div>
-
-  <!-- Categories Stats -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-      <i class="fas fa-tags"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
-    <div class="stat-label">Categories</div>
-    <div class="stat-change mt-2" style="color: #6b7280;">
-      <i class="fas fa-check mr-1"></i>
-      <%= @stats[:categories][:with_posts] %> active
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-purple-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:categories][:with_posts].to_f / [@stats[:categories][:total], 1].max * 100).round(1) %>%"></div>
-      </div>
-    </div>
-    <div class="mt-3">
-      <%= link_to admin_categories_path, class: "btn btn-secondary btn-sm group-hover:shadow-lg transition-all" do %>
-        <i class="fas fa-list mr-1"></i> Manage
-      <% end %>
     </div>
   </div>
 </div>

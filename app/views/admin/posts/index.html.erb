@@ -1,127 +1,309 @@
 <% content_for :page_title, "Posts Management" %>
 <% content_for :page_subtitle, "Manage forum posts, publications, and content moderation" %>
 
-<!-- Enhanced Stats Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-  <!-- Total Posts -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
-      <i class="fas fa-newspaper"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@total_posts) %></div>
-    <div class="stat-label">Total Posts</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-arrow-up mr-1"></i>
-      +<%= @posts_today %> today
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@posts_today.to_f / [@total_posts, 1].max * 100).round(1) %>%"></div>
+<!-- Enhanced Stats Cards - Column Layout -->
+<div class="flex flex-col lg:flex-row gap-6 mb-8">
+  <!-- Left Column - Content Overview -->
+  <div class="flex-1 space-y-4">
+    <!-- Total Posts -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">
+          <i class="fas fa-newspaper"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@total_posts) %></div>
+          <div class="stat-label">Total Posts</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            +<%= @posts_today %> today
+          </div>
+        </div>
+        <div class="flex-shrink-0 flex flex-col items-end space-y-2">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@posts_today.to_f / [@total_posts, 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+          <%= link_to new_admin_post_path, class: "btn btn-primary btn-sm group-hover:shadow-lg transition-all" do %>
+            <i class="fas fa-plus mr-1"></i> New Post
+          <% end %>
+        </div>
       </div>
     </div>
-    <div class="mt-3">
-      <%= link_to new_admin_post_path, class: "btn btn-primary btn-sm group-hover:shadow-lg transition-all" do %>
-        <i class="fas fa-plus mr-1"></i> New Post
-      <% end %>
-    </div>
-  </div>
 
-  <!-- Published Posts -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
-      <i class="fas fa-check-circle"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@published_posts) %></div>
-    <div class="stat-label">Published</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-eye mr-1"></i>
-      <%= ((@published_posts.to_f / [@total_posts, 1].max) * 100).round(1) %>% of total
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-green-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@published_posts.to_f / [@total_posts, 1].max * 100).round(1) %>%"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Draft Posts -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-      <i class="fas fa-edit"></i>
-    </div>
-    <div class="stat-number"><%= number_with_delimiter(@draft_posts) %></div>
-    <div class="stat-label">Drafts</div>
-    <div class="stat-change mt-2" style="color: #6b7280;">
-      <i class="fas fa-clock mr-1"></i>
-      Need review
-    </div>
-    <div class="stat-trend mt-2">
-      <div class="w-full bg-gray-200 rounded-full h-1.5">
-        <div class="bg-yellow-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@draft_posts.to_f / [@total_posts, 1].max * 100).round(1) %>%"></div>
+    <!-- Today's Posts -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+          <i class="fas fa-calendar-day"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@posts_today) %></div>
+          <div class="stat-label">Today</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-clock mr-1"></i>
+            Last 24 hours
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-purple-500 h-2 rounded-full transition-all duration-1000" style="width: <%= @posts_today > 0 ? 100 : 5 %>%"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Today's Posts -->
-  <div class="stat-card group hover:scale-105 transition-all duration-300">
-    <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
-      <i class="fas fa-calendar-day"></i>
+  <!-- Right Column - Publication Status -->
+  <div class="flex-1 space-y-4">
+    <!-- Published Posts -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@published_posts) %></div>
+          <div class="stat-label">Published</div>
+          <div class="stat-change positive mt-1 text-sm">
+            <i class="fas fa-eye mr-1"></i>
+            <%= ((@published_posts.to_f / [@total_posts, 1].max) * 100).round(1) %>% of total
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-green-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@published_posts.to_f / [@total_posts, 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="stat-number"><%= number_with_delimiter(@posts_today) %></div>
-    <div class="stat-label">Today</div>
-    <div class="stat-change positive mt-2">
-      <i class="fas fa-today mr-1"></i>
-      Last 24 hours
+
+    <!-- Draft Posts -->
+    <div class="stat-card group hover:scale-105 transition-all duration-300">
+      <div class="flex items-center space-x-4">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <i class="fas fa-edit"></i>
+        </div>
+        <div class="flex-1">
+          <div class="stat-number text-2xl"><%= number_with_delimiter(@draft_posts) %></div>
+          <div class="stat-label">Drafts</div>
+          <div class="stat-change mt-1 text-sm" style="color: #6b7280;">
+            <i class="fas fa-clock mr-1"></i>
+            Need review
+          </div>
+        </div>
+        <div class="flex-shrink-0">
+          <div class="stat-trend w-20">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-yellow-500 h-2 rounded-full transition-all duration-1000" style="width: <%= (@draft_posts.to_f / [@total_posts, 1].max * 100).round(1) %>%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Filters and Search -->
-<div class="card mb-8">
-  <div class="card-header">
-    <h3 class="card-title">
-      <i class="fas fa-filter mr-2" style="color: #3b82f6;"></i>
-      Filter Posts
+<!-- Enhanced Search and Filter Section -->
+<div class="enhanced-search-container">
+  <div class="enhanced-search-header">
+    <h3 class="enhanced-search-title">
+      <i class="fas fa-filter text-blue-500"></i>
+      Advanced Post Search & Filters
     </h3>
-    <p class="card-subtitle">Search and filter posts by various criteria</p>
+    <p class="enhanced-search-subtitle">Find posts by title, content, author, category, publication status, and engagement metrics</p>
   </div>
-  <div class="card-body">
-    <%= form_with url: admin_posts_path, method: :get, local: true, class: "space-y-6" do |form| %>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Search -->
-        <div>
-          <label class="form-label">Search Posts</label>
+  <div class="enhanced-search-body">
+    <%= form_with url: admin_posts_path, method: :get, local: true, class: "enhanced-search-form" do |form| %>
+      <!-- Main search row -->
+      <div class="enhanced-search-row">
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-search mr-2 text-blue-500"></i>
+            Search Posts
+          </label>
           <%= form.text_field :search, 
-                placeholder: "Search by author, title, or content...", 
-                value: params[:search],
-                class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" %>
+              placeholder: "Search by title, content, author, or keywords...", 
+              value: params[:search],
+              class: "enhanced-form-input" %>
         </div>
         
-        <!-- Category Filter -->
-        <div>
-          <label class="form-label">Category</label>
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-layer-group mr-2 text-green-500"></i>
+            Category
+          </label>
           <%= form.select :category_id, 
                 options_from_collection_for_select(@categories, :id, :name, params[:category_id]),
                 { prompt: "All Categories" },
-                { class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" } %>
+                { class: "enhanced-form-select" } %>
         </div>
         
-        <!-- Status Filter -->
-        <div>
-          <label class="form-label">Status</label>
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-toggle-on mr-2 text-purple-500"></i>
+            Publication Status
+          </label>
           <%= form.select :published, 
-                options_for_select([["All Posts", ""], ["Published", "true"], ["Drafts", "false"]], params[:published]),
+                options_for_select([
+                  ['All Posts', ''],
+                  ['✅ Published Posts', 'true'], 
+                  ['📝 Draft Posts', 'false']
+                ], params[:published]),
                 {},
-                { class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" } %>
+                { class: "enhanced-form-select" } %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-calendar-range mr-2 text-orange-500"></i>
+            Date Range
+          </label>
+          <%= form.select :date_range, 
+                options_for_select([
+                  ['All Time', ''],
+                  ['Today', 'today'],
+                  ['This Week', 'week'],
+                  ['This Month', 'month'],
+                  ['Last 3 Months', '3months'],
+                  ['This Year', 'year']
+                ], params[:date_range]),
+                {},
+                { class: "enhanced-form-select" } %>
         </div>
       </div>
       
-      <!-- Actions -->
-      <div class="flex items-center space-x-3 pt-6 border-t border-gray-200">
-        <%= form.submit "Apply Filters", class: "btn btn-primary" %>
-        <%= link_to "Clear All", admin_posts_path, class: "btn btn-secondary" %>
-        <div class="flex-1"></div>
-        <span class="text-sm text-gray-500">Showing <%= @posts.count %> posts</span>
+      <!-- Advanced filters row -->
+      <div class="enhanced-search-row" style="opacity: 0.9;">
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-sort-amount-down mr-2 text-cyan-500"></i>
+            Sort By
+          </label>
+          <%= form.select :sort, 
+                options_for_select([
+                  ['Recently Published', 'newest'],
+                  ['Oldest First', 'oldest'],
+                  ['Most Comments', 'most_comments'],
+                  ['Most Recent Activity', 'recent_activity'],
+                  ['Alphabetical A-Z', 'alpha_asc'],
+                  ['Alphabetical Z-A', 'alpha_desc']
+                ], params[:sort] || 'newest'),
+                {},
+                { class: "enhanced-form-select" } %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-list-ol mr-2 text-pink-500"></i>
+            Results Per Page
+          </label>
+          <%= form.select :per_page, 
+                options_for_select([
+                  ['10 posts', '10'],
+                  ['25 posts', '25'],
+                  ['50 posts', '50'],
+                  ['100 posts', '100']
+                ], params[:per_page] || '25'),
+                {},
+                { class: "enhanced-form-select" } %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-comments mr-2 text-indigo-500"></i>
+            Min Comments
+          </label>
+          <%= form.number_field :min_comments, 
+                placeholder: "0", 
+                value: params[:min_comments],
+                min: 0,
+                class: "enhanced-form-input" %>
+        </div>
+        
+        <div class="enhanced-form-group">
+          <label class="enhanced-form-label">
+            <i class="fas fa-user-edit mr-2 text-teal-500"></i>
+            Author
+          </label>
+          <%= form.text_field :author, 
+                placeholder: "Filter by author...", 
+                value: params[:author],
+                class: "enhanced-form-input" %>
+        </div>
+      </div>
+      
+      <!-- Search actions -->
+      <div class="enhanced-search-actions">
+        <div class="enhanced-search-buttons">
+          <%= form.submit "🔍 Apply Filters", class: "enhanced-search-btn enhanced-search-btn-primary" %>
+          <%= link_to "🗑️ Clear All", admin_posts_path, class: "enhanced-search-btn enhanced-search-btn-secondary" %>
+          <button type="button" id="advanced-toggle" class="enhanced-search-btn enhanced-search-btn-secondary">
+            <i class="fas fa-sliders-h mr-2"></i>
+            Advanced Options
+          </button>
+        </div>
+        
+        <div class="enhanced-search-results">
+          <% filter_params = ['search', 'category_id', 'published', 'date_range', 'sort', 'min_comments', 'author'] %>
+          <% has_filters = filter_params.any? { |key| params[key].present? } %>
+          <% if has_filters %>
+            <div class="flex items-center space-x-2 text-sm">
+              <i class="fas fa-filter text-blue-500"></i>
+              <span class="text-slate-600">Active filters:</span>
+              <div class="flex items-center space-x-1 flex-wrap">
+                <% if params[:search].present? %>
+                  <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                    Search: "<%= params[:search] %>"
+                  </span>
+                <% end %>
+                <% if params[:category_id].present? %>
+                  <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                    Category: <%= @categories.find_by(id: params[:category_id])&.name || params[:category_id] %>
+                  </span>
+                <% end %>
+                <% if params[:published].present? %>
+                  <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                    Status: <%= params[:published] == 'true' ? 'Published' : 'Draft' %>
+                  </span>
+                <% end %>
+                <% if params[:date_range].present? %>
+                  <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">
+                    Date: <%= params[:date_range].humanize %>
+                  </span>
+                <% end %>
+                <% if params[:sort].present? %>
+                  <span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
+                    Sort: <%= params[:sort].humanize %>
+                  </span>
+                <% end %>
+                <% if params[:min_comments].present? %>
+                  <span class="px-2 py-1 bg-cyan-100 text-cyan-700 rounded-full text-xs font-medium">
+                    Min Comments: <%= params[:min_comments] %>
+                  </span>
+                <% end %>
+                <% if params[:author].present? %>
+                  <span class="px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-medium">
+                    Author: <%= params[:author] %>
+                  </span>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          
+          <div class="text-slate-500">
+            <i class="fas fa-newspaper mr-1"></i>
+            Showing <%= @posts.respond_to?(:count) ? @posts.count : @posts.size %> posts
+            <% if ['search', 'category_id', 'published', 'date_range', 'author'].any? { |key| params[key].present? } %>
+              <span class="text-blue-600 font-medium">(filtered)</span>
+            <% end %>
+          </div>
+        </div>
       </div>
     <% end %>
   </div>

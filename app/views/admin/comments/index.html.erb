@@ -76,86 +76,140 @@
   </div>
 </div>
 
-<!-- Comments Table -->
-<div class="table-container mb-8">
-  <div class="card-header">
+  <!-- Include Enhanced Table Styles (if not already included) -->
+  <%= render 'shared/enhanced_table_styles' unless @enhanced_styles_included %>
+  <% @enhanced_styles_included = true %>
+
+<!-- Enhanced Comments Table -->
+<div class="enhanced-table-container mb-8 enhanced-fade-in">
+  <div class="enhanced-table-header">
     <div class="flex items-center justify-between">
       <div>
-        <h3 class="card-title">
-          <i class="fas fa-comments mr-2" style="color: #f59e0b;"></i>
-          All Comments
-        </h3>
-        <p class="card-subtitle mt-1">Manage and moderate forum discussions</p>
+        <h2 class="enhanced-table-title">
+          <i class="fas fa-comments" style="color: #f59e0b;"></i>
+          Comments & Discussion Management
+        </h2>
+        <p class="enhanced-table-subtitle">Moderate forum discussions and community interactions - monitor content quality and user engagement</p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="enhanced-stats-group">
+          <div class="enhanced-stat-item">
+            <i class="fas fa-comments"></i>
+            <span><%= @stats[:total] %> Total Comments</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-calendar-day text-green-500"></i>
+            <span><%= @stats[:today] %> Today</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-chart-line text-blue-500"></i>
+            <span><%= @stats[:this_week] %> This Week</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  
-  <div class="overflow-x-auto">
-    <table class="table admin-table">
-      <thead>
-        <tr>
-          <th>Comment Content</th>
-          <th>Author</th>
-          <th class="hidden md:table-cell">Post</th>
-          <th class="hidden lg:table-cell">Date</th>
-          <th class="text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @comments.each do |comment| %>
+    
+    <div class="overflow-x-auto">
+      <table class="enhanced-table">
+        <thead>
           <tr>
+            <th><i class="fas fa-comment mr-2"></i>Comment Content & Details</th>
+            <th><i class="fas fa-user mr-2"></i>Author & Info</th>
+            <th class="hidden lg:table-cell"><i class="fas fa-newspaper mr-2"></i>Post & Context</th>
+            <th class="text-right"><i class="fas fa-cogs mr-2"></i>Moderation</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @comments.each do |comment| %>
+          <tr class="enhanced-fade-in">
             <td>
-              <div class="space-y-2">
-                <div class="text-gray-900 line-clamp-3">
-                  <%= truncate(strip_tags(comment.content), length: 120) %>
+              <div class="enhanced-content-preview">
+                <div class="enhanced-content-excerpt">
+                  <%= truncate(strip_tags(comment.content), length: 150) %>
                 </div>
-                <div class="md:hidden flex items-center space-x-2">
-                  <span class="text-xs text-gray-500">on</span>
-                  <%= link_to truncate(comment.post.title, length: 30), comment.post, 
-                      class: "text-blue-600 hover:text-blue-800 text-xs font-medium", target: "_blank" %>
+                <div class="enhanced-content-meta">
+                  <span class="enhanced-badge enhanced-badge-warning">
+                    <i class="fas fa-comment mr-1"></i>
+                    Comment
+                  </span>
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span><%= time_ago_in_words(comment.created_at) %> ago</span>
+                  </span>
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-clock"></i>
+                    <span><%= comment.created_at.strftime('%b %d, %Y') %></span>
+                  </span>
+                  <div class="md:hidden mt-2">
+                    <span class="enhanced-badge enhanced-badge-info text-xs">
+                      <i class="fas fa-newspaper mr-1"></i>
+                      <%= link_to truncate(comment.post.title, length: 25), comment.post, 
+                          class: "text-blue-600 hover:text-blue-800", target: "_blank" %>
+                    </span>
+                  </div>
                 </div>
               </div>
             </td>
             <td>
-              <div class="flex items-center space-x-3">
+              <div class="enhanced-user-info">
                 <div class="flex-shrink-0">
                   <% if comment.user.avatar.attached? %>
-                    <%= image_tag comment.user.avatar, class: "admin-avatar" %>
+                    <%= image_tag comment.user.avatar, class: "enhanced-avatar", alt: comment.user.username %>
                   <% else %>
-                    <div class="admin-avatar bg-gradient-to-br from-yellow-500 to-orange-600 flex items-center justify-center">
-                      <span class="text-sm font-bold text-white"><%= comment.user.username&.first&.upcase || 'U' %></span>
+                    <div class="enhanced-avatar-placeholder bg-gradient-to-br from-yellow-500 to-orange-600">
+                      <%= comment.user.username&.first&.upcase || 'U' %>
                     </div>
                   <% end %>
                 </div>
-                <div>
-                  <div class="font-medium text-gray-900"><%= comment.user.username %></div>
-                  <div class="text-sm text-gray-500"><%= comment.user.role.humanize %></div>
-                </div>
-              </div>
-            </td>
-            <td class="hidden md:table-cell">
-              <div class="space-y-1">
-                <%= link_to comment.post, 
-                    class: "text-blue-600 hover:text-blue-800 font-medium line-clamp-2", target: "_blank" do %>
-                  <%= truncate(comment.post.title, length: 60) %>
-                <% end %>
-                <div class="text-xs text-gray-500">
-                  in <span class="font-medium"><%= comment.post.category.name %></span>
+                <div class="enhanced-user-details">
+                  <h4><%= comment.user.username %></h4>
+                  <div class="enhanced-content-meta">
+                    <span class="enhanced-badge enhanced-badge-secondary text-xs">
+                      <i class="fas fa-user-tag mr-1"></i>
+                      <%= comment.user.role.humanize %>
+                    </span>
+                    <span class="enhanced-stat-item text-xs">
+                      <i class="fas fa-envelope"></i>
+                      <span><%= comment.user.email %></span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </td>
             <td class="hidden lg:table-cell">
-              <div class="text-sm text-gray-900"><%= time_ago_in_words(comment.created_at) %> ago</div>
-              <div class="text-xs text-gray-500"><%= comment.created_at.strftime('%b %d, %Y') %></div>
+              <div class="enhanced-content-preview">
+                <div class="enhanced-content-title">
+                  <%= link_to comment.post, 
+                      class: "text-blue-600 hover:text-blue-800 transition-colors", target: "_blank" do %>
+                    <%= truncate(comment.post.title, length: 50) %>
+                  <% end %>
+                </div>
+                <div class="enhanced-content-meta">
+                  <span class="enhanced-badge enhanced-badge-info">
+                    <i class="fas fa-layer-group mr-1"></i>
+                    <%= comment.post.category.name %>
+                  </span>
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-user"></i>
+                    <span>by <%= comment.post.user.username %></span>
+                  </span>
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-comments"></i>
+                    <span><%= comment.post.comments.count %> comments</span>
+                  </span>
+                </div>
+              </div>
             </td>
             <td class="text-right">
-              <div class="flex items-center justify-end space-x-2">
-                <%= link_to comment.post, class: "btn btn-secondary btn-sm", target: "_blank", title: "View post" do %>
+              <div class="enhanced-action-buttons">
+                <%= link_to comment.post, class: "enhanced-action-btn enhanced-action-btn-view", target: "_blank", title: "View post" do %>
                   <i class="fas fa-external-link-alt"></i>
                 <% end %>
+                
                 <%= link_to admin_comment_path(comment), method: :delete,
                     data: { confirm: "Are you sure you want to delete this comment?" },
-                    class: "btn btn-danger btn-sm",
+                    class: "enhanced-action-btn enhanced-action-btn-danger",
                     title: "Delete comment" do %>
                   <i class="fas fa-trash"></i>
                 <% end %>
@@ -163,36 +217,58 @@
             </td>
           </tr>
         <% end %>
-      </tbody>
-    </table>
-  
-    <!-- Table Footer -->
-    <div class="card-footer">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center text-sm text-gray-600">
-          <span>Showing <%= @comments.respond_to?(:count) ? @comments.count : @comments.size %> comments</span>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Enhanced Table Footer -->
+    <div class="enhanced-table-footer">
+      <div class="enhanced-footer-stats">
+        <div class="enhanced-stat-item">
+          <i class="fas fa-comments text-yellow-500"></i>
+          <span><%= @comments.respond_to?(:count) ? @comments.count : @comments.size %> Comments Displayed</span>
         </div>
-        <div class="flex items-center space-x-2">
-          <% if @comments.respond_to?(:current_page) %>
-            <div class="pagination-info text-sm text-gray-500">
-              Page <%= @comments.current_page %> of <%= @comments.total_pages %>
-            </div>
-            <div class="pagination-controls flex space-x-2">
-              <% if @comments.prev_page %>
-                <%= link_to "Previous", admin_comments_path(page: @comments.prev_page, search: params[:search]), 
-                      class: "btn btn-secondary btn-sm" %>
-              <% end %>
-              <% if @comments.next_page %>
-                <%= link_to "Next", admin_comments_path(page: @comments.next_page, search: params[:search]), 
-                      class: "btn btn-primary btn-sm" %>
-              <% end %>
-            </div>
-          <% else %>
-            <span class="text-sm text-gray-500">Page 1 of 1</span>
-          <% end %>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-calendar-day text-green-500"></i>
+          <span><%= @stats[:today] %> Today</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-chart-line text-blue-500"></i>
+          <span><%= @stats[:this_week] %> This Week</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-database text-gray-500"></i>
+          <span><%= @stats[:total] %> Total</span>
         </div>
       </div>
+      
+      <% if @comments.respond_to?(:current_page) %>
+        <div class="enhanced-pagination">
+          <span class="enhanced-pagination-info">
+            Page <%= @comments.current_page %> of <%= @comments.total_pages %>
+          </span>
+          <div class="enhanced-pagination-controls">
+            <% if @comments.prev_page %>
+              <%= link_to admin_comments_path(page: @comments.prev_page, search: params[:search]), 
+                    class: "enhanced-pagination-btn enhanced-pagination-prev" do %>
+                <i class="fas fa-chevron-left"></i> Previous
+              <% end %>
+            <% end %>
+            <% if @comments.next_page %>
+              <%= link_to admin_comments_path(page: @comments.next_page, search: params[:search]), 
+                    class: "enhanced-pagination-btn enhanced-pagination-next" do %>
+                Next <i class="fas fa-chevron-right"></i>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% else %>
+        <div class="enhanced-pagination">
+          <span class="enhanced-pagination-info">Page 1 of 1</span>
+        </div>
+      <% end %>
     </div>
+  </div>
   </div>
 </div>
 

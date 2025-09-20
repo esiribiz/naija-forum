@@ -87,105 +87,200 @@
   </div>
 </div>
 
-  <!-- Categories Table -->
-  <div class="table-container mb-8">
-    <div class="card-header">
+  <!-- Include Enhanced Table Styles (if not already included) -->
+  <%= render 'shared/enhanced_table_styles' unless @enhanced_styles_included %>
+  <% @enhanced_styles_included = true %>
+
+  <!-- Enhanced Categories Table -->
+  <div class="enhanced-table-container mb-8 enhanced-fade-in">
+    <div class="enhanced-table-header">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="card-title">
-            <i class="fas fa-tags mr-2" style="color: #10b981;"></i>
-            All Categories
-          </h3>
-          <p class="card-subtitle mt-1">Manage forum categories and their properties</p>
+          <h2 class="enhanced-table-title">
+            <i class="fas fa-layer-group" style="color: #10b981;"></i>
+            Categories & Content Organization
+          </h2>
+          <p class="enhanced-table-subtitle">Organize forum discussions with structured categories - manage hierarchy, content flow, and user navigation</p>
         </div>
-        <div class="flex space-x-2">
-          <%= link_to new_admin_category_path, class: "btn btn-primary btn-sm" do %>
-            <i class="fas fa-plus mr-1"></i> Add Category
+        <div class="flex items-center space-x-4">
+          <div class="enhanced-stats-group">
+            <div class="enhanced-stat-item">
+              <i class="fas fa-layer-group"></i>
+              <span><%= @stats[:total] %> Total Categories</span>
+            </div>
+            <div class="enhanced-stat-item">
+              <i class="fas fa-file-alt text-green-500"></i>
+              <span><%= @stats[:with_posts] %> With Content</span>
+            </div>
+          </div>
+          <%= link_to new_admin_category_path, class: "btn btn-success hover:scale-105 transition-transform" do %>
+            <i class="fas fa-plus mr-2"></i> New Category
           <% end %>
         </div>
       </div>
     </div>
     
     <div class="overflow-x-auto">
-      <table class="table admin-table">
+      <table class="enhanced-table">
         <thead>
           <tr>
-            <th>Category</th>
-            <th class="hidden md:table-cell">Description</th>
-            <th>Posts</th>
-            <th class="text-right">Actions</th>
+            <th><i class="fas fa-layer-group mr-2"></i>Category Details</th>
+            <th class="hidden md:table-cell"><i class="fas fa-align-left mr-2"></i>Description & Info</th>
+            <th><i class="fas fa-chart-bar mr-2"></i>Content & Activity</th>
+            <th class="text-right"><i class="fas fa-cogs mr-2"></i>Management</th>
           </tr>
         </thead>
         <tbody>
         <% @categories.each do |category| %>
-          <tr>
+          <tr class="enhanced-fade-in">
             <td>
-              <div class="flex items-center space-x-3">
+              <div class="enhanced-user-info">
                 <div class="flex-shrink-0">
                   <% if category.image.attached? %>
-                    <%= image_tag category.image, class: "w-10 h-10 rounded-lg object-cover shadow-sm", alt: category.name %>
+                    <%= image_tag category.image, class: "enhanced-avatar rounded-lg object-cover", alt: category.name %>
                   <% elsif category.color.present? %>
-                    <div class="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-sm" style="background-color: <%= category.color %>">
+                    <div class="enhanced-avatar-placeholder rounded-lg" style="background-color: <%= category.color %>; width: 56px; height: 56px; font-size: 1.25rem;">
                       <%= category.name.first.upcase %>
                     </div>
                   <% else %>
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                    <div class="enhanced-avatar-placeholder bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg" style="width: 56px; height: 56px; font-size: 1.25rem;">
                       <%= category.name.first.upcase %>
                     </div>
                   <% end %>
                 </div>
-                <div>
-                  <div class="font-semibold text-gray-900"><%= category.name %></div>
+                <div class="enhanced-user-details">
+                  <h4 class="text-lg"><%= category.name %></h4>
+                  <div class="enhanced-content-meta">
+                    <span class="enhanced-badge enhanced-badge-success text-xs">
+                      <i class="fas fa-layer-group mr-1"></i>
+                      Category
+                    </span>
+                    <span class="enhanced-stat-item text-xs">
+                      <i class="fas fa-hashtag"></i>
+                      <span>ID: <%= category.id %></span>
+                    </span>
+                    <% if category.color.present? %>
+                      <div class="flex items-center text-xs">
+                        <div class="w-3 h-3 rounded-full mr-2" style="background-color: <%= category.color %>"></div>
+                        <span class="text-gray-500"><%= category.color %></span>
+                      </div>
+                    <% end %>
+                  </div>
                   <% if category.description.present? %>
-                    <div class="text-sm text-gray-500 md:hidden"><%= truncate(category.description, length: 50) %></div>
+                    <p class="text-xs text-gray-500 md:hidden mt-2"><%= truncate(category.description, length: 60) %></p>
                   <% end %>
                 </div>
               </div>
             </td>
             <td class="hidden md:table-cell">
-              <div class="text-sm text-gray-900">
-                <%= truncate(category.description, length: 100) if category.description %>
+              <div class="enhanced-content-preview">
+                <% if category.description.present? %>
+                  <div class="enhanced-content-title">Description</div>
+                  <div class="enhanced-content-excerpt"><%= truncate(category.description, length: 150) %></div>
+                <% else %>
+                  <div class="enhanced-content-excerpt text-gray-400 italic">No description provided for this category</div>
+                <% end %>
+                <div class="enhanced-content-meta mt-3">
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Created <%= time_ago_in_words(category.created_at) %> ago</span>
+                  </span>
+                  <% if category.image.attached? %>
+                    <span class="enhanced-stat-item">
+                      <i class="fas fa-image text-blue-500"></i>
+                      <span>Has custom image</span>
+                    </span>
+                  <% end %>
+                </div>
               </div>
             </td>
             <td>
-              <div class="flex items-center space-x-1">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                  <%= category.posts.count %>
-                </span>
-                <span class="text-xs text-gray-500">posts</span>
+              <div class="space-y-3">
+                <div class="enhanced-stats-group flex-col items-start gap-2">
+                  <div class="enhanced-stat-item">
+                    <i class="fas fa-file-alt text-green-500"></i>
+                    <span><%= pluralize(category.posts.count, 'post') %></span>
+                  </div>
+                  <% if category.posts.count > 0 %>
+                    <div class="enhanced-stat-item">
+                      <i class="fas fa-comments text-blue-500"></i>
+                      <span><%= category.posts.sum { |p| p.comments.count } %> comments</span>
+                    </div>
+                    <div class="enhanced-stat-item">
+                      <i class="fas fa-percentage text-purple-500"></i>
+                      <span><%= (category.posts.count.to_f / @categories.map{|c| c.posts.count}.sum.to_f * 100).round(1) %>% of content</span>
+                    </div>
+                  <% end %>
+                </div>
+                
+                <% if category.posts.count > 0 %>
+                  <div class="w-full">
+                    <div class="flex justify-between items-center text-xs text-gray-500 mb-1">
+                      <span>Activity Level</span>
+                      <span><%= category.posts.count %> / <%= @categories.map{|c| c.posts.count}.max %></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full transition-all duration-300" 
+                           style="width: <%= [category.posts.count.to_f / [@categories.map{|c| c.posts.count}.max, 1].max * 100, 8].max %>%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                      Last post <%= time_ago_in_words(category.posts.order(:created_at).last.created_at) %> ago
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="text-center py-2">
+                    <div class="enhanced-badge enhanced-badge-secondary text-xs">
+                      <i class="fas fa-plus-circle mr-1"></i>
+                      No Posts Yet
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Waiting for content</p>
+                  </div>
+                <% end %>
               </div>
             </td>
             <td class="text-right">
-              <div class="flex items-center justify-end space-x-2">
-                <%= link_to admin_category_path(category), class: "btn btn-secondary btn-sm", title: "View category" do %>
+              <div class="enhanced-action-group">
+                <%= link_to admin_category_path(category), class: "enhanced-action-btn enhanced-action-btn-secondary", title: "View category details" do %>
                   <i class="fas fa-eye"></i>
                 <% end %>
-                <%= link_to edit_admin_category_path(category), class: "btn btn-primary btn-sm", title: "Edit category" do %>
+                <%= link_to edit_admin_category_path(category), class: "enhanced-action-btn enhanced-action-btn-primary", title: "Edit category" do %>
                   <i class="fas fa-edit"></i>
                 <% end %>
+                <% if category.posts.count > 0 %>
+                  <%= link_to "#", class: "enhanced-action-btn enhanced-action-btn-success", 
+                        title: "View #{category.posts.count} posts in this category", 
+                        onclick: "alert('View posts in category: #{category.name}')" do %>
+                    <i class="fas fa-list"></i>
+                  <% end %>
+                <% end %>
+                
                 <% if category.posts.count == 0 %>
                   <%= link_to admin_category_path(category), method: :delete,
-                      data: { confirm: "Are you sure?" },
-                      class: "btn btn-danger btn-sm",
-                      title: "Delete category" do %>
+                        data: { confirm: "Are you sure you want to delete '#{category.name}'?" },
+                        class: "enhanced-action-btn enhanced-action-btn-danger",
+                        title: "Delete empty category" do %>
                     <i class="fas fa-trash"></i>
                   <% end %>
                 <% else %>
                   <div class="relative inline-block">
-                    <button type="button" class="btn btn-danger btn-sm category-delete-toggle" data-category-id="<%= category.id %>" title="Delete category (has posts)">
-                      <i class="fas fa-trash"></i>
+                    <button type="button" class="enhanced-action-btn enhanced-action-btn-warning category-delete-toggle" 
+                            data-category-id="<%= category.id %>" title="Delete category (has posts)">
+                      <i class="fas fa-exclamation-triangle"></i>
                     </button>
-                    <div id="delete-menu-<%= category.id %>" class="hidden absolute right-0 z-10 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-gray-200 focus:outline-none">
-                      <div class="py-1">
-                        <div class="px-4 py-2 text-xs text-gray-500 border-b border-gray-200">
+                    <div id="delete-menu-<%= category.id %>" class="hidden absolute right-0 z-20 mt-2 w-64 rounded-lg shadow-xl bg-white ring-1 ring-gray-200 focus:outline-none">
+                      <div class="py-2">
+                        <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
                           <i class="fas fa-warning mr-1 text-yellow-500"></i>
-                          <%= category.posts.count %> posts in this category
+                          Category has content
+                        </div>
+                        <div class="px-4 py-2 text-sm text-gray-700">
+                          This category contains <strong><%= category.posts.count %> posts</strong>
                         </div>
                         <%= link_to admin_category_path(category, force: true), 
-                            method: :delete,
-                            data: { confirm: "This will unassign #{category.posts.count} posts from this category. Continue?" },
-                            class: "block px-4 py-2 text-sm text-red-600 hover:bg-red-50" do %>
-                          <i class="fas fa-exclamation-triangle mr-2"></i> Force Delete
+                              method: :delete,
+                              data: { confirm: "This will unassign #{category.posts.count} posts from '#{category.name}'. Continue?" },
+                              class: "block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors" do %>
+                          <i class="fas fa-exclamation-triangle mr-2"></i> Force Delete Category
                         <% end %>
                       </div>
                     </div>
@@ -198,17 +293,80 @@
       </tbody>
     </table>
   </div>
-
+  
+  <!-- Enhanced Table Footer -->
+  <div class="enhanced-table-footer">
+    <div class="enhanced-pagination-info">
+      <div class="flex items-center space-x-4">
+        <span>Showing <%= @categories.respond_to?(:count) ? @categories.count : @categories.size %> categories</span>
+        <div class="enhanced-stats-group">
+          <div class="enhanced-stat-item">
+            <i class="fas fa-file-alt text-green-500"></i>
+            <span><%= @stats[:with_posts] %> With Posts</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-plus-circle text-yellow-500"></i>
+            <span><%= @stats[:empty] %> Empty</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-comments text-blue-500"></i>
+            <span><%= @categories.sum { |c| c.posts.sum { |p| p.comments.count } } %> Total Comments</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="enhanced-pagination-controls">
+      <% if @categories.respond_to?(:current_page) %>
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mr-4">
+          <span>Page <%= @categories.current_page %> of <%= @categories.total_pages %></span>
+        </div>
+        <div class="flex space-x-2">
+          <% if @categories.prev_page %>
+            <%= link_to admin_categories_path(page: @categories.prev_page, search: params[:search]), 
+                  class: "btn btn-secondary btn-sm" do %>
+              <i class="fas fa-chevron-left mr-1"></i> Previous
+            <% end %>
+          <% end %>
+          <% if @categories.next_page %>
+            <%= link_to admin_categories_path(page: @categories.next_page, search: params[:search]), 
+                  class: "btn btn-primary btn-sm" do %>
+              Next <i class="fas fa-chevron-right ml-1"></i>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex items-center space-x-3">
+          <span class="text-sm text-gray-500">All categories displayed</span>
+          <button class="btn btn-success btn-sm" onclick="location.reload()">
+            <i class="fas fa-sync-alt mr-1"></i> Refresh
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  
   <% if @categories.empty? %>
-    <div class="text-center py-12">
-      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14-7H3a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z"/>
-      </svg>
-      <h3 class="mt-2 text-sm font-medium text-gray-900">No categories found</h3>
-      <p class="mt-1 text-sm text-gray-500">Get started by creating a new category.</p>
-      <div class="mt-6">
-        <%= link_to "New Category", new_admin_category_path, 
-            class: "bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700" %>
+    <div class="text-center py-16">
+      <div class="mx-auto w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mb-6">
+        <i class="fas fa-layer-group text-4xl text-green-500"></i>
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">No categories found</h3>
+      <p class="text-gray-500 mb-8 max-w-md mx-auto">
+        <% if params[:search].present? %>
+          Try adjusting your search to see more results, or create a new category to organize your content.
+        <% else %>
+          Categories help organize your forum content and make it easier for users to find relevant discussions.
+        <% end %>
+      </p>
+      <div class="flex items-center justify-center space-x-4">
+        <%= link_to new_admin_category_path, class: "btn btn-success" do %>
+          <i class="fas fa-plus mr-2"></i> Create Your First Category
+        <% end %>
+        <% if params[:search].present? %>
+          <%= link_to admin_categories_path, class: "btn btn-secondary" do %>
+            <i class="fas fa-times mr-2"></i> Clear Search
+          <% end %>
+        <% end %>
       </div>
     </div>
   <% end %>

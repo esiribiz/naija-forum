@@ -127,163 +127,218 @@
   </div>
 </div>
 
-<!-- Posts Table -->
-<div class="table-container mb-8">
-  <div class="card-header">
+  <!-- Include Enhanced Table Styles (if not already included) -->
+  <%= render 'shared/enhanced_table_styles' unless @enhanced_styles_included %>
+  <% @enhanced_styles_included = true %>
+
+<!-- Enhanced Posts Table -->
+<div class="enhanced-table-container mb-8 enhanced-fade-in">
+  <div class="enhanced-table-header">
     <div class="flex items-center justify-between">
       <div>
-        <h3 class="card-title">
-          <i class="fas fa-newspaper mr-2" style="color: #3b82f6;"></i>
-          All Posts
-        </h3>
-        <p class="card-subtitle mt-1">Manage forum posts and content</p>
+        <h2 class="enhanced-table-title">
+          <i class="fas fa-newspaper" style="color: #3b82f6;"></i>
+          Posts & Content Management
+        </h2>
+        <p class="enhanced-table-subtitle">Manage forum posts, publications, and content moderation - track engagement, status, and author activity</p>
       </div>
-      <div class="flex space-x-2">
-        <%= link_to new_admin_post_path, class: "btn btn-primary btn-sm" do %>
-          <i class="fas fa-plus mr-1"></i> New Post
+      <div class="flex items-center space-x-4">
+        <div class="enhanced-stats-group">
+          <div class="enhanced-stat-item">
+            <i class="fas fa-newspaper"></i>
+            <span><%= @total_posts %> Total Posts</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-check-circle text-green-500"></i>
+            <span><%= @published_posts %> Published</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-edit text-yellow-500"></i>
+            <span><%= @draft_posts %> Drafts</span>
+          </div>
+        </div>
+        <%= link_to new_admin_post_path, class: "btn btn-primary hover:scale-105 transition-transform" do %>
+          <i class="fas fa-plus mr-2"></i> New Post
         <% end %>
       </div>
     </div>
   </div>
-  
-  <div class="overflow-x-auto">
-    <table class="table admin-table">
-      <thead>
-        <tr>
-          <th>Post Details</th>
-          <th>Author</th>
-          <th class="hidden md:table-cell">Category</th>
-          <th>Status</th>
-          <th class="hidden lg:table-cell">Engagement</th>
-          <th class="hidden lg:table-cell">Created</th>
-          <th class="text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-      <% @posts.each do |post| %>
-        <tr>
-          <td>
-            <div class="space-y-1">
-              <div class="font-semibold text-gray-900 line-clamp-2">
-                <%= link_to post.title, admin_post_path(post), class: "hover:text-blue-600 transition-colors" %>
+    
+    <div class="overflow-x-auto">
+      <table class="enhanced-table">
+        <thead>
+          <tr>
+            <th><i class="fas fa-newspaper mr-2"></i>Post Details & Content</th>
+            <th><i class="fas fa-user mr-2"></i>Author & Info</th>
+            <th class="hidden lg:table-cell"><i class="fas fa-chart-bar mr-2"></i>Engagement & Stats</th>
+            <th class="text-right"><i class="fas fa-cogs mr-2"></i>Management</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @posts.each do |post| %>
+          <tr class="enhanced-fade-in">
+            <td>
+              <div class="enhanced-content-preview">
+                <div class="enhanced-content-title">
+                  <%= link_to post.title, admin_post_path(post), class: "hover:text-blue-600 transition-colors" %>
+                </div>
+                <div class="enhanced-content-excerpt">
+                  <%= truncate(strip_tags(post.body), length: 120) %>
+                </div>
+                <div class="enhanced-content-meta">
+                  <span class="enhanced-badge <%= post.published? ? 'enhanced-badge-success' : 'enhanced-badge-warning' %>">
+                    <i class="fas fa-<%= post.published? ? 'check-circle' : 'edit' %> mr-1"></i>
+                    <%= post.published? ? 'Published' : 'Draft' %>
+                  </span>
+                  <span class="enhanced-badge enhanced-badge-info">
+                    <i class="fas fa-layer-group mr-1"></i>
+                    <%= post.category.name %>
+                  </span>
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span><%= time_ago_in_words(post.created_at) %> ago</span>
+                  </span>
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-comments"></i>
+                    <span><%= post.comments.count %> comments</span>
+                  </span>
+                </div>
               </div>
-              <div class="text-sm text-gray-500 line-clamp-2">
-                <%= truncate(strip_tags(post.body), length: 80) %>
-              </div>
-              <div class="md:hidden flex items-center space-x-2 mt-2">
-                <span class="badge bg-blue-500"><%= post.category.name %></span>
-                <% if post.published? %>
-                  <span class="badge bg-green-500">Published</span>
-                <% else %>
-                  <span class="badge bg-yellow-500">Draft</span>
-                <% end %>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="flex items-center space-x-3">
-              <div class="flex-shrink-0">
-                <% if post.user.avatar.attached? %>
-                  <%= image_tag post.user.avatar, class: "admin-avatar" %>
-                <% else %>
-                  <div class="admin-avatar bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                    <span class="text-sm font-bold text-white"><%= post.user.username&.first&.upcase || 'U' %></span>
+            </td>
+            <td>
+              <div class="enhanced-user-info">
+                <div class="flex-shrink-0">
+                  <% if post.user.avatar.attached? %>
+                    <%= image_tag post.user.avatar, class: "enhanced-avatar", alt: post.user.username %>
+                  <% else %>
+                    <div class="enhanced-avatar-placeholder bg-gradient-to-br from-blue-500 to-purple-600">
+                      <%= post.user.username&.first&.upcase || 'U' %>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="enhanced-user-details">
+                  <h4><%= post.user.username %></h4>
+                  <div class="enhanced-content-meta">
+                    <span class="enhanced-badge enhanced-badge-secondary text-xs">
+                      <i class="fas fa-user-tag mr-1"></i>
+                      <%= post.user.role.humanize %>
+                    </span>
+                    <span class="enhanced-stat-item text-xs">
+                      <i class="fas fa-envelope"></i>
+                      <span><%= post.user.email %></span>
+                    </span>
                   </div>
-                <% end %>
+                </div>
               </div>
-              <div>
-                <div class="font-medium text-gray-900"><%= post.user.username %></div>
-                <div class="text-sm text-gray-500"><%= post.user.role.humanize %></div>
+            </td>
+            <td class="hidden lg:table-cell">
+              <div class="space-y-3">
+                <div class="enhanced-stats-group flex-col items-start gap-2">
+                  <div class="enhanced-stat-item">
+                    <i class="fas fa-comments text-blue-500"></i>
+                    <span><%= post.comments.count %> Comments</span>
+                  </div>
+                  <div class="enhanced-stat-item">
+                    <i class="fas fa-calendar-plus text-green-500"></i>
+                    <span>Created <%= post.created_at.strftime('%b %d, %Y') %></span>
+                  </div>
+                  <% if post.updated_at != post.created_at %>
+                    <div class="enhanced-stat-item">
+                      <i class="fas fa-edit text-yellow-500"></i>
+                      <span>Updated <%= time_ago_in_words(post.updated_at) %> ago</span>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="mt-3">
+                  <div class="text-xs text-gray-500 mb-1">Publishing Status</div>
+                  <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-<%= post.published? ? 'green' : 'yellow' %>-500 h-2 rounded-full transition-all duration-300" style="width: <%= post.published? ? '100' : '50' %>%"></div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </td>
-          <td class="hidden md:table-cell">
-            <span class="badge bg-purple-500">
-              <i class="fas fa-tag mr-1"></i> <%= post.category.name %>
-            </span>
-          </td>
-          <td>
-            <% if post.published? %>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                <i class="fas fa-check-circle mr-1"></i> Published
-              </span>
-            <% else %>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                <i class="fas fa-edit mr-1"></i> Draft
-              </span>
-            <% end %>
-          </td>
-          <td class="hidden lg:table-cell">
-            <div class="flex items-center space-x-3 text-sm">
-              <div class="flex items-center text-gray-600">
-                <i class="fas fa-comments mr-1 text-blue-500"></i>
-                <span><%= post.comments.count %></span>
-              </div>
-            </div>
-          </td>
-          <td class="hidden lg:table-cell">
-            <div class="text-sm text-gray-900"><%= time_ago_in_words(post.created_at) %> ago</div>
-            <div class="text-xs text-gray-500"><%= post.created_at.strftime('%b %d, %Y') %></div>
-          </td>
-          <td class="text-right">
-            <div class="flex items-center justify-end space-x-2">
-              <%= link_to admin_post_path(post), class: "btn btn-secondary btn-sm", title: "View post" do %>
-                <i class="fas fa-eye"></i>
-              <% end %>
-              
-              <%= link_to edit_admin_post_path(post), class: "btn btn-primary btn-sm", title: "Edit post" do %>
-                <i class="fas fa-edit"></i>
-              <% end %>
-              
-              <%= link_to toggle_published_admin_post_path(post), method: :patch, 
-                    class: "btn btn-#{post.published? ? 'warning' : 'success'} btn-sm",
-                    title: post.published? ? 'Unpublish' : 'Publish',
-                    data: { confirm: "Are you sure you want to #{post.published? ? 'unpublish' : 'publish'} this post?" } do %>
-                <% if post.published? %>
-                  <i class="fas fa-eye-slash"></i>
-                <% else %>
+            </td>
+            <td class="text-right">
+              <div class="enhanced-action-buttons">
+                <%= link_to admin_post_path(post), class: "enhanced-action-btn enhanced-action-btn-view", title: "View post" do %>
                   <i class="fas fa-eye"></i>
                 <% end %>
-              <% end %>
-              
-              <%= link_to admin_post_path(post), method: :delete, 
-                    class: "btn btn-danger btn-sm",
-                    title: "Delete post",
-                    data: { confirm: "Are you sure you want to delete this post? This action cannot be undone." } do %>
-                <i class="fas fa-trash"></i>
-              <% end %>
-            </div>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+                
+                <%= link_to edit_admin_post_path(post), class: "enhanced-action-btn enhanced-action-btn-edit", title: "Edit post" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                
+                <%= link_to toggle_published_admin_post_path(post), method: :patch, 
+                      class: "enhanced-action-btn enhanced-action-btn-#{post.published? ? 'warning' : 'success'}",
+                      title: post.published? ? 'Unpublish' : 'Publish',
+                      data: { confirm: "Are you sure you want to #{post.published? ? 'unpublish' : 'publish'} this post?" } do %>
+                  <% if post.published? %>
+                    <i class="fas fa-eye-slash"></i>
+                  <% else %>
+                    <i class="fas fa-check"></i>
+                  <% end %>
+                <% end %>
+                
+                <%= link_to admin_post_path(post), method: :delete, 
+                      class: "enhanced-action-btn enhanced-action-btn-danger",
+                      title: "Delete post",
+                      data: { confirm: "Are you sure you want to delete this post? This action cannot be undone." } do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
   
-  <!-- Table Footer -->
-  <div class="card-footer">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center text-sm text-gray-600">
-        <span>Showing <%= @posts.respond_to?(:count) ? @posts.count : @posts.size %> posts</span>
+    </div>
+    
+    <!-- Enhanced Table Footer -->
+    <div class="enhanced-table-footer">
+      <div class="enhanced-footer-stats">
+        <div class="enhanced-stat-item">
+          <i class="fas fa-newspaper text-blue-500"></i>
+          <span><%= @posts.respond_to?(:count) ? @posts.count : @posts.size %> Posts Displayed</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-check-circle text-green-500"></i>
+          <span><%= @published_posts %> Published</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-edit text-yellow-500"></i>
+          <span><%= @draft_posts %> Drafts</span>
+        </div>
+        <div class="enhanced-stat-item">
+          <i class="fas fa-calendar-day text-purple-500"></i>
+          <span><%= @posts_today %> Today</span>
+        </div>
       </div>
-      <div class="flex items-center space-x-2">
-        <% if @posts.respond_to?(:current_page) %>
-          <div class="pagination-info text-sm text-gray-500">
+      
+      <% if @posts.respond_to?(:current_page) %>
+        <div class="enhanced-pagination">
+          <span class="enhanced-pagination-info">
             Page <%= @posts.current_page %> of <%= @posts.total_pages %>
-          </div>
-          <div class="pagination-controls flex space-x-2">
+          </span>
+          <div class="enhanced-pagination-controls">
             <% if @posts.prev_page %>
-              <%= link_to "Previous", admin_posts_path(page: @posts.prev_page, search: params[:search], category_id: params[:category_id], published: params[:published]), 
-                    class: "btn btn-secondary btn-sm" %>
+              <%= link_to admin_posts_path(page: @posts.prev_page, search: params[:search], category_id: params[:category_id], published: params[:published]), 
+                    class: "enhanced-pagination-btn enhanced-pagination-prev" do %>
+                <i class="fas fa-chevron-left"></i> Previous
+              <% end %>
             <% end %>
             <% if @posts.next_page %>
-              <%= link_to "Next", admin_posts_path(page: @posts.next_page, search: params[:search], category_id: params[:category_id], published: params[:published]), 
-                    class: "btn btn-primary btn-sm" %>
+              <%= link_to admin_posts_path(page: @posts.next_page, search: params[:search], category_id: params[:category_id], published: params[:published]), 
+                    class: "enhanced-pagination-btn enhanced-pagination-next" do %>
+                Next <i class="fas fa-chevron-right"></i>
+              <% end %>
             <% end %>
           </div>
-        <% else %>
-          <span class="text-sm text-gray-500">Page 1 of 1</span>
-        <% end %>
-      </div>
+        </div>
+      <% else %>
+        <div class="enhanced-pagination">
+          <span class="enhanced-pagination-info">Page 1 of 1</span>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

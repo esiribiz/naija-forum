@@ -1,477 +1,365 @@
 <% content_for :page_title, "Tags Management" %>
+<% content_for :page_subtitle, "Manage forum tags, labels, and content organization" %>
 
-<div class="admin-container">
-  <!-- Page Header -->
-  <div class="admin-page-header">
-    <div class="admin-page-header-content">
-      <div class="admin-page-title-wrapper">
-        <div class="admin-page-icon">
-          <i class="fas fa-tags"></i>
+<!-- Enhanced Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <!-- Total Tags -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+      <i class="fas fa-tags"></i>
+    </div>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:total]) %></div>
+    <div class="stat-label">Total Tags</div>
+    <div class="stat-change mt-2" style="color: #6b7280;">
+      <i class="fas fa-list mr-1"></i>
+      Organizing content
+    </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-purple-500 h-1.5 rounded-full transition-all duration-1000" style="width: 100%"></div>
+      </div>
+    </div>
+    <div class="mt-3">
+      <%= link_to "<i class='fas fa-plus mr-1'></i> Add New".html_safe, new_admin_tag_path, class: "btn btn-primary btn-sm group-hover:shadow-lg transition-all" %>
+    </div>
+  </div>
+
+  <!-- Active Tags with Posts -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+      <i class="fas fa-file-alt"></i>
+    </div>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:with_posts]) %></div>
+    <div class="stat-label">With Posts</div>
+    <div class="stat-change positive mt-2">
+      <i class="fas fa-check mr-1"></i>
+      <%= ((@stats[:with_posts].to_f / [@stats[:total], 1].max) * 100).round(1) %>% active
+    </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-green-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:with_posts].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unused Tags -->
+  <div class="stat-card group hover:scale-105 transition-all duration-300">
+    <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="stat-number"><%= number_with_delimiter(@stats[:unused]) %></div>
+    <div class="stat-label">Unused Tags</div>
+    <div class="stat-change mt-2" style="color: #6b7280;">
+      <i class="fas fa-warning mr-1"></i>
+      Need content
+    </div>
+    <div class="stat-trend mt-2">
+      <div class="w-full bg-gray-200 rounded-full h-1.5">
+        <div class="bg-yellow-500 h-1.5 rounded-full transition-all duration-1000" style="width: <%= (@stats[:unused].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search/Filter Bar -->
+<div class="card mb-8">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="fas fa-search mr-2" style="color: #8b5cf6;"></i>
+      Search & Filter Tags
+    </h3>
+    <p class="card-subtitle">Find and organize tags by name, usage, or other criteria</p>
+  </div>
+  <div class="card-body">
+    <form method="get" action="<%= admin_tags_path %>" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="lg:col-span-2">
+          <input type="text" name="search" value="<%= params[:search] %>" placeholder="Search tags by name or description..." 
+                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
         </div>
         <div>
-          <h1 class="admin-page-title">Tags Management</h1>
-          <p class="admin-page-subtitle">Manage forum tags and labels</p>
+          <select name="filter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+            <option value="">All Tags</option>
+            <option value="used" <%= 'selected' if params[:filter] == 'used' %>>Used Tags</option>
+            <option value="unused" <%= 'selected' if params[:filter] == 'unused' %>>Unused Tags</option>
+            <option value="popular" <%= 'selected' if params[:filter] == 'popular' %>>Popular Tags</option>
+          </select>
+        </div>
+        <div class="flex space-x-2">
+          <button type="submit" class="btn btn-primary btn-sm">Search</button>
+          <%= link_to "Clear", admin_tags_path, class: "btn btn-secondary btn-sm" %>
         </div>
       </div>
-      <div class="admin-page-actions">
-        <button class="admin-btn admin-btn-secondary" onclick="bulkManageTags()">
-          <i class="fas fa-tasks mr-2"></i>
-          Bulk Actions
+      <div class="flex items-center space-x-4 pt-2">
+        <div class="flex items-center space-x-2">
+          <label class="text-sm font-medium text-gray-700">Sort by:</label>
+          <select name="sort" class="px-3 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm">
+            <option value="name_asc" <%= 'selected' if (params[:sort] || 'name_asc') == 'name_asc' %>>Name A-Z</option>
+            <option value="name_desc" <%= 'selected' if params[:sort] == 'name_desc' %>>Name Z-A</option>
+            <option value="usage_desc" <%= 'selected' if params[:sort] == 'usage_desc' %>>Most Used</option>
+            <option value="usage_asc" <%= 'selected' if params[:sort] == 'usage_asc' %>>Least Used</option>
+            <option value="created_desc" <%= 'selected' if params[:sort] == 'created_desc' %>>Newest</option>
+            <option value="created_asc" <%= 'selected' if params[:sort] == 'created_asc' %>>Oldest</option>
+          </select>
+        </div>
+        <div class="flex items-center text-sm text-gray-600">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+            <%= @stats[:total] %> total tags
+          </span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Include Enhanced Table Styles (if not already included) -->
+<%= render 'shared/enhanced_table_styles' unless @enhanced_styles_included %>
+<% @enhanced_styles_included = true %>
+
+<!-- Enhanced Tags Table -->
+<div class="enhanced-table-container mb-8 enhanced-fade-in">
+  <div class="enhanced-table-header">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="enhanced-table-title">
+          <i class="fas fa-tags" style="color: #8b5cf6;"></i>
+          Tags Management & Organization
+        </h2>
+        <p class="enhanced-table-subtitle">Organize and manage forum content with professional tag system - track usage, popularity, and content organization</p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <div class="enhanced-stats-group">
+          <div class="enhanced-stat-item">
+            <i class="fas fa-tags"></i>
+            <span><%= @stats[:total] %> Total Tags</span>
+          </div>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-check-circle text-green-500"></i>
+            <span><%= @stats[:with_posts] %> Active</span>
+          </div>
+        </div>
+        <button class="btn btn-primary hover:scale-105 transition-transform">
+          <i class="fas fa-plus mr-2"></i> Create New Tag
         </button>
-        <%= link_to new_admin_tag_path, class: "admin-btn admin-btn-primary" do %>
-          <i class="fas fa-plus mr-2"></i>
-          New Tag
+      </div>
+    </div>
+  </div>
+  
+  <div class="overflow-x-auto">
+    <table class="enhanced-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-tag mr-2"></i>Tag Information</th>
+          <th class="hidden md:table-cell"><i class="fas fa-align-left mr-2"></i>Description & Details</th>
+          <th><i class="fas fa-chart-bar mr-2"></i>Usage Analytics</th>
+          <th class="hidden lg:table-cell"><i class="fas fa-calendar-plus mr-2"></i>Creation Date</th>
+          <th class="text-right"><i class="fas fa-cogs mr-2"></i>Manage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tags.each do |tag| %>
+          <tr class="enhanced-fade-in">
+            <td>
+              <div class="enhanced-user-info">
+                <div class="flex-shrink-0">
+                  <% tag_icon_class = case
+                                       when tag.posts.count > 10 then 'enhanced-avatar-placeholder bg-gradient-to-br from-green-500 to-emerald-600'
+                                       when tag.posts.count > 0 then 'enhanced-avatar-placeholder bg-gradient-to-br from-blue-500 to-indigo-600'
+                                       else 'enhanced-avatar-placeholder bg-gradient-to-br from-gray-400 to-gray-500'
+                                     end %>
+                  <div class="<%= tag_icon_class %>" style="width: 56px; height: 56px; font-size: 1.25rem;">
+                    <i class="fas fa-tag"></i>
+                  </div>
+                </div>
+                <div class="enhanced-user-details">
+                  <h4 class="text-lg">#<%= tag.name %></h4>
+                  <div class="enhanced-content-meta">
+                    <% if tag.posts.count > 10 %>
+                      <span class="enhanced-badge enhanced-badge-success text-xs">
+                        <i class="fas fa-fire mr-1"></i> Popular Tag
+                      </span>
+                    <% elsif tag.posts.count > 0 %>
+                      <span class="enhanced-badge enhanced-badge-primary text-xs">
+                        <i class="fas fa-check-circle mr-1"></i> Active
+                      </span>
+                    <% else %>
+                      <span class="enhanced-badge enhanced-badge-secondary text-xs">
+                        <i class="fas fa-clock mr-1"></i> Unused
+                      </span>
+                    <% end %>
+                    <span class="enhanced-stat-item text-xs">
+                      <i class="fas fa-hashtag"></i>
+                      <span>ID: <%= tag.id %></span>
+                    </span>
+                  </div>
+                  <% if tag.description.present? %>
+                    <p class="text-xs text-gray-500 md:hidden mt-2"><%= truncate(tag.description, length: 50) %></p>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+            <td class="hidden md:table-cell">
+              <div class="enhanced-content-preview">
+                <% if tag.description.present? %>
+                  <div class="enhanced-content-title">Description</div>
+                  <div class="enhanced-content-excerpt"><%= truncate(tag.description, length: 120) %></div>
+                <% else %>
+                  <div class="enhanced-content-excerpt text-gray-400 italic">No description provided for this tag</div>
+                <% end %>
+                <div class="enhanced-content-meta mt-3">
+                  <span class="enhanced-stat-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Created <%= time_ago_in_words(tag.created_at) %> ago</span>
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="space-y-3">
+                <div class="enhanced-stats-group flex-col items-start gap-2">
+                  <div class="enhanced-stat-item">
+                    <i class="fas fa-file-alt text-purple-500"></i>
+                    <span><%= pluralize(tag.posts.count, 'post') %></span>
+                  </div>
+                  <% if tag.posts.count > 0 %>
+                    <div class="enhanced-stat-item">
+                      <i class="fas fa-percentage text-green-500"></i>
+                      <span><%= (tag.posts.count.to_f / [@tags.map{|t| t.posts.count}.sum, 1].max * 100).round(1) %>% of content</span>
+                    </div>
+                  <% end %>
+                </div>
+                <% if tag.posts.count > 0 %>
+                  <div class="w-full">
+                    <div class="flex justify-between items-center text-xs text-gray-500 mb-1">
+                      <span>Usage Level</span>
+                      <span><%= tag.posts.count %> / <%= @tags.map{|t| t.posts.count}.max %></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                      <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300" 
+                           style="width: <%= [tag.posts.count.to_f / [@tags.map{|t| t.posts.count}.max, 1].max * 100, 8].max %>%"></div>
+                    </div>
+                  </div>
+                <% else %>
+                  <div class="text-center py-2">
+                    <div class="enhanced-badge enhanced-badge-secondary text-xs">
+                      <i class="fas fa-exclamation-circle mr-1"></i>
+                      No Usage Yet
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </td>
+            <td class="hidden lg:table-cell">
+              <div class="space-y-2">
+                <div class="enhanced-content-title text-sm"><%= tag.created_at.strftime('%B %d, %Y') %></div>
+                <div class="enhanced-content-excerpt text-xs">Added <%= time_ago_in_words(tag.created_at) %> ago</div>
+                <div class="enhanced-stat-item">
+                  <i class="fas fa-user-plus"></i>
+                  <span>Tag #<%= tag.id %></span>
+                </div>
+              </div>
+            </td>
+            <td class="text-right">
+              <div class="enhanced-action-group">
+                <%= link_to admin_tag_path(tag), class: "enhanced-action-btn enhanced-action-btn-secondary", title: "View tag details" do %>
+                  <i class="fas fa-eye"></i>
+                <% end %>
+                <%= link_to edit_admin_tag_path(tag), class: "enhanced-action-btn enhanced-action-btn-primary", title: "Edit tag" do %>
+                  <i class="fas fa-edit"></i>
+                <% end %>
+                <% if tag.posts.count > 0 %>
+                  <%= link_to "#", class: "enhanced-action-btn enhanced-action-btn-success", title: "View #{tag.posts.count} posts with this tag", onclick: "alert('View posts with tag: #{tag.name}')" do %>
+                    <i class="fas fa-list"></i>
+                  <% end %>
+                <% end %>
+                <%= link_to admin_tag_path(tag), method: :delete,
+                      data: { confirm: "Are you sure? This will remove '#{tag.name}' from all #{tag.posts.count} posts." },
+                      class: "enhanced-action-btn enhanced-action-btn-danger",
+                      title: "Delete tag" do %>
+                  <i class="fas fa-trash"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
         <% end %>
-      </div>
-    </div>
+      </tbody>
+    </table>
   </div>
-
-  <!-- Stats Cards -->
-  <div class="admin-stats-grid">
-    <div class="admin-stat-card admin-stat-card-info">
-      <div class="admin-stat-icon">
-        <i class="fas fa-tags"></i>
-      </div>
-      <div class="admin-stat-content">
-        <div class="admin-stat-label">Total Tags</div>
-        <div class="admin-stat-value"><%= @stats[:total] %></div>
-        <div class="admin-stat-change neutral">All Tags</div>
-      </div>
-      <div class="admin-stat-chart">
-        <div class="admin-progress-bar">
-          <div class="admin-progress-fill" style="width: 100%"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="admin-stat-card admin-stat-card-success">
-      <div class="admin-stat-icon">
-        <i class="fas fa-file-alt"></i>
-      </div>
-      <div class="admin-stat-content">
-        <div class="admin-stat-label">With Posts</div>
-        <div class="admin-stat-value"><%= @stats[:with_posts] %></div>
-        <div class="admin-stat-change positive">Active Tags</div>
-      </div>
-      <div class="admin-stat-chart">
-        <div class="admin-progress-bar">
-          <div class="admin-progress-fill" style="width: <%= (@stats[:with_posts].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="admin-stat-card admin-stat-card-warning">
-      <div class="admin-stat-icon">
-        <i class="fas fa-exclamation-triangle"></i>
-      </div>
-      <div class="admin-stat-content">
-        <div class="admin-stat-label">Unused</div>
-        <div class="admin-stat-value"><%= @stats[:unused] %></div>
-        <div class="admin-stat-change negative">Need Attention</div>
-      </div>
-      <div class="admin-stat-chart">
-        <div class="admin-progress-bar">
-          <div class="admin-progress-fill" style="width: <%= (@stats[:unused].to_f / [@stats[:total], 1].max * 100).round(1) %>%"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Search and Filters -->
-  <div class="admin-card">
-    <div class="admin-card-header">
-      <h2 class="admin-card-title">
-        <i class="fas fa-search mr-2"></i>
-        Search & Filter Tags
-      </h2>
-      <div class="admin-card-header-actions">
-        <span class="admin-badge admin-badge-info"><%= @stats[:total] %> total tags</span>
-      </div>
-    </div>
-    <div class="admin-card-body">
-      <%= form_with url: admin_tags_path, method: :get, local: true, class: "admin-form" do |form| %>
-        <div class="admin-form-grid">
-          <div class="admin-form-group">
-            <label class="admin-form-label">
-              <i class="fas fa-search mr-2"></i>
-              Search Tags
-            </label>
-            <%= form.text_field :search, placeholder: "Search by tag name or description...", 
-                value: params[:search], class: "admin-form-input" %>
+  
+  <!-- Enhanced Table Footer -->
+  <div class="enhanced-table-footer">
+    <div class="enhanced-pagination-info">
+      <div class="flex items-center space-x-4">
+        <span>Showing <%= @tags.respond_to?(:count) ? @tags.count : @tags.size %> tags</span>
+        <div class="enhanced-stats-group">
+          <div class="enhanced-stat-item">
+            <i class="fas fa-check-circle text-green-500"></i>
+            <span><%= @stats[:with_posts] %> Active</span>
           </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">
-              <i class="fas fa-filter mr-2"></i>
-              Filter by Usage
-            </label>
-            <%= form.select :filter, 
-                options_for_select([
-                  ['All Tags', ''],
-                  ['Used Tags', 'used'],
-                  ['Unused Tags', 'unused'],
-                  ['Popular Tags', 'popular']
-                ], params[:filter]), 
-                {}, { class: "admin-form-select" } %>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-clock text-yellow-500"></i>
+            <span><%= @stats[:unused] %> Unused</span>
           </div>
-          <div class="admin-form-group">
-            <label class="admin-form-label">
-              <i class="fas fa-sort mr-2"></i>
-              Sort By
-            </label>
-            <%= form.select :sort, 
-                options_for_select([
-                  ['Name A-Z', 'name_asc'],
-                  ['Name Z-A', 'name_desc'],
-                  ['Most Used', 'usage_desc'],
-                  ['Least Used', 'usage_asc'],
-                  ['Newest', 'created_desc'],
-                  ['Oldest', 'created_asc']
-                ], params[:sort] || 'name_asc'), 
-                {}, { class: "admin-form-select" } %>
+          <div class="enhanced-stat-item">
+            <i class="fas fa-fire text-red-500"></i>
+            <span><%= @tags.select { |t| t.posts.count > 10 }.count %> Popular</span>
           </div>
         </div>
-        <div class="admin-form-actions">
-          <%= form.submit "Apply Filters", class: "admin-btn admin-btn-primary" %>
-          <%= link_to "Reset Filters", admin_tags_path, class: "admin-btn admin-btn-secondary" %>
+      </div>
+    </div>
+    <div class="enhanced-pagination-controls">
+      <% if @tags.respond_to?(:current_page) %>
+        <div class="flex items-center space-x-2 text-sm text-gray-500 mr-4">
+          <span>Page <%= @tags.current_page %> of <%= @tags.total_pages %></span>
+        </div>
+        <div class="flex space-x-2">
+          <% if @tags.prev_page %>
+            <%= link_to admin_tags_path(page: @tags.prev_page, search: params[:search], filter: params[:filter], sort: params[:sort]), 
+                  class: "btn btn-secondary btn-sm" do %>
+              <i class="fas fa-chevron-left mr-1"></i> Previous
+            <% end %>
+          <% end %>
+          <% if @tags.next_page %>
+            <%= link_to admin_tags_path(page: @tags.next_page, search: params[:search], filter: params[:filter], sort: params[:sort]), 
+                  class: "btn btn-primary btn-sm" do %>
+              Next <i class="fas fa-chevron-right ml-1"></i>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="flex items-center space-x-3">
+          <span class="text-sm text-gray-500">Single page view</span>
+          <button class="btn btn-primary btn-sm" onclick="location.reload()">
+            <i class="fas fa-sync-alt mr-1"></i> Refresh
+          </button>
         </div>
       <% end %>
     </div>
   </div>
-
-  <!-- Tags Table -->
-  <div class="admin-card">
-    <div class="admin-card-header">
-      <h3 class="admin-card-title">
-        <i class="fas fa-list mr-2"></i>
-        Tags Overview
-      </h3>
-      <div class="admin-card-header-actions">
-        <div class="admin-toggle-wrapper">
-          <label class="admin-toggle">
-            <input type="checkbox" id="bulk-select-tags" onchange="toggleBulkSelectTags()">
-            <span class="admin-toggle-slider"></span>
-            <span class="admin-toggle-label">Bulk Select</span>
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="admin-table-container">
-      <table class="admin-table">
-        <thead class="admin-table-header">
-          <tr>
-            <th class="admin-table-cell admin-table-cell-checkbox" style="display: none;" id="bulk-header-tags">
-              <input type="checkbox" class="admin-checkbox" id="select-all-tags">
-            </th>
-            <th class="admin-table-cell">
-              <i class="fas fa-tag mr-2"></i>
-              Tag Name
-            </th>
-            <th class="admin-table-cell">
-              <i class="fas fa-align-left mr-2"></i>
-              Description
-            </th>
-            <th class="admin-table-cell">
-              <i class="fas fa-chart-bar mr-2"></i>
-              Usage Stats
-            </th>
-            <th class="admin-table-cell">
-              <i class="fas fa-calendar-plus mr-2"></i>
-              Created
-            </th>
-            <th class="admin-table-cell admin-table-cell-actions">
-              <i class="fas fa-cogs mr-2"></i>
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="admin-table-body">
-          <% @tags.each do |tag| %>
-            <tr class="admin-table-row">
-              <td class="admin-table-cell admin-table-cell-checkbox" style="display: none;">
-                <input type="checkbox" class="admin-checkbox bulk-select-tag" value="<%= tag.id %>">
-              </td>
-              <td class="admin-table-cell">
-                <div class="admin-tag-info">
-                  <span class="admin-tag-badge admin-tag-badge-<%= tag.posts.count > 5 ? 'popular' : tag.posts.count > 0 ? 'used' : 'unused' %>">
-                    <i class="fas fa-tag mr-1"></i>
-                    <%= tag.name %>
-                  </span>
-                  <% if tag.posts.count > 10 %>
-                    <span class="admin-badge admin-badge-success admin-badge-small">Popular</span>
-                  <% elsif tag.posts.count == 0 %>
-                    <span class="admin-badge admin-badge-warning admin-badge-small">Unused</span>
-                  <% end %>
-                </div>
-              </td>
-              <td class="admin-table-cell">
-                <div class="admin-tag-description">
-                  <%= truncate(tag.description, length: 80) if tag.description.present? %>
-                  <% unless tag.description.present? %>
-                    <span class="admin-text-muted">No description</span>
-                  <% end %>
-                </div>
-              </td>
-              <td class="admin-table-cell">
-                <div class="admin-usage-stats">
-                  <div class="admin-usage-count">
-                    <i class="fas fa-file-alt mr-1"></i>
-                    <%= pluralize(tag.posts.count, 'post') %>
-                  </div>
-                  <div class="admin-usage-bar">
-                    <div class="admin-usage-fill" style="width: <%= [tag.posts.count.to_f / [@tags.map{|t| t.posts.count}.max, 1].max * 100, 5].max %>%"></div>
-                  </div>
-                </div>
-              </td>
-              <td class="admin-table-cell">
-                <div class="admin-date-info">
-                  <div class="admin-date"><%= tag.created_at.strftime("%b %d, %Y") %></div>
-                  <div class="admin-date-relative"><%= time_ago_in_words(tag.created_at) %> ago</div>
-                </div>
-              </td>
-              <td class="admin-table-cell admin-table-cell-actions">
-                <div class="admin-actions-wrapper">
-                  <div class="admin-quick-actions">
-                    <%= link_to admin_tag_path(tag), class: "admin-btn admin-btn-sm admin-btn-outline", title: "View Tag" do %>
-                      <i class="fas fa-eye"></i>
-                    <% end %>
-                    <%= link_to edit_admin_tag_path(tag), class: "admin-btn admin-btn-sm admin-btn-primary", title: "Edit Tag" do %>
-                      <i class="fas fa-edit"></i>
-                    <% end %>
-                  </div>
-                  <div class="admin-actions-dropdown">
-                    <button class="admin-btn admin-btn-sm admin-btn-outline" onclick="toggleTagActionsDropdown(<%= tag.id %>)">
-                      <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <div class="admin-dropdown-menu" id="tag-actions-menu-<%= tag.id %>">
-                      <%= link_to admin_tag_path(tag), class: "admin-dropdown-item" do %>
-                        <i class="fas fa-eye mr-2"></i>
-                        View Details
-                      <% end %>
-                      <%= link_to edit_admin_tag_path(tag), class: "admin-dropdown-item" do %>
-                        <i class="fas fa-edit mr-2"></i>
-                        Edit Tag
-                      <% end %>
-                      <% if tag.posts.count > 0 %>
-                        <a href="#" class="admin-dropdown-item" onclick="showTagPosts(<%= tag.id %>)">
-                          <i class="fas fa-list mr-2"></i>
-                          View Posts (<%= tag.posts.count %>)
-                        </a>
-                      <% end %>
-                      <div class="admin-dropdown-divider"></div>
-                      <%= link_to admin_tag_path(tag), method: :delete,
-                          data: { confirm: "Are you sure? This will remove the tag from all posts." },
-                          class: "admin-dropdown-item admin-dropdown-item-danger" do %>
-                        <i class="fas fa-trash mr-2"></i>
-                        Delete Tag
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
+  
   <% if @tags.empty? %>
-    <div class="admin-empty-state">
-      <div class="admin-empty-icon">
-        <i class="fas fa-tags"></i>
+    <div class="text-center py-16">
+      <div class="mx-auto w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mb-6">
+        <i class="fas fa-tags text-4xl text-purple-500"></i>
       </div>
-      <h3 class="admin-empty-title">No tags found</h3>
-      <p class="admin-empty-description">Get started by creating your first tag to organize forum content.</p>
-      <div class="admin-empty-actions">
-        <%= link_to new_admin_tag_path, class: "admin-btn admin-btn-primary" do %>
-          <i class="fas fa-plus mr-2"></i>
-          Create Your First Tag
+      <h3 class="text-xl font-bold text-gray-900 mb-2">No tags found</h3>
+      <p class="text-gray-500 mb-8 max-w-md mx-auto">
+        <% if params[:search].present? || params[:filter].present? %>
+          Try adjusting your search filters to see more results, or create a new tag to get started.
+        <% else %>
+          Get started by creating your first tag to organize and categorize forum content effectively.
+        <% end %>
+      </p>
+      <div class="flex items-center justify-center space-x-4">
+        <%= link_to new_admin_tag_path, class: "btn btn-primary" do %>
+          <i class="fas fa-plus mr-2"></i> Create Your First Tag
+        <% end %>
+        <% if params[:search].present? || params[:filter].present? %>
+          <%= link_to admin_tags_path, class: "btn btn-secondary" do %>
+            <i class="fas fa-times mr-2"></i> Clear Filters
+          <% end %>
         <% end %>
       </div>
     </div>
   <% end %>
 </div>
-
-<!-- Bulk Actions Bar (Hidden by default) -->
-<div id="bulk-actions-bar-tags" class="admin-bulk-actions" style="display: none;">
-  <div class="admin-bulk-actions-content">
-    <div class="admin-bulk-actions-info">
-      <span id="selected-tags-count">0</span> tags selected
-    </div>
-    <div class="admin-bulk-actions-buttons">
-      <button class="admin-btn admin-btn-sm admin-btn-danger" onclick="bulkDeleteTags()">
-        <i class="fas fa-trash mr-2"></i>
-        Delete Selected
-      </button>
-      <button class="admin-btn admin-btn-sm admin-btn-info" onclick="exportTags()">
-        <i class="fas fa-download mr-2"></i>
-        Export
-      </button>
-      <button class="admin-btn admin-btn-sm admin-btn-secondary" onclick="clearTagSelection()">
-        <i class="fas fa-times mr-2"></i>
-        Clear
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Flash Messages -->
-<div id="flash-container" class="admin-flash-container"></div>
-
-<script>
-// Tags management JavaScript
-let selectedTags = new Set();
-
-function toggleBulkSelectTags() {
-  const bulkMode = document.getElementById('bulk-select-tags').checked;
-  const checkboxCells = document.querySelectorAll('.admin-table-cell-checkbox');
-  const bulkBar = document.getElementById('bulk-actions-bar-tags');
-  
-  checkboxCells.forEach(cell => {
-    cell.style.display = bulkMode ? 'table-cell' : 'none';
-  });
-  
-  if (!bulkMode) {
-    selectedTags.clear();
-    document.querySelectorAll('.bulk-select-tag').forEach(cb => cb.checked = false);
-    bulkBar.style.display = 'none';
-  }
-  
-  updateTagSelectionCount();
-}
-
-function updateTagSelectionCount() {
-  const selectedCount = selectedTags.size;
-  document.getElementById('selected-tags-count').textContent = selectedCount;
-  
-  const bulkBar = document.getElementById('bulk-actions-bar-tags');
-  const bulkMode = document.getElementById('bulk-select-tags').checked;
-  
-  if (bulkMode && selectedCount > 0) {
-    bulkBar.style.display = 'flex';
-  } else if (bulkMode) {
-    bulkBar.style.display = 'flex';
-    bulkBar.style.opacity = '0.6';
-  } else {
-    bulkBar.style.display = 'none';
-  }
-}
-
-function toggleTagActionsDropdown(tagId) {
-  const dropdown = document.getElementById(`tag-actions-menu-${tagId}`);
-  const allDropdowns = document.querySelectorAll('.admin-dropdown-menu');
-  
-  allDropdowns.forEach(menu => {
-    if (menu !== dropdown) {
-      menu.style.display = 'none';
-    }
-  });
-  
-  dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-}
-
-function showTagPosts(tagId) {
-  showFlashMessage('Loading tag posts...', 'info');
-}
-
-function bulkDeleteTags() {
-  if (selectedTags.size === 0) {
-    showFlashMessage('Please select tags to delete', 'warning');
-    return;
-  }
-  
-  if (confirm(`Are you sure you want to delete ${selectedTags.size} selected tags?`)) {
-    showFlashMessage('Bulk delete functionality coming soon...', 'info');
-  }
-}
-
-function exportTags() {
-  showFlashMessage('Export functionality coming soon...', 'info');
-}
-
-function clearTagSelection() {
-  selectedTags.clear();
-  document.querySelectorAll('.bulk-select-tag').forEach(cb => cb.checked = false);
-  document.getElementById('select-all-tags').checked = false;
-  updateTagSelectionCount();
-}
-
-function bulkManageTags() {
-  showFlashMessage('Bulk management features coming soon...', 'info');
-}
-
-function showFlashMessage(message, type) {
-  const container = document.getElementById('flash-container');
-  const div = document.createElement('div');
-  
-  const typeStyles = {
-    success: { bg: 'admin-flash-success', icon: 'fa-check-circle' },
-    error: { bg: 'admin-flash-error', icon: 'fa-exclamation-circle' },
-    warning: { bg: 'admin-flash-warning', icon: 'fa-exclamation-triangle' },
-    info: { bg: 'admin-flash-info', icon: 'fa-info-circle' }
-  };
-  
-  const style = typeStyles[type] || typeStyles.info;
-  
-  div.className = `admin-flash ${style.bg}`;
-  div.innerHTML = `
-    <div class="admin-flash-content">
-      <i class="fas ${style.icon} admin-flash-icon"></i>
-      <span class="admin-flash-message">${message}</span>
-      <button class="admin-flash-close" onclick="this.parentElement.parentElement.remove()">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-  `;
-  
-  container.appendChild(div);
-  
-  setTimeout(() => {
-    if (div.parentElement) {
-      div.remove();
-    }
-  }, 5000);
-}
-
-// Event listeners
-document.addEventListener('DOMContentLoaded', function() {
-  // Select all checkbox
-  const selectAllCheckbox = document.getElementById('select-all-tags');
-  if (selectAllCheckbox) {
-    selectAllCheckbox.addEventListener('change', function() {
-      const checkboxes = document.querySelectorAll('.bulk-select-tag');
-      checkboxes.forEach(cb => {
-        cb.checked = this.checked;
-        if (this.checked) {
-          selectedTags.add(cb.value);
-        } else {
-          selectedTags.delete(cb.value);
-        }
-      });
-      updateTagSelectionCount();
-    });
-  }
-  
-  // Individual tag checkboxes
-  document.querySelectorAll('.bulk-select-tag').forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      if (this.checked) {
-        selectedTags.add(this.value);
-      } else {
-        selectedTags.delete(this.value);
-        document.getElementById('select-all-tags').checked = false;
-      }
-      updateTagSelectionCount();
-    });
-  });
-});
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.admin-actions-dropdown')) {
-    document.querySelectorAll('.admin-dropdown-menu').forEach(menu => {
-      menu.style.display = 'none';
-    });
-  }
-});
-</script>

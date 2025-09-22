@@ -8,13 +8,13 @@ local:
 
 # Production S3 storage configuration
 # Configure via environment variables for security
-amazon:
-  service: S3
-  access_key_id: <%= ENV["AWS_ACCESS_KEY_ID"] %>
-  secret_access_key: <%= ENV["AWS_SECRET_ACCESS_KEY"] %>
-  region: <%= ENV.fetch("AWS_REGION", "us-east-1") %>
-  bucket: <%= ENV.fetch("AWS_S3_BUCKET", "naija-forum-#{Rails.env}") %>
-  public: true
+#amazon:
+ # service: S3
+ # access_key_id: <%= ENV["AWS_ACCESS_KEY_ID"] %>
+  #secret_access_key: <%= ENV["AWS_SECRET_ACCESS_KEY"] %>
+  #region: <%= ENV.fetch("AWS_REGION", "us-east-1") %>
+  #bucket: <%= ENV.fetch("AWS_S3_BUCKET", "naija-forum-#{Rails.env}") %>
+  #public: true
   
 # Alternative configuration using Rails credentials
 # Run: bin/rails credentials:edit

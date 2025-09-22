@@ -1,4 +1,7 @@
 require_relative "boot"
+hostinger_env = File.join(Rails.root, "config", "hostinger_env.rb")
+require hostinger_env if File.exist?(hostinger_env)
+
 
 require "rails/all"
 

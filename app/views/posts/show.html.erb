@@ -138,7 +138,8 @@
       <%= image_tag @post.user.avatar, class: "w-18 h-18 rounded-full border-2 border-naija-green shadow-lg object-cover" %>
     <% else %>
       <div class="w-18 h-18 bg-gradient-to-br from-naija-green to-naija-green-600 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-lg">
-        <%= @post.user.username.first(2).upcase %>
+        <%= (@post.user&.username.to_s.first(2).upcase.presence || "NA") %>
+
       </div>
     <% end %>
     <div>
@@ -444,18 +445,21 @@
           let shareUrl = '';
           
           switch(platform) {
+          switch (platform) {
             case 'twitter':
-              shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`;
+              shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
               break;
             case 'facebook':
-              shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+              shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
               break;
             case 'linkedin':
-              shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+              shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
               break;
             case 'whatsapp':
-              shareUrl = `https://api.whatsapp.com/send?text=${title}%20${url}`;
+              shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(url)}`;
               break;
+          }
+
           }
           
           window.open(shareUrl, '_blank').focus();

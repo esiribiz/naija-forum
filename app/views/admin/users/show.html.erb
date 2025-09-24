@@ -1,0 +1,81 @@
+<!-- app/views/admin/users/show.html.erb -->
+
+<div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
+  <!-- User Info -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold mb-1"><%= @user.username %></h1>
+      <p class="text-gray-600"><%= @user.email %></p>
+      <p class="text-gray-600"><%= @user.first_name %> <%= @user.last_name %></p>
+      <p class="text-gray-500 text-sm mt-1">Role: <%= @user.role.capitalize %></p>
+      <% if @user.suspended? %>
+        <span class="inline-block mt-1 px-2 py-1 bg-red-100 text-red-700 text-sm rounded">Suspended</span>
+      <% end %>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col space-y-3">
+      <!-- Edit Button -->
+      <%= link_to "Edit User", edit_admin_user_path(@user), class: "px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-center" %>
+
+      <!-- Suspend / Unsuspend -->
+      <% if @user.suspended? %>
+        <%= button_to "Unsuspend User", toggle_suspend_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" %>
+      <% else %>
+        <%= button_to "Suspend User", toggle_suspend_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500" %>
+      <% end %>
+
+      <!-- Grant / Remove Admin -->
+      <% if @user.admin? %>
+        <%= button_to "Remove Admin", toggle_admin_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" %>
+      <% else %>
+        <%= button_to "Grant Admin", toggle_admin_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" %>
+      <% end %>
+
+      <!-- Delete User -->
+      <%= button_to "Delete User", admin_user_path(@user), method: :delete, data: { confirm: "Are you sure?" }, class: "px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" %>
+    </div>
+  </div>
+
+  <!-- User Bio -->
+  <% if @user.bio.present? %>
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-1">Bio</h2>
+      <p class="text-gray-700"><%= @user.bio %></p>
+    </div>
+  <% end %>
+
+  <!-- User Posts -->
+  <div class="mb-6">
+    <h2 class="text-xl font-semibold mb-2">Posts (<%= @user_posts.count %>)</h2>
+    <% if @user_posts.any? %>
+      <ul class="divide-y divide-gray-200">
+        <% @user_posts.each do |post| %>
+          <li class="py-2">
+            <%= link_to post.title, admin_post_path(post), class: "text-blue-600 hover:underline" %>
+            <span class="text-gray-500 text-sm">(<%= post.created_at.strftime("%b %d, %Y") %>)</span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-gray-500">No posts yet.</p>
+    <% end %>
+  </div>
+
+  <!-- User Comments -->
+  <div class="mb-6">
+    <h2 class="text-xl font-semibold mb-2">Comments (<%= @user_comments.count %>)</h2>
+    <% if @user_comments.any? %>
+      <ul class="divide-y divide-gray-200">
+        <% @user_comments.each do |comment| %>
+          <li class="py-2">
+            <span class="text-gray-700"><%= truncate(comment.content, length: 80) %></span>
+            <span class="text-gray-500 text-sm">on <%= link_to comment.post.title, admin_post_path(comment.post), class: "text-blue-600 hover:underline" %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="text-gray-500">No comments yet.</p>
+    <% end %>
+  </div>
+</div>

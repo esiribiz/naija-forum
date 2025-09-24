@@ -9,6 +9,8 @@ Rails.application.routes.draw do
         patch :toggle_admin
         patch :ban
         patch :unban
+        patch :toggle_admin
+        patch :toggle_suspend
         patch :update_role
       end
     end

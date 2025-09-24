@@ -1,5 +1,5 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_admin]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_admin, :toggle_suspend]
 
   def index
     @users = User.includes(:posts, :comments).order(created_at: :desc)
@@ -52,6 +52,19 @@ class Admin::UsersController < Admin::BaseController
     @user.destroy
     redirect_to admin_users_path, notice: 'User was successfully deleted.'
   end
+
+    # toggle_suspend
+  def toggle_suspend
+    if @user == current_user
+      redirect_to admin_users_path, alert: "You cannot suspend yourself."
+      return
+    end
+
+    @user.update!(suspended: !@user.suspended)
+    action = @user.suspended? ? "suspended" : "unsuspended"
+    redirect_to admin_user_path(@user), notice: "User has been #{action}."
+  end
+
   
   def toggle_admin
     # Admin access is already validated by Admin::BaseController

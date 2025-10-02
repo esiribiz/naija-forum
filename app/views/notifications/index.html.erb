@@ -146,13 +146,48 @@
       <% end %>
       
       <!-- Pagination -->
-      <% if @notifications.any? && @notifications.respond_to?(:current_page) %>
+      <% if @notifications.respond_to?(:current_page) && @notifications.total_pages > 1 %>
         <div class="px-8 py-6 border-t border-gray-100 bg-gray-50">
-          <div class="flex justify-center">
-            <%= paginate @notifications, 
-                window: 2,
-                theme: 'twitter_bootstrap_4',
-                class: 'pagination-modern' %>
+          <div class="flex items-center justify-between pagination-controls">
+            <div class="text-sm text-gray-600 pagination-info">
+              Showing page <%= @notifications.current_page %> of <%= @notifications.total_pages %>
+              (<%= @notifications.total_count %> total notifications)
+            </div>
+            <div class="flex space-x-2 pagination-buttons">
+              <% if @notifications.prev_page %>
+                <%= link_to notifications_path(page: @notifications.prev_page), 
+                    class: "inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200" do %>
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                  Previous
+                <% end %>
+              <% else %>
+                <span class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed">
+                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                  Previous
+                </span>
+              <% end %>
+              
+              <% if @notifications.next_page %>
+                <%= link_to notifications_path(page: @notifications.next_page), 
+                    class: "inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200" do %>
+                  Next
+                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                <% end %>
+              <% else %>
+                <span class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed">
+                  Next
+                  <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </span>
+              <% end %>
+            </div>
           </div>
         </div>
       <% end %>
@@ -201,30 +236,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Custom Styles -->
 <style>
-.pagination-modern .page-item .page-link {
-  border: none;
-  color: #6b7280;
-  font-weight: 500;
-  padding: 0.75rem 1rem;
-  margin: 0 0.25rem;
-  border-radius: 0.75rem;
-  transition: all 0.2s;
-}
-
-.pagination-modern .page-item.active .page-link {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.pagination-modern .page-item:hover .page-link {
-  background-color: #f3f4f6;
-  transform: translateY(-1px);
-}
-
 .notification-filter-btn.active {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
   box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+/* Responsive adjustments for pagination */
+@media (max-width: 640px) {
+  .pagination-controls {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .pagination-info {
+    order: 2;
+  }
+  
+  .pagination-buttons {
+    order: 1;
+    justify-content: center;
+  }
 }
 </style>

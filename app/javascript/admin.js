@@ -2,6 +2,27 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   
+  // Real-time Clock Update
+  function updateClock() {
+    const clockElement = document.getElementById('current-time');
+    if (clockElement) {
+      const now = new Date();
+      const options = {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      };
+      clockElement.textContent = now.toLocaleString('en-US', options);
+    }
+  }
+  
+  // Update clock every minute
+  updateClock(); // Initial update
+  setInterval(updateClock, 60000); // Update every minute
+  
   // Professional Loading Animation
   function showLoading(element) {
     if (!element) return;

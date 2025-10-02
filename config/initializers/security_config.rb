@@ -135,6 +135,11 @@ class << self
     }
     end
 
+    # Session timeout accessor
+    def session_timeout
+      current_env_config[:session_timeout]
+    end
+
     # Security Validation Methods
     def valid_password?(password)
     return false if password.length < password_requirements[:min_length]

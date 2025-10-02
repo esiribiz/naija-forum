@@ -1,6 +1,9 @@
 class Post < ApplicationRecord
-include HtmlProcessor
-include Redis::Objects
+  extend FriendlyId
+  friendly_id :title, use: [:slugged, :finders]
+
+  include HtmlProcessor
+  include Redis::Objects
 
 # Rate limiting
 rate_limit_key = ->(post) { "post:#{post.user_id}:rate_limit" }
@@ -17,6 +20,7 @@ has_many :tags, through: :post_tags
 has_many :mentions, as: :mentionable, dependent: :destroy
 has_many :notifications, as: :notifiable, dependent: :destroy
 has_many :likes, dependent: :destroy
+has_many :liked_by_users, through: :likes, source: :user
 
 # Validations
 validates :title, presence: true, 

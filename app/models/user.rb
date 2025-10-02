@@ -45,13 +45,12 @@ accepts_nested_attributes_for :security_questions
 has_many :posts, dependent: :destroy
 has_many :comments, dependent: :destroy
 has_many :login_activities, dependent: :destroy
-has_many :login_activities, dependent: :destroy
 has_many :likes, dependent: :destroy
 has_many :notifications, foreign_key: "user_id", dependent: :destroy
 has_many :followings, class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
 has_many :followers, class_name: "Follow", foreign_key: "followed_id", dependent: :destroy
-has_many :following_users, through: :followers, source: :follower
-has_many :following, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
+has_many :followed_users, through: :followings, source: :followed
+has_many :follower_users, through: :followers, source: :follower
 has_many :liked_posts, through: :likes, source: :post
 has_one_attached :avatar
 

@@ -1,15 +1,15 @@
 class PostPolicy < ApplicationPolicy
-class Scope < Scope
+  class Scope < Scope
     def resolve
-    # Return all published posts for regular users
-    # Admins can see all posts including drafts
-    if user&.admin?
+      # Return all published posts for regular users
+      # Admins can see all posts including drafts
+      if user&.admin?
         scope.all
-    else  
+      else  
         scope.where(published: true)
+      end
     end
-    end
-end
+  end
 
 def index?
     true

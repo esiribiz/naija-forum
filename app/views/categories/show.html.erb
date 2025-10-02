@@ -31,12 +31,25 @@
       <h2 class="text-2xl font-semibold text-gray-800 mb-4">Posts in this Category:</h2>
       <ul class="space-y-6">
         <% @category.posts.each do |post| %>
-          <li class="p-6 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition">
-            <h3 class="text-xl font-bold text-blue-700">
-              <%= link_to post.title, post_path(post), class: "hover:underline" %>
+          <li class="p-6 bg-gray-50 rounded-xl shadow-sm hover:shadow-md transition relative cursor-pointer group">
+            <% if user_signed_in? %>
+              <%= link_to post_path(post), class: "absolute inset-0 z-10 rounded-xl" do %>
+                <span class="sr-only">View <%= post.title %></span>
+              <% end %>
+            <% else %>
+              <%= link_to new_user_session_path, class: "absolute inset-0 z-10 rounded-xl" do %>
+                <span class="sr-only">Sign in to view <%= post.title %></span>
+              <% end %>
+            <% end %>
+            
+            <h3 class="text-xl font-bold text-blue-700 group-hover:text-blue-800 transition-colors">
+              <%= post.title %>
+              <% unless user_signed_in? %>
+                <span class="block text-xs text-blue-600 font-normal mt-1">🔒 Sign in to read this post</span>
+              <% end %>
             </h3>
-            <p class="text-gray-600 mt-2"><%= truncate(post.body, length: 150) %></p>
-            <p class="mt-4 text-sm text-gray-500">By <%= post.user.username %> • <%= time_ago_in_words(post.created_at) %> ago</p>
+            <p class="text-gray-600 mt-2 group-hover:text-gray-800 transition-colors"><%= truncate(post.body, length: 150) %></p>
+            <p class="mt-4 text-sm text-gray-500 group-hover:text-gray-600 transition-colors">By <%= post.user.username %> • <%= time_ago_in_words(post.created_at) %> ago</p>
           </li>
         <% end %>
       </ul>

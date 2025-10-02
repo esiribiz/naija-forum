@@ -34,7 +34,17 @@
       <% if @posts.present? %>
         <% @posts.each do |post| %>
           <!-- Post Card with Nigerian-inspired design -->
-          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-green-500">
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-green-500 relative group">
+            <% if user_signed_in? %>
+              <%= link_to post_path(post), class: "absolute inset-0 z-10 rounded-xl" do %>
+                <span class="sr-only">View <%= post.title %></span>
+              <% end %>
+            <% else %>
+              <%= link_to new_user_session_path, class: "absolute inset-0 z-10 rounded-xl" do %>
+                <span class="sr-only">Sign in to view <%= post.title %></span>
+              <% end %>
+            <% end %>
+            
             <!-- User Info Section -->
             <div class="flex items-center space-x-4 p-5 border-b border-gray-100">
               <% if post.user&.avatar&.attached? %>
@@ -45,19 +55,11 @@
                 </div>
               <% end %>
               
-              <div>
-                <h2 class="text-xl font-bold text-gray-800 group">
-                  <% if user_signed_in? %>
-                    <%= link_to post_path(post), class: "hover:text-green-600 transition-colors duration-200" do %>
-                      <%= post.title %>
-                      <span class="block h-0.5 w-0 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
-                    <% end %>
-                  <% else %>
-                    <%= link_to new_user_session_path, class: "hover:text-green-600 transition-colors duration-200 relative" do %>
-                      <%= post.title %>
-                      <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
-                      <span class="block h-0.5 w-0 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
-                    <% end %>
+              <div class="flex-1">
+                <h2 class="text-xl font-bold text-gray-800 group-hover:text-green-600 transition-colors duration-200">
+                  <%= post.title %>
+                  <% unless user_signed_in? %>
+                    <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
                   <% end %>
                 </h2>
                 <p class="text-sm text-gray-500 flex items-center">
@@ -66,6 +68,7 @@
                   </svg>
                   <%= time_ago_in_words(post.created_at) %> ago
                 </p>
+                <%= online_dot(post.user, class: 'ml-2') %>
               </div>
             </div>
             
@@ -91,7 +94,7 @@
                 
                 <!-- Category badge -->
                 <% if post.category %>
-                  <span class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full">
+                  <span class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full relative z-20">
                     <%= post.category.name %>
                   </span>
                 <% end %>

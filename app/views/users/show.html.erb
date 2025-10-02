@@ -298,14 +298,27 @@
       
       <div class="space-y-3">
         <% recent_posts.each do |post| %>
-          <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors relative cursor-pointer group">
+            <% if user_signed_in? %>
+              <%= link_to post, class: "absolute inset-0 z-10 rounded-lg" do %>
+                <span class="sr-only">View <%= post.title %></span>
+              <% end %>
+            <% else %>
+              <%= link_to new_user_session_path, class: "absolute inset-0 z-10 rounded-lg" do %>
+                <span class="sr-only">Sign in to view <%= post.title %></span>
+              <% end %>
+            <% end %>
+            
             <div class="flex items-start justify-between">
               <div class="flex-1">
-                <%= link_to post, class: "font-semibold text-gray-900 hover:text-green-600" do %>
+                <h4 class="font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
                   <%= truncate(post.title, length: 50) %>
-                <% end %>
-                <p class="text-sm text-gray-600 mt-1"><%= truncate(post.body, length: 100) %></p>
-                <div class="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                  <% unless user_signed_in? %>
+                    <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
+                  <% end %>
+                </h4>
+                <p class="text-sm text-gray-600 mt-1 group-hover:text-gray-800 transition-colors"><%= truncate(post.body, length: 100) %></p>
+                <div class="flex items-center space-x-4 mt-2 text-xs text-gray-500 group-hover:text-gray-600 transition-colors">
                   <span><%= post.created_at.strftime("%b %d, %Y") %></span>
                   <span><%= post.comments.count %> comments</span>
                 </div>

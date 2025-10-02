@@ -2,12 +2,12 @@
 <% content_for :page_subtitle, "Welcome back! Here's what's happening on your forum today." %>
 
 <!-- Professional Dashboard Welcome Section -->
-<div class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 rounded-3xl shadow-2xl mb-8 overflow-hidden relative border border-slate-700">
-  <!-- Animated background elements -->
-  <div class="absolute inset-0 opacity-10">
-    <div class="absolute top-0 left-1/4 w-40 h-40 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-3xl animate-pulse"></div>
-    <div class="absolute bottom-0 right-1/4 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
-    <div class="absolute top-1/2 left-1/2 w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full blur-2xl animate-pulse" style="animation-delay: 1s;"></div>
+<div class="bg-gradient-to-br from-green-800 via-green-700 to-green-900 rounded-3xl shadow-2xl mb-8 overflow-hidden relative border border-green-600">
+  <!-- Nigerian Flag Inspired Animated Elements -->
+  <div class="absolute inset-0 opacity-15">
+    <div class="absolute top-0 left-1/4 w-40 h-40 bg-gradient-to-br from-green-400 to-green-500 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-0 right-1/4 w-32 h-32 bg-gradient-to-br from-white to-green-100 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute top-1/2 left-1/2 w-24 h-24 bg-gradient-to-br from-green-300 to-green-400 rounded-full blur-2xl animate-pulse" style="animation-delay: 1s;"></div>
   </div>
   
   <!-- Main Content Container -->
@@ -23,9 +23,9 @@
           <div class="relative flex-shrink-0">
             <div class="w-24 h-24 lg:w-28 lg:h-28 relative">
               <% if current_user&.avatar&.attached? %>
-                <%= image_tag current_user.avatar, class: "w-full h-full rounded-2xl object-cover border-4 border-slate-600 shadow-2xl" %>
+                <%= image_tag current_user.avatar, class: "w-full h-full rounded-2xl object-cover border-4 border-green-400 shadow-2xl" %>
               <% else %>
-                <div class="w-full h-full bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 rounded-2xl flex items-center justify-center border-4 border-slate-600 shadow-2xl">
+                <div class="w-full h-full bg-gradient-to-br from-green-500 via-green-600 to-green-700 rounded-2xl flex items-center justify-center border-4 border-green-400 shadow-2xl">
                   <span class="text-2xl lg:text-3xl font-bold text-white"><%= current_user&.username&.first&.upcase || 'A' %></span>
                 </div>
               <% end %>
@@ -34,15 +34,15 @@
               <div class="absolute -bottom-1 -right-1">
                 <% if current_user&.online? %>
                   <div class="relative">
-                    <div class="w-7 h-7 bg-green-500 border-4 border-slate-900 rounded-full shadow-lg flex items-center justify-center">
-                      <div class="w-3 h-3 bg-green-300 rounded-full animate-ping absolute"></div>
-                      <div class="w-3 h-3 bg-green-400 rounded-full relative"></div>
+                    <div class="w-7 h-7 bg-green-400 border-4 border-green-800 rounded-full shadow-lg flex items-center justify-center">
+                      <div class="w-3 h-3 bg-green-200 rounded-full animate-ping absolute"></div>
+                      <div class="w-3 h-3 bg-green-300 rounded-full relative"></div>
                     </div>
                   </div>
                 <% elsif current_user&.recently_active? %>
-                  <div class="w-7 h-7 bg-amber-500 border-4 border-slate-900 rounded-full shadow-lg"></div>
+                  <div class="w-7 h-7 bg-yellow-400 border-4 border-green-800 rounded-full shadow-lg"></div>
                 <% else %>
-                  <div class="w-7 h-7 bg-slate-500 border-4 border-slate-900 rounded-full shadow-lg"></div>
+                  <div class="w-7 h-7 bg-gray-400 border-4 border-green-800 rounded-full shadow-lg"></div>
                 <% end %>
               </div>
             </div>
@@ -53,9 +53,9 @@
             <!-- Main Greeting -->
             <div class="mb-4">
               <h1 class="text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">
-                <span class="text-slate-200"><%= time_based_greeting %>,</span>
+                <span class="text-green-100"><%= time_based_greeting %>,</span>
                 <br class="sm:hidden">
-                <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+                <span class="bg-gradient-to-r from-green-200 via-green-100 to-white bg-clip-text text-transparent">
                   <%= current_user&.display_name || current_user&.username || 'Admin' %>
                 </span>! 👋
               </h1>
@@ -66,31 +66,31 @@
               <!-- Enhanced Role Badge -->
               <% case current_user&.role %>
               <% when 'admin' %>
-                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-red-600 to-red-700 text-white border border-red-500/50 shadow-lg">
+                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-green-600 to-green-800 text-white border border-green-500/50 shadow-lg">
                   <i class="fas fa-crown mr-2 text-yellow-300"></i>
                   System Administrator
                 </div>
               <% when 'moderator' %>
-                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-blue-600 to-blue-700 text-white border border-blue-500/50 shadow-lg">
-                  <i class="fas fa-shield-alt mr-2 text-cyan-300"></i>
+                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-green-500 to-green-700 text-white border border-green-400/50 shadow-lg">
+                  <i class="fas fa-shield-alt mr-2 text-green-200"></i>
                   Forum Moderator
                 </div>
               <% else %>
-                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-slate-600 to-slate-700 text-slate-100 border border-slate-500/50 shadow-lg">
-                  <i class="fas fa-user mr-2 text-slate-300"></i>
+                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-green-400 to-green-600 text-white border border-green-300/50 shadow-lg">
+                  <i class="fas fa-user mr-2 text-green-100"></i>
                   <%= current_user&.role&.humanize || 'User' %>
                 </div>
               <% end %>
               
               <!-- Enhanced Time Display -->
-              <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-slate-800/80 text-slate-200 border border-slate-600/50 backdrop-blur-sm shadow-lg">
-                <i class="fas fa-clock mr-2 text-emerald-400"></i>
+              <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-green-900/80 text-green-100 border border-green-600/50 backdrop-blur-sm shadow-lg">
+                <i class="fas fa-clock mr-2 text-green-300"></i>
                 <span id="dashboard-current-time" class="font-mono"><%= formatted_current_time %></span>
               </div>
             </div>
             
             <!-- Description -->
-            <p class="text-slate-300 text-lg leading-relaxed mb-4">
+            <p class="text-green-100 text-lg leading-relaxed mb-4">
               Here's your comprehensive forum overview for 
               <span class="text-white font-semibold"><%= Date.current.strftime('%B %d, %Y') %></span>
             </p>
@@ -99,21 +99,21 @@
         
         <!-- Right: Quick Actions -->
         <div class="flex flex-wrap gap-3 lg:flex-col lg:w-auto">
-          <%= link_to new_admin_user_path, class: "inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+          <%= link_to new_admin_user_path, class: "inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
             </svg>
             Add User
           <% end %>
           
-          <%= link_to new_admin_category_path, class: "inline-flex items-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+          <%= link_to new_admin_category_path, class: "inline-flex items-center px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
             </svg>
             New Category
           <% end %>
           
-          <%= link_to admin_comments_path, class: "inline-flex items-center px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+          <%= link_to admin_comments_path, class: "inline-flex items-center px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
             </svg>
@@ -127,13 +127,13 @@
         
         <!-- User Details -->
         <div class="flex flex-wrap items-center gap-6 text-sm">
-          <div class="flex items-center text-slate-300">
-            <div class="w-8 h-8 bg-slate-700/50 rounded-lg flex items-center justify-center mr-3">
-              <i class="fas fa-user-clock text-emerald-400"></i>
+          <div class="flex items-center text-green-200">
+            <div class="w-8 h-8 bg-green-800/50 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-user-clock text-green-300"></i>
             </div>
             <div>
-              <div class="text-xs text-slate-400 uppercase tracking-wide font-medium">Last Login</div>
-              <div class="text-slate-200 font-medium">
+              <div class="text-xs text-green-300 uppercase tracking-wide font-medium">Last Login</div>
+              <div class="text-green-100 font-medium">
                 <% if current_user&.last_sign_in_at %>
                   <%= time_ago_in_words(current_user.last_sign_in_at) %> ago
                 <% else %>
@@ -143,34 +143,34 @@
             </div>
           </div>
           
-          <div class="flex items-center text-slate-300">
-            <div class="w-8 h-8 bg-slate-700/50 rounded-lg flex items-center justify-center mr-3">
-              <i class="fas fa-calendar-plus text-blue-400"></i>
+          <div class="flex items-center text-green-200">
+            <div class="w-8 h-8 bg-green-800/50 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-calendar-plus text-green-300"></i>
             </div>
             <div>
-              <div class="text-xs text-slate-400 uppercase tracking-wide font-medium">Member Since</div>
-              <div class="text-slate-200 font-medium"><%= current_user&.created_at&.strftime('%B %Y') %></div>
+              <div class="text-xs text-green-300 uppercase tracking-wide font-medium">Member Since</div>
+              <div class="text-green-100 font-medium"><%= current_user&.created_at&.strftime('%B %Y') %></div>
             </div>
           </div>
           
           <% if current_user&.online? %>
-            <div class="flex items-center text-green-400">
-              <div class="w-8 h-8 bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
+            <div class="flex items-center text-green-300">
+              <div class="w-8 h-8 bg-green-700/30 rounded-lg flex items-center justify-center mr-3">
                 <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
               </div>
               <div>
-                <div class="text-xs text-green-300 uppercase tracking-wide font-medium">Status</div>
-                <div class="text-green-200 font-medium">Currently Online</div>
+                <div class="text-xs text-green-200 uppercase tracking-wide font-medium">Status</div>
+                <div class="text-green-100 font-medium">Currently Online</div>
               </div>
             </div>
           <% elsif current_user&.recently_active? %>
-            <div class="flex items-center text-amber-400">
-              <div class="w-8 h-8 bg-amber-900/30 rounded-lg flex items-center justify-center mr-3">
-                <div class="w-3 h-3 bg-amber-400 rounded-full"></div>
+            <div class="flex items-center text-yellow-400">
+              <div class="w-8 h-8 bg-yellow-900/30 rounded-lg flex items-center justify-center mr-3">
+                <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
               </div>
               <div>
-                <div class="text-xs text-amber-300 uppercase tracking-wide font-medium">Status</div>
-                <div class="text-amber-200 font-medium">Recently Active</div>
+                <div class="text-xs text-yellow-300 uppercase tracking-wide font-medium">Status</div>
+                <div class="text-yellow-200 font-medium">Recently Active</div>
               </div>
             </div>
           <% end %>
@@ -179,20 +179,20 @@
         <!-- Quick Stats Summary -->
         <div class="flex items-center gap-6 text-sm">
           <div class="text-center">
-            <div class="text-2xl font-bold text-emerald-400"><%= number_with_delimiter(@stats[:users][:total]) %></div>
-            <div class="text-xs text-slate-400 uppercase tracking-wide">Users</div>
+            <div class="text-2xl font-bold text-green-300"><%= number_with_delimiter(@stats[:users][:total]) %></div>
+            <div class="text-xs text-green-400 uppercase tracking-wide">Users</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl font-bold text-blue-400"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
-            <div class="text-xs text-slate-400 uppercase tracking-wide">Posts</div>
+            <div class="text-2xl font-bold text-green-200"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
+            <div class="text-xs text-green-400 uppercase tracking-wide">Posts</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl font-bold text-amber-400"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
-            <div class="text-xs text-slate-400 uppercase tracking-wide">Comments</div>
+            <div class="text-2xl font-bold text-yellow-300"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
+            <div class="text-xs text-green-400 uppercase tracking-wide">Comments</div>
           </div>
           <div class="text-center">
-            <div class="text-2xl font-bold text-purple-400"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
-            <div class="text-xs text-slate-400 uppercase tracking-wide">Categories</div>
+            <div class="text-2xl font-bold text-white"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
+            <div class="text-xs text-green-400 uppercase tracking-wide">Categories</div>
           </div>
         </div>
       </div>

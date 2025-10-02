@@ -11,11 +11,11 @@
         <div class="security-question-group mb-4 p-3 border border-gray-200 rounded">
           <div class="mb-3">
             <%= sq.label :question, "Question", class: "block font-medium text-sm text-gray-700 mb-1" %>
-            <%= sq.text_field :question, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            <%= sq.text_field :question, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" %>
           </div>
           <div class="mb-1">
             <%= sq.label :answer, "Answer", class: "block font-medium text-sm text-gray-700 mb-1" %>
-            <%= sq.text_field :answer, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+            <%= sq.text_field :answer, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" %>
             <p class="text-xs text-gray-500 mt-1">Your answer is case-insensitive.</p>
           </div>
         </div>
@@ -26,11 +26,11 @@
           <%= f.fields_for :security_questions, f.object.security_questions.build do |sq| %>
             <div class="mb-3">
               <%= sq.label :question, "Question #{i+1}", class: "block font-medium text-sm text-gray-700 mb-1" %>
-              <%= sq.text_field :question, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+              <%= sq.text_field :question, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" %>
             </div>
             <div class="mb-1">
               <%= sq.label :answer, "Answer #{i+1}", class: "block font-medium text-sm text-gray-700 mb-1" %>
-              <%= sq.text_field :answer, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+              <%= sq.text_field :answer, class: "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm" %>
               <p class="text-xs text-gray-500 mt-1">Your answer is case-insensitive.</p>
             </div>
           <% end %>
@@ -41,7 +41,7 @@
 
   <% if f.object.security_questions.size < 3 && f.object.security_questions.any? %>
     <div class="mb-3">
-      <button type="button" id="add-security-question" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+      <button type="button" id="add-security-question" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
         Add Another Question
       </button>
       <p class="text-xs text-gray-500 mt-1">You need to have <%= Devise.security_question_count %> security questions.</p>
@@ -71,7 +71,7 @@
               const questionInput = document.createElement('input');
               questionInput.type = 'text';
               questionInput.name = `user[security_questions_attributes][${nextIndex}][question]`;
-              questionInput.className = 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm';
+              questionInput.className = 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm';
               
               questionDiv.appendChild(questionLabel);
               questionDiv.appendChild(questionInput);
@@ -87,7 +87,7 @@
               const answerInput = document.createElement('input');
               answerInput.type = 'text';
               answerInput.name = `user[security_questions_attributes][${nextIndex}][answer]`;
-              answerInput.className = 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm';
+              answerInput.className = 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm';
               
               const answerHelp = document.createElement('p');
               answerHelp.className = 'text-xs text-gray-500 mt-1';

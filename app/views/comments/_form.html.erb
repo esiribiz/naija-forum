@@ -1,6 +1,6 @@
 <%= form_with(
   model: [@post, comment],
-  class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-xl border border-green-200' : 'bg-white p-4 rounded-xl shadow-sm border border-gray-200'}",
+  class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl border border-green-200' : 'bg-white p-4 rounded-xl shadow-sm border border-gray-200'}",
   local: false,
   data: {
     controller: "reset-form comments",

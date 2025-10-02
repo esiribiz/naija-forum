@@ -36,6 +36,20 @@ devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :validatable,
     :trackable, :password_expirable, :password_archivable
 
+# Activity-based scopes for admin filtering
+scope :online, -> { where('last_sign_in_at > ? OR last_active_at > ?', 5.minutes.ago, 5.minutes.ago) }
+scope :recently_active, -> { where('last_sign_in_at > ? OR last_active_at > ?', 1.day.ago, 1.day.ago) }
+scope :inactive, -> { where('last_sign_in_at IS NOT NULL AND last_sign_in_at <= ?', 1.day.ago) }
+scope :never_logged_in, -> { where(last_sign_in_at: nil) }
+scope :joined_today, -> { where('created_at >= ?', Date.current) }
+scope :joined_this_week, -> { where('created_at >= ?', 1.week.ago) }
+scope :joined_this_month, -> { where('created_at >= ?', 1.month.ago) }
+scope :joined_last_3_months, -> { where('created_at >= ?', 3.months.ago) }
+scope :joined_this_year, -> { where('created_at >= ?', 1.year.ago) }
+scope :by_posts_count, -> { left_joins(:posts).group('users.id').order('COUNT(posts.id) DESC') }
+scope :by_comments_count, -> { left_joins(:comments).group('users.id').order('COUNT(comments.id) DESC') }
+scope :most_active, -> { left_joins(:posts, :comments).group('users.id').order('(COUNT(DISTINCT posts.id) + COUNT(DISTINCT comments.id)) DESC') }
+
 # Keep the association but make security questions optional
 has_many :security_questions, dependent: :destroy
 accepts_nested_attributes_for :security_questions
@@ -218,7 +232,32 @@ before_validation :sanitize_user_input
 
 # Status methods
 def online?
-last_active_at.present? && last_active_at > 5.minutes.ago
+  # Check if user is currently online (signed in within last 5 minutes)
+  (last_sign_in_at.present? && last_sign_in_at > 5.minutes.ago) ||
+  (last_active_at.present? && last_active_at > 5.minutes.ago)
+end
+
+def recently_active?
+  # User was active within the last 24 hours
+  (last_sign_in_at.present? && last_sign_in_at > 1.day.ago) ||
+  (last_active_at.present? && last_active_at > 1.day.ago)
+end
+
+def inactive?
+  # User has signed in before but not recently
+  last_sign_in_at.present? && last_sign_in_at <= 1.day.ago
+end
+
+def never_logged_in?
+  # User created account but never signed in
+  last_sign_in_at.blank?
+end
+
+def activity_status
+  return 'online' if online?
+  return 'recent' if recently_active?
+  return 'never' if never_logged_in?
+  return 'inactive'
 end
 # Rate limiting using Redis
 counter :password_reset_attempts, expireat: -> { 1.hour.from_now }

@@ -60,6 +60,10 @@ end
     return unless user_signed_in?
     
     current_user.track_activity(request.remote_ip)
+    
+    # Update last_active_at for online status tracking
+    current_user.update_column(:last_active_at, Time.current) if current_user.last_active_at.nil? || current_user.last_active_at < 1.minute.ago
+    
     session[:last_activity] = Time.current
   end
 

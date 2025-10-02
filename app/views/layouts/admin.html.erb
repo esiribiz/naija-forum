@@ -307,14 +307,40 @@
           </div>
           
           <!-- Right section with breadcrumb and actions -->
-          <div class="hidden lg:flex items-center space-x-4">
-            <!-- Breadcrumb -->
-            <div class="flex items-center space-x-2 text-sm text-slate-400">
-              <i class="fas fa-home"></i>
-              <i class="fas fa-chevron-right text-xs"></i>
-              <span class="text-slate-300 font-medium">
-                <%= content_for(:page_title) || controller_name.humanize %>
-              </span>
+          <div class="hidden lg:flex items-center space-x-6">
+            <!-- Breadcrumb with Time and Status -->
+            <div class="flex flex-col space-y-1">
+              <!-- Page breadcrumb -->
+              <div class="flex items-center space-x-2 text-sm text-slate-400">
+                <i class="fas fa-home"></i>
+                <i class="fas fa-chevron-right text-xs"></i>
+                <span class="text-slate-300 font-medium">
+                  <%= content_for(:page_title) || controller_name.humanize %>
+                </span>
+              </div>
+              <!-- Time and status info -->
+              <div class="flex items-center space-x-4 text-xs text-slate-400">
+                <div class="flex items-center space-x-1">
+                  <i class="fas fa-clock text-slate-500"></i>
+                  <span id="header-current-time" class="font-mono text-slate-300"><%= Time.current.strftime('%l:%M %p, %B %d, %Y').strip %></span>
+                </div>
+                <% if current_user&.online? %>
+                  <div class="flex items-center space-x-1 text-green-400">
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="font-medium">Online</span>
+                  </div>
+                <% elsif current_user&.recently_active? %>
+                  <div class="flex items-center space-x-1 text-yellow-400">
+                    <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                    <span class="font-medium">Recently Active</span>
+                  </div>
+                <% else %>
+                  <div class="flex items-center space-x-1 text-slate-500">
+                    <div class="w-2 h-2 bg-slate-500 rounded-full"></div>
+                    <span class="font-medium">Offline</span>
+                  </div>
+                <% end %>
+              </div>
             </div>
             
             <!-- View toggle -->
@@ -495,6 +521,27 @@
             }
           });
         });
+        
+        // Update header time
+        function updateHeaderTime() {
+          const headerTimeElement = document.getElementById('header-current-time');
+          if (headerTimeElement) {
+            const now = new Date();
+            const timeString = now.toLocaleString('en-US', {
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true,
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric'
+            });
+            headerTimeElement.textContent = timeString;
+          }
+        }
+        
+        // Update header time every minute
+        updateHeaderTime();
+        setInterval(updateHeaderTime, 60000);
       });
     </script>
     

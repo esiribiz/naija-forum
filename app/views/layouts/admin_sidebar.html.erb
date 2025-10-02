@@ -21,7 +21,10 @@
     
     <!-- JavaScript -->
     <%= javascript_importmap_tags %>
-    <%= javascript_include_tag "admin_notifications", "data-turbo-track": "reload" %>
+    <script type="module">
+      import 'admin_notifications';
+      import 'admin';
+    </script>
     
     <!-- Chart.js for dashboard charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

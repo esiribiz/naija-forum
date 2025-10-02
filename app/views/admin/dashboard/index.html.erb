@@ -1,156 +1,199 @@
 <% content_for :page_title, "Dashboard" %>
 <% content_for :page_subtitle, "Welcome back! Here's what's happening on your forum today." %>
 
-<!-- Enhanced Dashboard Header -->
-<div class="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 rounded-2xl shadow-xl mb-8 overflow-hidden relative">
+<!-- Professional Dashboard Welcome Section -->
+<div class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 rounded-3xl shadow-2xl mb-8 overflow-hidden relative border border-slate-700">
   <!-- Animated background elements -->
-  <div class="absolute inset-0 opacity-20">
-    <div class="absolute top-0 left-1/4 w-32 h-32 bg-white rounded-full mix-blend-overlay animate-pulse"></div>
-    <div class="absolute bottom-0 right-1/4 w-24 h-24 bg-white rounded-full mix-blend-overlay animate-pulse" style="animation-delay: 1s;"></div>
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-0 left-1/4 w-40 h-40 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-0 right-1/4 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute top-1/2 left-1/2 w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full blur-2xl animate-pulse" style="animation-delay: 1s;"></div>
   </div>
   
-  <div class="relative px-8 py-6">
-    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-      <!-- Enhanced Welcome Message -->
-      <div class="mb-6 lg:mb-0">
-        <div class="flex flex-col lg:flex-row lg:items-start lg:space-x-6">
-          <!-- Avatar Section -->
-          <div class="flex-shrink-0 mb-4 lg:mb-0">
-            <div class="relative">
+  <!-- Main Content Container -->
+  <div class="relative p-8 lg:p-12">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Top Section: Avatar + Main Info -->
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-8">
+        
+        <!-- Left: Avatar + Primary Info -->
+        <div class="flex items-start gap-6">
+          <!-- Enhanced Avatar -->
+          <div class="relative flex-shrink-0">
+            <div class="w-24 h-24 lg:w-28 lg:h-28 relative">
               <% if current_user&.avatar&.attached? %>
-                <%= image_tag current_user.avatar, class: "w-20 h-20 rounded-2xl object-cover border-4 border-white/30 shadow-2xl" %>
+                <%= image_tag current_user.avatar, class: "w-full h-full rounded-2xl object-cover border-4 border-slate-600 shadow-2xl" %>
               <% else %>
-                <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center border-4 border-white/30 shadow-2xl">
-                  <span class="text-2xl font-bold text-white"><%= current_user&.username&.first&.upcase || 'A' %></span>
+                <div class="w-full h-full bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-600 rounded-2xl flex items-center justify-center border-4 border-slate-600 shadow-2xl">
+                  <span class="text-2xl lg:text-3xl font-bold text-white"><%= current_user&.username&.first&.upcase || 'A' %></span>
                 </div>
               <% end %>
               
-              <!-- Online Status Indicator -->
-              <% if current_user&.online? %>
-                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-3 border-white rounded-full shadow-lg">
-                  <div class="w-full h-full bg-green-400 rounded-full animate-ping opacity-75"></div>
-                </div>
-              <% elsif current_user&.recently_active? %>
-                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-500 border-3 border-white rounded-full shadow-lg"></div>
-              <% else %>
-                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-gray-400 border-3 border-white rounded-full shadow-lg"></div>
-              <% end %>
+              <!-- Enhanced Online Status -->
+              <div class="absolute -bottom-1 -right-1">
+                <% if current_user&.online? %>
+                  <div class="relative">
+                    <div class="w-7 h-7 bg-green-500 border-4 border-slate-900 rounded-full shadow-lg flex items-center justify-center">
+                      <div class="w-3 h-3 bg-green-300 rounded-full animate-ping absolute"></div>
+                      <div class="w-3 h-3 bg-green-400 rounded-full relative"></div>
+                    </div>
+                  </div>
+                <% elsif current_user&.recently_active? %>
+                  <div class="w-7 h-7 bg-amber-500 border-4 border-slate-900 rounded-full shadow-lg"></div>
+                <% else %>
+                  <div class="w-7 h-7 bg-slate-500 border-4 border-slate-900 rounded-full shadow-lg"></div>
+                <% end %>
+              </div>
             </div>
           </div>
           
-          <!-- Welcome Text and Info -->
-          <div class="flex-1">
-            <div class="mb-3">
-              <h1 class="text-4xl font-bold text-white mb-2 leading-tight">
-                <%= time_based_greeting %>, <span class="text-yellow-300"><%= current_user&.display_name || current_user&.username || 'Admin' %></span>! 👋
+          <!-- Welcome Message + Role -->
+          <div class="flex-1 min-w-0">
+            <!-- Main Greeting -->
+            <div class="mb-4">
+              <h1 class="text-3xl lg:text-4xl font-bold text-white mb-2 leading-tight">
+                <span class="text-slate-200"><%= time_based_greeting %>,</span>
+                <br class="sm:hidden">
+                <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+                  <%= current_user&.display_name || current_user&.username || 'Admin' %>
+                </span>! 👋
               </h1>
+            </div>
+            
+            <!-- Role Badge + Time -->
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <!-- Enhanced Role Badge -->
+              <% case current_user&.role %>
+              <% when 'admin' %>
+                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-red-600 to-red-700 text-white border border-red-500/50 shadow-lg">
+                  <i class="fas fa-crown mr-2 text-yellow-300"></i>
+                  System Administrator
+                </div>
+              <% when 'moderator' %>
+                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-blue-600 to-blue-700 text-white border border-blue-500/50 shadow-lg">
+                  <i class="fas fa-shield-alt mr-2 text-cyan-300"></i>
+                  Forum Moderator
+                </div>
+              <% else %>
+                <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-slate-600 to-slate-700 text-slate-100 border border-slate-500/50 shadow-lg">
+                  <i class="fas fa-user mr-2 text-slate-300"></i>
+                  <%= current_user&.role&.humanize || 'User' %>
+                </div>
+              <% end %>
               
-              <!-- Role Badge -->
-              <div class="flex items-center space-x-3 mb-2">
-                <% case current_user&.role %>
-                <% when 'admin' %>
-                  <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-bold bg-red-500/20 text-red-100 border border-red-400/30 backdrop-blur-sm">
-                    <i class="fas fa-crown mr-2"></i>System Administrator
-                  </span>
-                <% when 'moderator' %>
-                  <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-bold bg-blue-500/20 text-blue-100 border border-blue-400/30 backdrop-blur-sm">
-                    <i class="fas fa-shield-alt mr-2"></i>Forum Moderator
-                  </span>
-                <% else %>
-                  <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-medium bg-gray-500/20 text-gray-100 border border-gray-400/30 backdrop-blur-sm">
-                    <i class="fas fa-user mr-2"></i><%= current_user&.role&.humanize || 'User' %>
-                  </span>
-                <% end %>
-                
-                <!-- Time Display -->
-                <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-medium bg-white/10 text-white border border-white/20 backdrop-blur-sm">
-                  <i class="fas fa-clock mr-2"></i>
-                  <span id="dashboard-current-time"><%= formatted_current_time %></span>
-                </span>
+              <!-- Enhanced Time Display -->
+              <div class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium bg-slate-800/80 text-slate-200 border border-slate-600/50 backdrop-blur-sm shadow-lg">
+                <i class="fas fa-clock mr-2 text-emerald-400"></i>
+                <span id="dashboard-current-time" class="font-mono"><%= formatted_current_time %></span>
               </div>
             </div>
             
-            <div class="space-y-2">
-              <p class="text-blue-100 text-lg leading-relaxed">
-                Here's your comprehensive forum overview for <span class="font-semibold text-white"><%= Date.current.strftime('%B %d, %Y') %></span>
-              </p>
-              
-              <!-- Additional Info Row -->
-              <div class="flex flex-wrap items-center gap-4 text-sm text-blue-200">
-                <div class="flex items-center">
-                  <i class="fas fa-user-clock mr-1.5"></i>
-                  <% if current_user&.last_sign_in_at %>
-                    Last login: <%= time_ago_in_words(current_user.last_sign_in_at) %> ago
-                  <% else %>
-                    First time logging in
-                  <% end %>
-                </div>
-                
-                <div class="flex items-center">
-                  <i class="fas fa-calendar-alt mr-1.5"></i>
-                  Member since <%= current_user&.created_at&.strftime('%B %Y') %>
-                </div>
-                
-                <% if current_user&.online? %>
-                  <div class="flex items-center text-green-300">
-                    <div class="w-2 h-2 bg-green-400 rounded-full mr-1.5 animate-pulse"></div>
-                    Currently online
-                  </div>
-                <% elsif current_user&.recently_active? %>
-                  <div class="flex items-center text-yellow-300">
-                    <div class="w-2 h-2 bg-yellow-400 rounded-full mr-1.5"></div>
-                    Recently active
-                  </div>
+            <!-- Description -->
+            <p class="text-slate-300 text-lg leading-relaxed mb-4">
+              Here's your comprehensive forum overview for 
+              <span class="text-white font-semibold"><%= Date.current.strftime('%B %d, %Y') %></span>
+            </p>
+          </div>
+        </div>
+        
+        <!-- Right: Quick Actions -->
+        <div class="flex flex-wrap gap-3 lg:flex-col lg:w-auto">
+          <%= link_to new_admin_user_path, class: "inline-flex items-center px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+            </svg>
+            Add User
+          <% end %>
+          
+          <%= link_to new_admin_category_path, class: "inline-flex items-center px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+            New Category
+          <% end %>
+          
+          <%= link_to admin_comments_path, class: "inline-flex items-center px-4 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5" do %>
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            Moderate
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Bottom Section: User Details + Stats -->
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        
+        <!-- User Details -->
+        <div class="flex flex-wrap items-center gap-6 text-sm">
+          <div class="flex items-center text-slate-300">
+            <div class="w-8 h-8 bg-slate-700/50 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-user-clock text-emerald-400"></i>
+            </div>
+            <div>
+              <div class="text-xs text-slate-400 uppercase tracking-wide font-medium">Last Login</div>
+              <div class="text-slate-200 font-medium">
+                <% if current_user&.last_sign_in_at %>
+                  <%= time_ago_in_words(current_user.last_sign_in_at) %> ago
+                <% else %>
+                  First time logging in
                 <% end %>
               </div>
             </div>
           </div>
+          
+          <div class="flex items-center text-slate-300">
+            <div class="w-8 h-8 bg-slate-700/50 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-calendar-plus text-blue-400"></i>
+            </div>
+            <div>
+              <div class="text-xs text-slate-400 uppercase tracking-wide font-medium">Member Since</div>
+              <div class="text-slate-200 font-medium"><%= current_user&.created_at&.strftime('%B %Y') %></div>
+            </div>
+          </div>
+          
+          <% if current_user&.online? %>
+            <div class="flex items-center text-green-400">
+              <div class="w-8 h-8 bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
+                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+              </div>
+              <div>
+                <div class="text-xs text-green-300 uppercase tracking-wide font-medium">Status</div>
+                <div class="text-green-200 font-medium">Currently Online</div>
+              </div>
+            </div>
+          <% elsif current_user&.recently_active? %>
+            <div class="flex items-center text-amber-400">
+              <div class="w-8 h-8 bg-amber-900/30 rounded-lg flex items-center justify-center mr-3">
+                <div class="w-3 h-3 bg-amber-400 rounded-full"></div>
+              </div>
+              <div>
+                <div class="text-xs text-amber-300 uppercase tracking-wide font-medium">Status</div>
+                <div class="text-amber-200 font-medium">Recently Active</div>
+              </div>
+            </div>
+          <% end %>
         </div>
-      </div>
-      
-      <!-- Quick Action Buttons -->
-      <div class="flex flex-wrap gap-3">
-        <%= link_to new_admin_user_path, class: "inline-flex items-center px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition-all duration-200 backdrop-blur-sm border border-white/30 hover:border-white/50" do %>
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-          </svg>
-          Add User
-        <% end %>
         
-        <%= link_to new_admin_category_path, class: "inline-flex items-center px-4 py-2 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition-all duration-200 backdrop-blur-sm border border-white/30 hover:border-white/50" do %>
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-          </svg>
-          New Category
-        <% end %>
-        
-        <%= link_to admin_comments_path, class: "inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl" do %>
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"></path>
-          </svg>
-          Moderate
-        <% end %>
-      </div>
-    </div>
-    
-    <!-- Quick Stats Bar -->
-    <div class="mt-6 pt-6 border-t border-white/20">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="text-center">
-          <div class="text-2xl font-bold text-white"><%= number_with_delimiter(@stats[:users][:total]) %></div>
-          <div class="text-blue-100 text-sm">Total Users</div>
-        </div>
-        <div class="text-center">
-          <div class="text-2xl font-bold text-white"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
-          <div class="text-blue-100 text-sm">Total Posts</div>
-        </div>
-        <div class="text-center">
-          <div class="text-2xl font-bold text-white"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
-          <div class="text-blue-100 text-sm">Comments</div>
-        </div>
-        <div class="text-center">
-          <div class="text-2xl font-bold text-white"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
-          <div class="text-blue-100 text-sm">Categories</div>
+        <!-- Quick Stats Summary -->
+        <div class="flex items-center gap-6 text-sm">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-emerald-400"><%= number_with_delimiter(@stats[:users][:total]) %></div>
+            <div class="text-xs text-slate-400 uppercase tracking-wide">Users</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-blue-400"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
+            <div class="text-xs text-slate-400 uppercase tracking-wide">Posts</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-amber-400"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
+            <div class="text-xs text-slate-400 uppercase tracking-wide">Comments</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-purple-400"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
+            <div class="text-xs text-slate-400 uppercase tracking-wide">Categories</div>
+          </div>
         </div>
       </div>
     </div>

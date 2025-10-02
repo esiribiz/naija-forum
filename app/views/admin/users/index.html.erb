@@ -425,26 +425,36 @@
                   
                   <!-- Activity Status -->
                   <div class="mt-3">
-                    <% if user.last_sign_in_at.present? && user.last_sign_in_at > 5.minutes.ago %>
+                    <% if user.online? %>
                       <div class="enhanced-status-indicator enhanced-status-online">
                         🟢 Currently Online
                       </div>
                       <div class="text-xs text-slate-500 mt-1">
                         Active now
                       </div>
-                    <% elsif user.last_sign_in_at.present? && user.last_sign_in_at > 1.day.ago %>
+                    <% elsif user.recently_active? %>
                       <div class="enhanced-status-indicator enhanced-status-recent">
                         🔵 Recently Active
                       </div>
                       <div class="text-xs text-slate-500 mt-1">
-                        Last seen <%= time_ago_in_words(user.last_sign_in_at) %> ago
+                        <% last_activity_time = [user.last_sign_in_at, user.last_active_at].compact.max %>
+                        <% if last_activity_time %>
+                          Last seen <%= time_ago_in_words(last_activity_time) %> ago
+                        <% else %>
+                          Last activity unknown
+                        <% end %>
                       </div>
-                    <% elsif user.last_sign_in_at.present? %>
+                    <% elsif user.inactive? %>
                       <div class="enhanced-status-indicator enhanced-status-inactive">
                         ⚫ Inactive User
                       </div>
                       <div class="text-xs text-slate-500 mt-1">
-                        Last seen <%= time_ago_in_words(user.last_sign_in_at) %> ago
+                        <% last_activity_time = [user.last_sign_in_at, user.last_active_at].compact.max %>
+                        <% if last_activity_time %>
+                          Last seen <%= time_ago_in_words(last_activity_time) %> ago
+                        <% else %>
+                          Last activity unknown
+                        <% end %>
                       </div>
                     <% else %>
                       <div class="enhanced-status-indicator enhanced-status-inactive">

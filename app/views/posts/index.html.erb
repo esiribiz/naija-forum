@@ -4,15 +4,15 @@
   <main class="flex-1 p-6 bg-gray-50">
     <%= render 'shared/navigation_menu' %>
     <!-- Header with Nigerian color theme -->
-    <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-xl mb-8 shadow-md relative overflow-hidden">
-      <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-10 -mt-10"></div>
-      <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-10 rounded-full -ml-8 -mb-8"></div>
+    <div class="bg-gradient-to-r from-green-600 to-green-700 text-white py-4 px-6 rounded-lg mb-6 shadow-md relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-20 h-20 bg-white opacity-10 rounded-full -mr-6 -mt-6"></div>
+      <div class="absolute bottom-0 left-0 w-16 h-16 bg-white opacity-10 rounded-full -ml-4 -mb-4"></div>
       
       <div class="flex justify-between items-center relative z-10">
-        <h1 class="text-3xl font-bold">All Posts</h1>
+        <h1 class="text-2xl font-bold">All Posts</h1>
         <% if user_signed_in? %>
-          <%= link_to new_post_path, class: "px-5 py-2.5 bg-white text-green-700 rounded-lg hover:bg-green-50 font-medium shadow-sm transition duration-300 flex items-center space-x-2 hover:shadow-md" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+          <%= link_to new_post_path, class: "px-4 py-2 bg-white text-green-700 rounded-lg hover:bg-green-50 font-medium shadow-sm transition duration-300 flex items-center space-x-2 hover:shadow-md" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
               <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
             </svg>
             <span>New Post</span>
@@ -27,7 +27,17 @@
       <% if @posts.present? %>
         <% @posts.each do |post| %>
           <!-- Post Card with Nigerian-inspired design -->
-          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-green-500">
+          <div class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-green-500 relative group">
+            <% if user_signed_in? %>
+              <%= link_to post_path(post), class: "absolute inset-0 z-10 rounded-xl" do %>
+                <span class="sr-only">View <%= post.title %></span>
+              <% end %>
+            <% else %>
+              <%= link_to new_user_session_path, class: "absolute inset-0 z-10 rounded-xl" do %>
+                <span class="sr-only">Sign in to view <%= post.title %></span>
+              <% end %>
+            <% end %>
+            
             <!-- User Info Section -->
             <div class="flex items-center space-x-4 p-5 border-b border-gray-100">
               <% if post.user&.avatar&.attached? %>
@@ -38,20 +48,12 @@
                 </div>
               <% end %>
               
-              <div>
+              <div class="flex-1">
                 <div class="flex items-center space-x-2 mb-1">
-                  <h2 class="text-xl font-bold text-gray-800 group">
-                    <% if user_signed_in? %>
-                      <%= link_to post_path(post), class: "hover:text-green-600 transition-colors duration-200" do %>
-                        <%= post.title %>
-                        <span class="block h-0.5 w-0 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
-                      <% end %>
-                    <% else %>
-                      <%= link_to new_user_session_path, class: "hover:text-green-600 transition-colors duration-200 relative" do %>
-                        <%= post.title %>
-                        <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
-                        <span class="block h-0.5 w-0 bg-green-500 transition-all duration-300 group-hover:w-full"></span>
-                      <% end %>
+                  <h2 class="text-xl font-bold text-gray-800 group-hover:text-green-600 transition-colors duration-200">
+                    <%= post.title %>
+                    <% unless user_signed_in? %>
+                      <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
                     <% end %>
                   </h2>
                 </div>
@@ -89,7 +91,7 @@
                 </span>
                 
                 <!-- Post Actions -->
-                <div class="flex space-x-4">
+                <div class="flex space-x-4 relative z-20">
                   <% if user_signed_in? && current_user == post.user %>
                     <%= link_to edit_post_path(post), class: "text-amber-500 hover:text-amber-600 transition-colors flex items-center" do %>
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-1">

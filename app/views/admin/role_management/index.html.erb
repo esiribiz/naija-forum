@@ -462,17 +462,21 @@
               </div>
             </td>
             <td>
-              <% if user.last_sign_in_at.present? && user.last_sign_in_at > 5.minutes.ago %>
+              <% if user.online? %>
                 <div class="enhanced-status-indicator enhanced-status-online">
                   <span>Online Now</span>
                 </div>
-              <% elsif user.last_sign_in_at.present? && user.last_sign_in_at > 1.day.ago %>
+              <% elsif user.recently_active? %>
                 <div class="enhanced-status-indicator enhanced-status-recent">
                   <span>Recently Active</span>
                 </div>
+              <% elsif user.never_logged_in? %>
+                <div class="enhanced-status-indicator enhanced-status-inactive">
+                  <span>Never Logged In</span>
+                </div>
               <% else %>
                 <div class="enhanced-status-indicator enhanced-status-inactive">
-                  <span><%= user.last_sign_in_at.present? ? 'Inactive' : 'Never Logged In' %></span>
+                  <span>Inactive</span>
                 </div>
               <% end %>
             </td>

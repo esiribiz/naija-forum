@@ -1,6 +1,6 @@
 <%= form_with(
   model: [@post, comment],
-  class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form bg-green-50/50 p-4 rounded-lg' : ''}",
+  class: "comment-form space-y-4 #{comment.parent_id.present? ? 'reply-form bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-xl border border-green-200' : 'bg-white p-4 rounded-xl shadow-sm border border-gray-200'}",
   local: false,
   data: {
     controller: "reset-form comments",
@@ -25,11 +25,11 @@
 
   <div class="relative">
     <%= f.text_area :content, 
-      rows: 3,
-      class: "w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-naija-green focus:border-naija-green transition duration-200",
-      placeholder: comment.parent_id.present? ? "Write a reply..." : "Write a comment..." %>
+      rows: comment.parent_id.present? ? 3 : 4,
+      class: "w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 resize-y",
+      placeholder: comment.parent_id.present? ? "💬 Write a thoughtful reply..." : "💬 Share your thoughts or ask a question..." %>
     
-    <div class="absolute bottom-2 right-2 text-xs text-gray-400" 
+    <div class="absolute bottom-3 right-3 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-full" 
          data-controller="character-count" 
          data-character-count-target="counter"></div>
   </div>
@@ -37,22 +37,22 @@
   <%# Ensure hidden parent_id field is present for replies %>
   <%= f.hidden_field :parent_id if comment.parent_id.present? %>
 
-  <div class="flex justify-end space-x-3 mt-3">
+  <div class="flex justify-end space-x-3 mt-4 pt-3 border-t border-gray-200">
     <% if comment.parent_id.present? %>
       <button type="button"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md border border-gray-200 hover:bg-gray-200 transition-all duration-200 shadow-sm flex items-center gap-1 text-sm font-medium"
+              class="inline-flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 text-sm font-medium shadow-sm"
               data-controller="comments"
               data-action="click->comments#toggleReplyForm"
               data-comments-comment-id-param="<%= comment.parent_id %>">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
         Cancel
       </button>
     <% end %>
 
-    <%= f.submit comment.parent_id.present? ? "Reply" : "Post Comment", 
-      class: "px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-all duration-200 shadow-sm flex items-center gap-1 text-sm font-medium" %>
+    <%= f.submit comment.parent_id.present? ? "💬 Reply" : "🚀 Post Comment", 
+      class: "inline-flex items-center px-5 py-2 border border-transparent rounded-xl text-white font-medium bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-sm hover:shadow-md text-sm" %>
   </div>
 
 <% end %>

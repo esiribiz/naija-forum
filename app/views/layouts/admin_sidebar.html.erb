@@ -506,7 +506,7 @@
                 <div class="flex items-center space-x-4 mt-1">
                   <p class="text-sm text-gray-600">
                     <i class="fas fa-clock mr-1"></i>
-                    <span id="current-time"><%= Time.current.strftime("%l:%M %p, %B %d, %Y").strip %></span>
+                    <span id="current-time"><%= formatted_current_time %></span>
                   </p>
                   <% if current_user&.online? %>
                     <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -523,16 +523,7 @@
           <div class="flex items-center space-x-6">
             <!-- Time-based Greeting -->
             <div class="hidden lg:block text-right">
-              <% 
-                hour = Time.current.hour
-                greeting = case hour
-                           when 5..11 then "Good Morning"
-                           when 12..17 then "Good Afternoon"
-                           when 18..21 then "Good Evening"
-                           else "Good Night"
-                           end
-              %>
-              <p class="text-sm text-gray-500"><%= greeting %>,</p>
+              <p class="text-sm text-gray-500"><%= time_based_greeting %>,</p>
               <p class="text-lg font-semibold text-gray-900"><%= current_user&.display_name || current_user&.username %></p>
             </div>
             

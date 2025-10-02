@@ -147,4 +147,24 @@ module ApplicationHelper
       end
     end
   end
+  
+  # Time-based greeting helper
+  def time_based_greeting(time = Time.current)
+    hour = time.hour
+    case hour
+    when 5..11
+      "Good Morning"
+    when 12..17
+      "Good Afternoon"
+    when 18..21
+      "Good Evening"
+    else
+      "Good Night"
+    end
+  end
+  
+  # Format current time for admin header
+  def formatted_current_time(time = Time.current)
+    time.strftime("%l:%M %p, %B %d, %Y").strip
+  end
 end

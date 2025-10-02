@@ -250,9 +250,10 @@
   flex-direction: column;
   overflow: hidden;
   background: var(--admin-gray-50);
-  margin-left: 16rem;
   z-index: 10;
 }
+
+/* Let Tailwind classes handle the layout spacing */
 
 .top-nav {
   background: white;
@@ -872,6 +873,14 @@
    ================================= */
 
 /* Width & Height Utilities */
+.w-3 { width: 0.75rem; }
+.h-3 { height: 0.75rem; }
+.w-4 { width: 1rem; }
+.h-4 { height: 1rem; }
+.w-5 { width: 1.25rem; }
+.h-5 { height: 1.25rem; }
+.w-6 { width: 1.5rem; }
+.h-6 { height: 1.5rem; }
 .w-8 { width: 2rem; }
 .h-8 { height: 2rem; }
 .w-10 { width: 2.5rem; }
@@ -986,9 +995,7 @@ img.avatar-md,
     z-index: 1000 !important;
   }
   
-  .main-content {
-    margin-left: 16rem !important;
-  }
+  /* Let layout handle its own margin via Tailwind classes */
 }
 
 /* Mobile sidebar fixes */
@@ -2094,5 +2101,120 @@ video, iframe, embed, object {
   .page-content {
     padding: 0;
     background: white;
+  }
+}
+
+/* =================================
+   DASHBOARD SPECIFIC FIXES
+   ================================= */
+
+/* Control FontAwesome icon sizes */
+.admin-body .fas,
+.admin-body .far,
+.admin-body .fab {
+  font-size: inherit !important;
+  width: auto !important;
+  height: auto !important;
+  display: inline-block !important;
+  vertical-align: baseline;
+  max-width: 1.5rem;
+  max-height: 1.5rem;
+}
+
+/* Specific size constraints for different contexts */
+.admin-body .card-title .fas,
+.admin-body .card-title .far,
+.admin-body .card-title .fab {
+  font-size: 1rem !important;
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+/* Dashboard elements */
+.admin-body h1 .fas,
+.admin-body h2 .fas,
+.admin-body h3 .fas {
+  font-size: 1.25rem !important;
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+}
+
+/* Ensure SVG icons maintain proper size */
+.admin-body svg {
+  flex-shrink: 0;
+  display: inline-block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Specific SVG size constraints to match Tailwind classes */
+.admin-body svg.w-3 { width: 0.75rem !important; max-width: 0.75rem !important; }
+.admin-body svg.h-3 { height: 0.75rem !important; max-height: 0.75rem !important; }
+.admin-body svg.w-4 { width: 1rem !important; max-width: 1rem !important; }
+.admin-body svg.h-4 { height: 1rem !important; max-height: 1rem !important; }
+.admin-body svg.w-5 { width: 1.25rem !important; max-width: 1.25rem !important; }
+.admin-body svg.h-5 { height: 1.25rem !important; max-height: 1.25rem !important; }
+.admin-body svg.w-6 { width: 1.5rem !important; max-width: 1.5rem !important; }
+.admin-body svg.h-6 { height: 1.5rem !important; max-height: 1.5rem !important; }
+.admin-body svg.w-8 { width: 2rem !important; max-width: 2rem !important; }
+.admin-body svg.h-8 { height: 2rem !important; max-height: 2rem !important; }
+
+/* Fix for mixed icon systems in navigation */
+.nav-icon {
+  width: 1.25rem !important;
+  height: 1.25rem !important;
+  font-size: 1.25rem !important;
+  flex-shrink: 0;
+}
+
+/* Dashboard stat cards consistency */
+.admin-body .stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f3f4f6;
+}
+
+/* Ensure proper spacing for dashboard grid layouts */
+.admin-body .grid {
+  gap: 1.5rem;
+}
+
+/* Fix for admin sidebar layout content positioning */
+/* Remove conflicting CSS - let Tailwind classes handle the spacing */
+
+/* Ensure FontAwesome doesn't override layout */
+.admin-body .fas::before,
+.admin-body .far::before,
+.admin-body .fab::before {
+  font-size: inherit !important;
+}
+
+/* Force proper sizing for all icon contexts */
+.admin-body .fas,
+.admin-body .far,
+.admin-body .fab {
+  line-height: 1 !important;
+  vertical-align: baseline !important;
+}
+
+/* Prevent icons from expanding containers */
+.admin-body .btn .fas,
+.admin-body .btn .far,
+.admin-body .btn .fab {
+  font-size: 0.875rem !important;
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+}
+
+/* Ensure sidebar works on desktop */
+@media (min-width: 1024px) {
+  .admin-layout {
+    padding-left: 0 !important;
+  }
+  
+  .admin-layout .main-content {
+    /* Let lg:ml-64 class work */
   }
 }

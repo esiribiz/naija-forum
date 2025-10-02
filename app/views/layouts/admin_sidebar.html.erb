@@ -21,6 +21,7 @@
     
     <!-- JavaScript -->
     <%= javascript_importmap_tags %>
+    <%= javascript_include_tag "admin_notifications", "data-turbo-track": "reload" %>
     
     <!-- Chart.js for dashboard charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,10 +30,209 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <%= yield :head %>
+    
+    <!-- Critical Layout Fix -->
+    <style>
+      /* Ensure admin layout works correctly */
+      @media (min-width: 1024px) {
+        .admin-layout .main-content {
+          margin-left: 16rem !important; /* 256px = w-64 */
+        }
+      }
+      
+      /* Fix SVG size issues - CRITICAL */
+      .admin-body svg {
+        flex-shrink: 0 !important;
+        display: inline-block !important;
+      }
+      
+      /* Enforce SVG size constraints */
+      .admin-body svg.h-3 { height: 0.75rem !important; max-height: 0.75rem !important; }
+      .admin-body svg.w-3 { width: 0.75rem !important; max-width: 0.75rem !important; }
+      .admin-body svg.h-4 { height: 1rem !important; max-height: 1rem !important; }
+      .admin-body svg.w-4 { width: 1rem !important; max-width: 1rem !important; }
+      .admin-body svg.h-5 { height: 1.25rem !important; max-height: 1.25rem !important; }
+      .admin-body svg.w-5 { width: 1.25rem !important; max-width: 1.25rem !important; }
+      .admin-body svg.h-6 { height: 1.5rem !important; max-height: 1.5rem !important; }
+      .admin-body svg.w-6 { width: 1.5rem !important; max-width: 1.5rem !important; }
+      .admin-body svg.h-8 { height: 2rem !important; max-height: 2rem !important; }
+      .admin-body svg.w-8 { width: 2rem !important; max-width: 2rem !important; }
+      
+      /* Fix FontAwesome size issues */
+      .admin-body .fas,
+      .admin-body .far,
+      .admin-body .fab {
+        font-size: 1rem !important;
+        width: 1rem !important;
+        height: 1rem !important;
+        display: inline-block !important;
+      }
+      
+      /* Prevent huge icons in navigation */
+      .nav-icon.fas,
+      .nav-icon.far,
+      .nav-icon.fab {
+        font-size: 1.25rem !important;
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+      }
+      
+      /* Modern Dashboard Enhancements */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes pulse-glow {
+        0%, 100% {
+          box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 20px rgba(16, 185, 129, 0.8), 0 0 30px rgba(16, 185, 129, 0.6);
+        }
+      }
+      
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+      
+      /* Dashboard specific animations */
+      .dashboard-card {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+      }
+      
+      .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+      .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+      .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+      .dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+      
+      /* Backdrop blur support */
+      @supports (backdrop-filter: blur(10px)) {
+        .admin-body .backdrop-blur-sm {
+          backdrop-filter: blur(4px);
+        }
+      }
+      
+      /* Enhanced gradients */
+      .bg-clip-text {
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      /* Modern scrollbar */
+      .admin-body ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      
+      .admin-body ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 3px;
+      }
+      
+      .admin-body ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+      }
+      
+      .admin-body ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+      }
+      
+      /* Glass morphism effects */
+      .glass {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+      
+      /* Smooth transitions for all interactive elements */
+      .admin-body button,
+      .admin-body a,
+      .admin-body input,
+      .admin-body select {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      /* Focus styles */
+      .admin-body *:focus {
+        outline: 2px solid rgba(59, 130, 246, 0.5);
+        outline-offset: 2px;
+      }
+      
+      /* Admin Notification System Styles */
+      #admin-notifications {
+        position: fixed !important;
+        top: 1rem !important;
+        right: 1rem !important;
+        z-index: 10001 !important;
+        pointer-events: none !important;
+        max-width: 24rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .admin-notification {
+        pointer-events: auto !important;
+        position: relative !important;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 1023px) {
+        #admin-notifications {
+          max-width: calc(100vw - 2rem) !important;
+          right: 1rem !important;
+          left: 1rem !important;
+        }
+      }
+      
+      @media (max-width: 640px) {
+        #admin-notifications {
+          top: 0.5rem !important;
+          left: 0.5rem !important;
+          right: 0.5rem !important;
+          max-width: none !important;
+        }
+      }
+      
+      /* Backward compatibility for role-notification class */
+      .role-notification {
+        position: fixed !important;
+        z-index: 10000 !important;
+        pointer-events: auto !important;
+        right: 1rem !important;
+        top: 1rem !important;
+      }
+      
+      /* Adjust flash messages to not conflict */
+      #flash-container {
+        top: 5rem !important;
+        z-index: 9999 !important;
+      }
+    </style>
   </head>
-  <body class="admin-body bg-gray-50 font-sans antialiased overflow-hidden">
-    <!-- Flash Messages -->
-    <div id="flash-container" class="fixed top-4 right-4 space-y-2" style="z-index: 999;">
+  <body class="admin-body">
+    <!-- Global notification container for JavaScript notifications -->
+    <div id="admin-notifications" class="fixed top-4 right-4 space-y-3" style="z-index: 10000; pointer-events: none;">
+      <!-- JavaScript notifications will be added here -->
+    </div>
+    
+    <!-- Flash Messages (positioned below notifications) -->
+    <div id="flash-container" class="fixed top-20 right-4 space-y-2" style="z-index: 999;">
       <% if notice %>
         <div class="flash-message flash-success animate-slide-in">
           <div class="flex items-center p-4 rounded-lg bg-green-50 border border-green-200 shadow-lg">
@@ -244,7 +444,7 @@
       </div>
 
       <!-- Main Content Area -->
-      <main class="main-content flex-1 flex flex-col overflow-hidden lg:ml-0">
+      <main class="main-content flex-1 flex flex-col overflow-hidden lg:ml-64">
         <!-- Top Navigation Bar -->
         <header class="top-nav bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-6">
           <!-- Left side - Mobile menu button and page title -->
@@ -374,37 +574,7 @@
       });
     </script>
 
-    <script>
-      // Sidebar toggle functionality
-      document.addEventListener('DOMContentLoaded', function() {
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const mobileSidebar = document.getElementById('mobile-sidebar');
-        const mobileSidebarClose = document.getElementById('mobile-sidebar-close');
-        const mobileSidebarOverlay = document.getElementById('mobile-sidebar-overlay');
-
-        function showSidebar() {
-          if (mobileSidebar) {
-            mobileSidebar.style.display = 'flex';
-          }
-        }
-
-        function hideSidebar() {
-          if (mobileSidebar) {
-            mobileSidebar.style.display = 'none';
-          }
-        }
-
-        if (sidebarToggle) {
-          sidebarToggle.addEventListener('click', showSidebar);
-        }
-
-        if (mobileSidebarClose) {
-          mobileSidebarClose.addEventListener('click', hideSidebar);
-        }
-
-        if (mobileSidebarOverlay) {
-          mobileSidebarOverlay.addEventListener('click', hideSidebar);
-        }
+    <!-- Duplicate JavaScript removed - functionality already handled above -->
 
         // Close sidebar on window resize if large screen
         window.addEventListener('resize', function() {

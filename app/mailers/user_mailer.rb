@@ -69,6 +69,26 @@ class UserMailer < ApplicationMailer
     )
   end
   
+  # Email notification for role changes
+  def role_change_notification(user, old_role, new_role, admin_user)
+    @user = user
+    @old_role = old_role
+    @new_role = new_role
+    @admin_user = admin_user
+    @promotion = role_priority(new_role) > role_priority(old_role)
+    
+    subject_text = if @promotion
+      "Congratulations! Your role has been updated to #{new_role.capitalize}"
+    else
+      "Your account role has been changed to #{new_role.capitalize}"
+    end
+    
+    mail(
+      to: @user.email,
+      subject: subject_text
+    )
+  end
+  
   # Generic email for other notification types
   def general_notification(notification)
     @notification = notification
@@ -80,6 +100,21 @@ class UserMailer < ApplicationMailer
       to: @recipient.email,
       subject: "New notification from Naija Forum"
     )
+  end
+  
+  private
+  
+  def role_priority(role)
+    case role.to_s.downcase
+    when 'admin'
+      3
+    when 'moderator'
+      2
+    when 'user'
+      1
+    else
+      0
+    end
   end
 end
 

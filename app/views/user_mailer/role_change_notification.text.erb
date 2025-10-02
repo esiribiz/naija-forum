@@ -1,0 +1,61 @@
+<% if @promotion %>ROLE PROMOTION - NAIJA FORUM<% else %>ROLE UPDATE - NAIJA FORUM<% end %>
+=====================================
+
+Hi <%= @user.display_name %>!
+
+<% if @promotion %>
+Congratulations! We're excited to inform you that your role on Naija Forum has been updated.
+<% else %>
+We wanted to let you know that your role on Naija Forum has been changed.
+<% end %>
+
+ROLE CHANGE DETAILS
+<% if @promotion %>🎊 Role Promotion!<% else %>📝 Role Change<% end %>
+Previous Role: <%= @old_role.capitalize %>
+New Role: <%= @new_role.capitalize %>
+
+YOUR NEW ROLE: <%= @new_role.capitalize.upcase %>
+<% case @new_role %>
+<% when 'admin' %>
+👑 Administrator privileges include:
+• Full access to the admin dashboard
+• User management and role assignments
+• Content moderation and system settings
+• Complete forum administration capabilities
+• Access to analytics and reporting features
+<% when 'moderator' %>
+🛡️ Moderator privileges include:
+• Content moderation capabilities
+• Post and comment management
+• User warning and basic moderation tools
+• Enhanced community management features
+• Access to moderation dashboard
+<% else %>
+👤 Community member privileges include:
+• Create and publish posts
+• Comment and engage with content
+• Follow other users and build connections
+• Like and interact with community content
+• Full access to all public forum features
+<% end %>
+
+<% if @promotion && (@new_role == 'admin' || @new_role == 'moderator') %>
+ACCESS ADMIN DASHBOARD:
+<%= Rails.application.routes.url_helpers.admin_dashboard_url %>
+
+<% end %>
+If you have any questions about your new role or need assistance, please don't hesitate to contact our support team.
+
+---
+CHANGE DETAILS:
+Role changed by: <%= @admin_user.display_name %> (<%= @admin_user.role.capitalize %>)
+Date: <%= Time.current.strftime('%B %d, %Y at %I:%M %p') %>
+Reference: User ID #<%= @user.id %>
+
+---
+This is an automated notification from Naija Forum.
+
+Visit Naija Forum: <%= Rails.application.routes.url_helpers.root_url %>
+Your Profile: <%= Rails.application.routes.url_helpers.user_url(@user) %>
+
+© <%= Date.current.year %> Naija Forum. All rights reserved.

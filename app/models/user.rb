@@ -229,6 +229,7 @@ end
 before_validation :sanitize_user_input
 # Security questions are now optional
 # before_validation :build_security_questions, if: -> { new_record? && security_questions.empty? }
+after_update :send_role_change_notification, if: :saved_change_to_role?
 
 # Status methods
 def online?
@@ -389,5 +390,30 @@ end
 # Override security questions required method to make questions optional
 def security_questions_required?
     false
+end
+
+# Send email notification when role changes
+def send_role_change_notification
+  # Get the current admin user who made the change
+  # This will need to be set in a thread-local variable or passed via context
+  admin_user = Thread.current[:current_admin_user] || User.where(role: 'admin').first
+  
+  # Skip if no admin user found or if this is the initial role assignment
+  return unless admin_user && saved_change_to_role?
+  
+  old_role, new_role = saved_change_to_role
+  
+  # Skip if this is the initial role assignment (from nil to something)
+  return if old_role.blank?
+  
+  # Don't send email to the admin who made the change (unless changing their own role)
+  return if self == admin_user
+  
+  begin
+    UserMailer.role_change_notification(self, old_role, new_role, admin_user).deliver_later
+    Rails.logger.info "Role change email sent to #{email} - Role changed from #{old_role} to #{new_role}"
+  rescue => e
+    Rails.logger.error "Failed to send role change email to #{email}: #{e.message}"
+  end
 end
 end

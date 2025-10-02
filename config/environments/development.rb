@@ -38,8 +38,11 @@ Rails.application.configure do
   config.active_storage.service_urls_expire_in = 1.hour
   config.active_storage.resolve_model_to_route = :rails_storage_proxy
   Rails.application.routes.default_url_options[:host] = 'localhost:3000'
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  # Configure email delivery for development
+  config.action_mailer.delivery_method = :file
+  config.action_mailer.file_settings = { location: Rails.root.join('tmp/mail') }
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.perform_deliveries = true
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false

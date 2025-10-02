@@ -97,6 +97,9 @@ class Admin::UsersController < Admin::BaseController
 
   def update
     # Admin access is already validated by Admin::BaseController
+    # Set the current admin user for the email notification
+    Thread.current[:current_admin_user] = current_user
+    
     if @user.update(user_params)
       redirect_to admin_users_path, notice: "User was successfully updated."
     else
@@ -136,6 +139,10 @@ class Admin::UsersController < Admin::BaseController
     end
     
     new_role = @user.admin? ? 'user' : 'admin'
+    
+    # Set the current admin user for the email notification
+    Thread.current[:current_admin_user] = current_user
+    
     @user.update!(role: new_role)
     
     action = @user.admin? ? 'granted' : 'removed'

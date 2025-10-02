@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+      /* Reset styles */
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+      }
+      
+      .email-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      
+      .email-header {
+        background: linear-gradient(135deg, #e11d48, #dc2626);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+      
+      .email-header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      
+      .email-content {
+        padding: 40px 30px;
+      }
+      
+      .role-change-card {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-left: 4px solid #f59e0b;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 6px;
+      }
+      
+      .promotion-card {
+        background: linear-gradient(135deg, #dcfdf7, #a7f3d0);
+        border-left: 4px solid #10b981;
+      }
+      
+      .role-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 0 5px;
+      }
+      
+      .role-admin {
+        background-color: #fca5a5;
+        color: #7f1d1d;
+      }
+      
+      .role-moderator {
+        background-color: #fde68a;
+        color: #92400e;
+      }
+      
+      .role-user {
+        background-color: #bfdbfe;
+        color: #1e3a8a;
+      }
+      
+      .highlight-box {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      
+      .email-footer {
+        background-color: #f8fafc;
+        padding: 20px 30px;
+        text-align: center;
+        font-size: 14px;
+        color: #6b7280;
+      }
+      
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #e11d48, #dc2626);
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: bold;
+        margin: 20px 0;
+      }
+      
+      .role-description {
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 10px;
+        line-height: 1.5;
+      }
+      
+      .admin-signature {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 14px;
+        color: #6b7280;
+      }
+      
+      .icon {
+        font-size: 18px;
+        margin-right: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <!-- Header -->
+      <div class="email-header">
+        <h1>
+          <% if @promotion %>
+            🎉 Role Promotion - Naija Forum
+          <% else %>
+            📋 Role Update - Naija Forum
+          <% end %>
+        </h1>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="email-content">
+        <h2>Hi <%= @user.display_name %>!</h2>
+        
+        <% if @promotion %>
+          <p>Congratulations! We're excited to inform you that your role on Naija Forum has been updated.</p>
+        <% else %>
+          <p>We wanted to let you know that your role on Naija Forum has been changed.</p>
+        <% end %>
+        
+        <!-- Role Change Card -->
+        <div class="role-change-card <%= 'promotion-card' if @promotion %>">
+          <div style="text-align: center;">
+            <% if @promotion %>
+              <h3 style="margin: 0 0 15px 0; color: #059669;">🎊 Role Promotion!</h3>
+            <% else %>
+              <h3 style="margin: 0 0 15px 0; color: #d97706;">📝 Role Change</h3>
+            <% end %>
+            
+            <div style="margin: 20px 0;">
+              <span class="role-badge role-<%= @old_role %>"><%= @old_role.capitalize %></span>
+              <span style="font-size: 18px; margin: 0 10px;">→</span>
+              <span class="role-badge role-<%= @new_role %>"><%= @new_role.capitalize %></span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Role Description -->
+        <div class="highlight-box">
+          <h4 style="margin: 0 0 10px 0;">
+            <span class="icon">
+              <% case @new_role %>
+              <% when 'admin' %>
+                👑
+              <% when 'moderator' %>
+                🛡️
+              <% else %>
+                👤
+              <% end %>
+            </span>
+            Your New Role: <%= @new_role.capitalize %>
+          </h4>
+          
+          <div class="role-description">
+            <% case @new_role %>
+            <% when 'admin' %>
+              <strong>Administrator privileges include:</strong><br>
+              • Full access to the admin dashboard<br>
+              • User management and role assignments<br>
+              • Content moderation and system settings<br>
+              • Complete forum administration capabilities<br>
+              • Access to analytics and reporting features
+            <% when 'moderator' %>
+              <strong>Moderator privileges include:</strong><br>
+              • Content moderation capabilities<br>
+              • Post and comment management<br>
+              • User warning and basic moderation tools<br>
+              • Enhanced community management features<br>
+              • Access to moderation dashboard
+            <% else %>
+              <strong>Community member privileges include:</strong><br>
+              • Create and publish posts<br>
+              • Comment and engage with content<br>
+              • Follow other users and build connections<br>
+              • Like and interact with community content<br>
+              • Full access to all public forum features
+            <% end %>
+          </div>
+        </div>
+        
+        <% if @promotion && (@new_role == 'admin' || @new_role == 'moderator') %>
+          <p>
+            <a href="<%= Rails.application.routes.url_helpers.admin_dashboard_url %>" class="btn">
+              Access Admin Dashboard
+            </a>
+          </p>
+        <% end %>
+        
+        <p>
+          If you have any questions about your new role or need assistance, please don't hesitate to contact our support team.
+        </p>
+        
+        <!-- Admin Signature -->
+        <div class="admin-signature">
+          <strong>Role changed by:</strong> <%= @admin_user.display_name %> (<%= @admin_user.role.capitalize %>)<br>
+          <strong>Date:</strong> <%= Time.current.strftime('%B %d, %Y at %I:%M %p') %><br>
+          <strong>Reference:</strong> User ID #<%= @user.id %>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="email-footer">
+        <p>
+          This is an automated notification from Naija Forum.<br>
+          <a href="<%= Rails.application.routes.url_helpers.root_url %>">Visit Naija Forum</a> |
+          <a href="<%= Rails.application.routes.url_helpers.user_url(@user) %>">Your Profile</a>
+        </p>
+        <p style="margin-top: 15px; font-size: 12px;">
+          © <%= Date.current.year %> Naija Forum. All rights reserved.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

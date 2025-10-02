@@ -1,12 +1,22 @@
 <% if notifications.any? %>
-  <div class="space-y-4">
+  <div class="space-y-0">
     <% notifications.each do |notification| %>
-      <%= render 'notifications/notification', notification: notification %>
+      <%= render 'notifications/notification', 
+          notification: notification, 
+          section: local_assigns.fetch(:section, 'all') %>
     <% end %>
   </div>
 <% else %>
-  <div class="py-4 text-center text-gray-500">
-    <p>No notifications yet</p>
+  <div class="px-8 py-12 text-center">
+    <div class="max-w-sm mx-auto">
+      <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-gray-800 mb-2">No notifications in this category</h3>
+      <p class="text-gray-500 text-sm">Check back later for updates!</p>
+    </div>
   </div>
 <% end %>
 

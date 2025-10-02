@@ -2,6 +2,7 @@ class Admin::BaseController < ApplicationController
   layout 'admin_sidebar'
   before_action :authenticate_user!
   before_action :ensure_admin_or_moderator
+  after_action :cleanup_thread_locals
   
   # Skip Pundit verification for admin controllers since they have custom authorization logic
   skip_after_action :verify_policy_scoped, :verify_authorized
@@ -18,5 +19,12 @@ class Admin::BaseController < ApplicationController
     unless current_user&.admin?
       redirect_to admin_root_path, alert: 'Access denied. Admin privileges required.'
     end
+  end
+  
+  private
+  
+  # Clean up thread-local variables after each request
+  def cleanup_thread_locals
+    Thread.current[:current_admin_user] = nil
   end
 end

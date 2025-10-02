@@ -2,20 +2,29 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   
-  // Real-time Clock Update
+  // Real-time Clock Update for both header and dashboard
   function updateClock() {
-    const clockElement = document.getElementById('current-time');
-    if (clockElement) {
-      const now = new Date();
-      const options = {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
-      };
-      clockElement.textContent = now.toLocaleString('en-US', options);
+    const now = new Date();
+    const options = {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    };
+    const formattedTime = now.toLocaleString('en-US', options);
+    
+    // Update header clock
+    const headerClockElement = document.getElementById('current-time');
+    if (headerClockElement) {
+      headerClockElement.textContent = formattedTime;
+    }
+    
+    // Update dashboard clock
+    const dashboardClockElement = document.getElementById('dashboard-current-time');
+    if (dashboardClockElement) {
+      dashboardClockElement.textContent = formattedTime;
     }
   }
   

@@ -11,14 +11,101 @@
   
   <div class="relative px-8 py-6">
     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-      <!-- Welcome Message -->
+      <!-- Enhanced Welcome Message -->
       <div class="mb-6 lg:mb-0">
-        <h1 class="text-3xl font-bold text-white mb-2">
-          Welcome back, <span class="text-yellow-300"><%= current_user&.display_name || 'Admin' %></span>! 👋
-        </h1>
-        <p class="text-blue-100 text-lg">
-          Here's your forum overview for <span class="font-semibold"><%= Date.current.strftime('%B %d, %Y') %></span>
-        </p>
+        <div class="flex flex-col lg:flex-row lg:items-start lg:space-x-6">
+          <!-- Avatar Section -->
+          <div class="flex-shrink-0 mb-4 lg:mb-0">
+            <div class="relative">
+              <% if current_user&.avatar&.attached? %>
+                <%= image_tag current_user.avatar, class: "w-20 h-20 rounded-2xl object-cover border-4 border-white/30 shadow-2xl" %>
+              <% else %>
+                <div class="w-20 h-20 bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center border-4 border-white/30 shadow-2xl">
+                  <span class="text-2xl font-bold text-white"><%= current_user&.username&.first&.upcase || 'A' %></span>
+                </div>
+              <% end %>
+              
+              <!-- Online Status Indicator -->
+              <% if current_user&.online? %>
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-3 border-white rounded-full shadow-lg">
+                  <div class="w-full h-full bg-green-400 rounded-full animate-ping opacity-75"></div>
+                </div>
+              <% elsif current_user&.recently_active? %>
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-500 border-3 border-white rounded-full shadow-lg"></div>
+              <% else %>
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-gray-400 border-3 border-white rounded-full shadow-lg"></div>
+              <% end %>
+            </div>
+          </div>
+          
+          <!-- Welcome Text and Info -->
+          <div class="flex-1">
+            <div class="mb-3">
+              <h1 class="text-4xl font-bold text-white mb-2 leading-tight">
+                <%= time_based_greeting %>, <span class="text-yellow-300"><%= current_user&.display_name || current_user&.username || 'Admin' %></span>! 👋
+              </h1>
+              
+              <!-- Role Badge -->
+              <div class="flex items-center space-x-3 mb-2">
+                <% case current_user&.role %>
+                <% when 'admin' %>
+                  <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-bold bg-red-500/20 text-red-100 border border-red-400/30 backdrop-blur-sm">
+                    <i class="fas fa-crown mr-2"></i>System Administrator
+                  </span>
+                <% when 'moderator' %>
+                  <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-bold bg-blue-500/20 text-blue-100 border border-blue-400/30 backdrop-blur-sm">
+                    <i class="fas fa-shield-alt mr-2"></i>Forum Moderator
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-medium bg-gray-500/20 text-gray-100 border border-gray-400/30 backdrop-blur-sm">
+                    <i class="fas fa-user mr-2"></i><%= current_user&.role&.humanize || 'User' %>
+                  </span>
+                <% end %>
+                
+                <!-- Time Display -->
+                <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-medium bg-white/10 text-white border border-white/20 backdrop-blur-sm">
+                  <i class="fas fa-clock mr-2"></i>
+                  <span id="dashboard-current-time"><%= formatted_current_time %></span>
+                </span>
+              </div>
+            </div>
+            
+            <div class="space-y-2">
+              <p class="text-blue-100 text-lg leading-relaxed">
+                Here's your comprehensive forum overview for <span class="font-semibold text-white"><%= Date.current.strftime('%B %d, %Y') %></span>
+              </p>
+              
+              <!-- Additional Info Row -->
+              <div class="flex flex-wrap items-center gap-4 text-sm text-blue-200">
+                <div class="flex items-center">
+                  <i class="fas fa-user-clock mr-1.5"></i>
+                  <% if current_user&.last_sign_in_at %>
+                    Last login: <%= time_ago_in_words(current_user.last_sign_in_at) %> ago
+                  <% else %>
+                    First time logging in
+                  <% end %>
+                </div>
+                
+                <div class="flex items-center">
+                  <i class="fas fa-calendar-alt mr-1.5"></i>
+                  Member since <%= current_user&.created_at&.strftime('%B %Y') %>
+                </div>
+                
+                <% if current_user&.online? %>
+                  <div class="flex items-center text-green-300">
+                    <div class="w-2 h-2 bg-green-400 rounded-full mr-1.5 animate-pulse"></div>
+                    Currently online
+                  </div>
+                <% elsif current_user&.recently_active? %>
+                  <div class="flex items-center text-yellow-300">
+                    <div class="w-2 h-2 bg-yellow-400 rounded-full mr-1.5"></div>
+                    Recently active
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Quick Action Buttons -->

@@ -12,7 +12,7 @@
   
   <!-- Unread Indicator -->
   <% unless notification.read? %>
-    <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 to-purple-600 rounded-r-full"></div>
+    <div class="absolute left-0 top-0 bottom-0 w-1 unread-indicator rounded-r-full"></div>
   <% end %>
   
   <div class="flex items-start space-x-4 relative">
@@ -135,7 +135,7 @@
               end
             %>
             <%= link_to view_path, 
-                class: "inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors duration-200 group" do %>
+                class: "action-button action-button-view" do %>
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -148,7 +148,7 @@
             <%= form_with url: mark_as_read_notification_path(notification), 
                 method: :post, local: true, class: "inline-block" do |f| %>
               <%= f.submit "Mark as Read", 
-                  class: "inline-flex items-center px-3 py-2 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors duration-200 cursor-pointer" %>
+                  class: "action-button action-button-read" %>
             <% end %>
           <% end %>
           
@@ -156,7 +156,7 @@
               method: :delete, local: true, class: "inline-block",
               data: { confirm: "Delete this notification?" } do |f| %>
             <%= f.submit "Delete", 
-                class: "inline-flex items-center px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors duration-200 cursor-pointer" %>
+                class: "action-button action-button-delete" %>
           <% end %>
           
         </div>

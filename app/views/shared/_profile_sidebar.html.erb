@@ -62,7 +62,7 @@
         <% if @user == current_user && @user.persisted? %>
           <% unread_count = current_user.notifications&.unread&.count || 0 %>
           <% if unread_count > 0 %>
-            <span class="ml-auto bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full"><%= unread_count %></span>
+            <span id="sidebar-notification-badge" class="ml-auto bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full"><%= unread_count %></span>
           <% end %>
         <% end %>
       <% end %>
@@ -81,7 +81,7 @@
           <span>Account Settings</span>
         <% end %>
 
-        <% if @user.admin? %>
+        <% if @user.staff? %>
           <%= link_to admin_users_path, class: "flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-green-200 hover:text-green-800 transition-colors duration-200 group" do %>
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />

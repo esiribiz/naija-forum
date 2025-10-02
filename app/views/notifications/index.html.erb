@@ -17,7 +17,7 @@
                 </div>
                 <div>
                   <h1 class="text-4xl font-bold text-white mb-2">Notifications</h1>
-                  <p class="text-blue-100 text-lg">Stay up to date with your forum activity</p>
+                  <p class="text-green-100 text-lg">Stay up to date with your forum activity</p>
                 </div>
               </div>
             </div>
@@ -28,13 +28,13 @@
                 <div class="text-2xl lg:text-3xl font-bold text-white mb-1">
                   <%= @notifications.unread.count %>
                 </div>
-                <div class="text-xs lg:text-sm text-blue-100 font-medium">Unread</div>
+                <div class="text-xs lg:text-sm text-green-100 font-medium">Unread</div>
               </div>
               <div class="notification-stats-card rounded-xl p-4 text-center">
                 <div class="text-2xl lg:text-3xl font-bold text-white mb-1">
                   <%= @notifications.count %>
                 </div>
-                <div class="text-xs lg:text-sm text-blue-100 font-medium">Total</div>
+                <div class="text-xs lg:text-sm text-green-100 font-medium">Total</div>
               </div>
             </div>
           </div>
@@ -139,7 +139,7 @@
                 Start engaging with the community to see your notifications come to life!
               </p>
               <%= link_to "Explore Posts", root_path, 
-                  class: "inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" %>
+                  class: "inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" %>
             </div>
           </div>
         </div>
@@ -219,18 +219,63 @@ function showReadNotifications() {
 function updateActiveFilter(activeId) {
   document.querySelectorAll('.notification-filter-btn').forEach(btn => {
     btn.classList.remove('active');
-    btn.classList.remove('bg-blue-500', 'text-white', 'shadow-md');
+    btn.classList.remove('bg-green-600', 'text-white', 'shadow-md');
     btn.classList.add('text-gray-600', 'hover:text-gray-800', 'hover:bg-gray-100');
   });
   
   const activeBtn = document.getElementById(activeId);
-  activeBtn.classList.add('active', 'bg-blue-500', 'text-white', 'shadow-md');
+  activeBtn.classList.add('active', 'bg-green-600', 'text-white', 'shadow-md');
   activeBtn.classList.remove('text-gray-600', 'hover:text-gray-800', 'hover:bg-gray-100');
 }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
   updateActiveFilter('btn-all');
+  
+  // Update notification badges when page loads
+  const controller = document.querySelector('[data-controller~="notification-badge"]');
+  if (controller && controller.notificationBadgeController) {
+    // Update badge count to 0 since user is viewing notifications
+    controller.notificationBadgeController.updateBadgeCount(0);
+  } else {
+    // Fallback: dispatch event to update badges
+    document.dispatchEvent(new CustomEvent('notifications:viewed'));
+  }
+  
+  // Listen for form submissions that affect notification count
+  document.addEventListener('submit', function(event) {
+    const form = event.target;
+    
+    // Handle mark all as read
+    if (form.action && form.action.includes('mark_all_as_read')) {
+      setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('notifications:markAllRead'));
+      }, 100);
+    }
+    
+    // Handle clear all
+    if (form.action && form.action.includes('clear')) {
+      setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('notifications:cleared'));
+      }, 100);
+    }
+    
+    // Handle individual mark as read
+    if (form.action && form.action.includes('mark_as_read')) {
+      setTimeout(() => {
+        // Fetch updated count from server
+        fetch('/notifications.json')
+          .then(response => response.json())
+          .then(data => {
+            const unreadCount = data.filter(n => !n.read).length;
+            document.dispatchEvent(new CustomEvent('notifications:updated', {
+              detail: { count: unreadCount }
+            }));
+          })
+          .catch(error => console.error('Error updating notification count:', error));
+      }, 100);
+    }
+  });
 });
 </script>
 
@@ -243,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .notification-header {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #1e40af 100%);
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 50%, #14532d 100%);
   color: white;
 }
 
@@ -271,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .unread-indicator {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, #16a34a, #15803d);
 }
 
 .notification-filter-btn {
@@ -288,9 +333,9 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .notification-filter-btn.active {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: linear-gradient(135deg, #16a34a, #15803d);
   color: white;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.3);
 }
 
 .action-button {
@@ -306,13 +351,13 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 .action-button-view {
-  background-color: #eff6ff;
-  color: #2563eb;
+  background-color: #f0fdf4;
+  color: #16a34a;
 }
 
 .action-button-view:hover {
-  background-color: #dbeafe;
-  color: #1d4ed8;
+  background-color: #dcfce7;
+  color: #15803d;
 }
 
 .action-button-read {
@@ -401,22 +446,19 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 /* Force color application */
-.text-blue-600 { color: #2563eb !important; }
-.text-red-600 { color: #dc2626 !important; }
 .text-green-600 { color: #16a34a !important; }
+.text-red-600 { color: #dc2626 !important; }
 .text-yellow-600 { color: #ca8a04 !important; }
 .text-gray-700 { color: #374151 !important; }
 .text-gray-600 { color: #4b5563 !important; }
 .text-gray-500 { color: #6b7280 !important; }
 .text-white { color: #ffffff !important; }
 
-.bg-blue-50 { background-color: #eff6ff !important; }
 .bg-green-50 { background-color: #f0fdf4 !important; }
 .bg-red-50 { background-color: #fef2f2 !important; }
 .bg-white { background-color: #ffffff !important; }
 
 /* Hover states */
-.hover\:bg-blue-100:hover { background-color: #dbeafe !important; }
 .hover\:bg-green-100:hover { background-color: #dcfce7 !important; }
 .hover\:bg-red-100:hover { background-color: #fee2e2 !important; }
 </style>

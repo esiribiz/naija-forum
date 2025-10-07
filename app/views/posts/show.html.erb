@@ -1,7 +1,7 @@
 <% content_for :title, @post.title %>
 
 <!-- Sticky Header with Breadcrumbs -->
-<div id="sticky-header" class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 transform transition-transform duration-300 -translate-y-full opacity-0" data-controller="scroll">
+<div id="sticky-header" data-post-target="stickyHeader" class="fixed top-0 left-0 right-0 bg-white shadow-md z-50 transform transition-transform duration-300 -translate-y-full opacity-0">
   <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
     <div class="flex items-center space-x-2 text-sm text-gray-600">
       <%= link_to "Home", root_path, class: "hover:text-naija-green" %>
@@ -21,7 +21,7 @@
       <span class="font-medium text-naija-green truncate max-w-xs"><%= @post.title %></span>
     </div>
     <div>
-      <button id="scroll-to-top" class="text-sm text-naija-green flex items-center">
+      <button id="scroll-to-top" data-post-target="scrollToTopBtn" data-action="click->post#scrollToTop" class="text-sm text-naija-green flex items-center">
         <span>Back to top</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
@@ -33,24 +33,24 @@
 
 <!-- Floating Action Button -->
 <div class="fixed bottom-8 right-8 z-40 flex flex-col space-y-4 items-end">
-  <div id="fab-menu" class="hidden flex-col space-y-2 items-center mb-2 transform transition-all duration-300 scale-95 opacity-0">
-    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Share" id="share-fab">
+  <div id="fab-menu" data-post-target="fabMenu" class="hidden flex-col space-y-2 items-center mb-2 transform transition-all duration-300 scale-95 opacity-0">
+    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Share" data-post-target="shareFab" data-action="click->post#openShareModal">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
       </svg>
     </button>
-    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Print" id="print-fab">
+    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Print" data-post-target="printFab" data-action="click->post#print">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
       </svg>
     </button>
-    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Jump to Comments" id="comments-fab">
+    <button class="w-10 h-10 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition duration-300" title="Jump to Comments" data-post-target="commentsFab" data-action="click->post#scrollToComments">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
       </svg>
     </button>
   </div>
-  <button id="fab-toggle" class="w-12 h-12 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition-all duration-300 transform hover:scale-110 focus:outline-none">
+  <button id="fab-toggle" data-post-target="fabToggle" data-action="click->post#toggleFabMenu" class="w-12 h-12 rounded-full bg-naija-green text-white shadow-lg flex items-center justify-center hover:bg-naija-green-600 transition-all duration-300 transform hover:scale-110 focus:outline-none">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
     </svg>
@@ -58,17 +58,17 @@
 </div>
 
 <!-- Social Share Modal -->
-<div id="share-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
-  <div class="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm" id="share-modal-backdrop"></div>
-  <div class="relative bg-white rounded-xl p-6 shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="share-modal-content">
-    <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-600" id="close-share-modal">
+<div id="share-modal" data-post-target="shareModal" class="fixed inset-0 z-50 hidden items-center justify-center">
+  <div class="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm" data-post-target="shareModalBackdrop" data-action="click->post#closeShareModal"></div>
+  <div class="relative bg-white rounded-xl p-6 shadow-2xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" data-post-target="shareModalContent">
+    <button class="absolute top-3 right-3 text-gray-400 hover:text-gray-600" data-post-target="closeShareModal" data-action="click->post#closeShareModal">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
     </button>
     <h3 class="text-xl font-bold text-gray-800 mb-4">Share this post</h3>
     <div class="grid grid-cols-4 gap-4">
-      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="twitter">
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="twitter" data-action="click->post#share">
         <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center mb-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
@@ -76,7 +76,7 @@
         </div>
         <span class="text-xs font-medium">Twitter</span>
       </a>
-      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="facebook">
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="facebook" data-action="click->post#share">
         <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mb-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -84,7 +84,7 @@
         </div>
         <span class="text-xs font-medium">Facebook</span>
       </a>
-      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="linkedin">
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="linkedin" data-action="click->post#share">
         <div class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center mb-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -92,7 +92,7 @@
         </div>
         <span class="text-xs font-medium">LinkedIn</span>
       </a>
-      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="whatsapp">
+      <a href="#" class="flex flex-col items-center justify-center p-3 rounded-lg hover:bg-green-50 transition duration-300" data-share="whatsapp" data-action="click->post#share">
         <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center mb-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
@@ -103,20 +103,20 @@
     </div>
     <div class="mt-4">
       <div class="relative">
-        <input type="text" id="share-url" value="<%= request.original_url %>" readonly class="w-full py-2 px-3 border border-gray-300 rounded-lg text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-naija-green focus:border-transparent">
-        <button id="copy-url" class="absolute right-2 top-2 text-naija-green hover:text-naija-green-600">
+        <input type="text" id="share-url" data-post-target="shareUrlInput" value="<%= request.original_url %>" readonly class="w-full py-2 px-3 border border-gray-300 rounded-lg text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-naija-green focus:border-transparent">
+        <button data-post-target="copyUrlBtn" data-action="click->post#copyUrl" class="absolute right-2 top-2 text-naija-green hover:text-naija-green-600">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
           </svg>
         </button>
       </div>
-      <p id="copy-message" class="text-center text-sm text-naija-green mt-2 opacity-0 transition-opacity duration-300">URL copied to clipboard!</p>
+      <p data-post-target="copyMessage" class="text-center text-sm text-naija-green mt-2 opacity-0 transition-opacity duration-300">URL copied to clipboard!</p>
     </div>
   </div>
 </div>
 
 <!-- Main Content Container -->
-<div class="container max-w-7xl mx-auto px-4 pt-10 pb-20">
+<div class="container max-w-7xl mx-auto px-4 pt-10 pb-20" data-controller="post">
   <% if notice.present? %>
     <p class="py-3 px-5 bg-naija-green/10 text-naija-green-800 font-semibold rounded-lg mb-6 border-l-4 border-naija-green animate-fadeIn">
       <%= notice %>
@@ -247,7 +247,7 @@
       </div>
     <% end %>
 
-    <div id="post_comments" class="space-y-6">
+    <div id="post_comments" data-post-target="commentsSection" class="space-y-6">
       <% if @post.comments.top_level.any? %>
         <% @post.comments.top_level.includes(:user, :replies).order(created_at: :desc).each do |comment| %>
           <%= render partial: 'comments/comment', locals: { comment: comment, post: @post } %>
@@ -317,214 +317,3 @@
   </div>
 </div>
 
-<!-- JavaScript for sticky header functionality -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const stickyHeader = document.getElementById('sticky-header');
-    const scrollToTopBtn = document.getElementById('scroll-to-top');
-    let lastScrollY = window.scrollY;
-    
-    // Function to handle scroll events
-    function handleScroll() {
-      const currentScrollY = window.scrollY;
-      
-      // Show/hide sticky header based on scroll position and direction
-      if (currentScrollY > 300) {
-        if (currentScrollY < lastScrollY) {
-          // Scrolling up - show header
-          stickyHeader.classList.remove('-translate-y-full', 'opacity-0');
-          stickyHeader.classList.add('translate-y-0', 'opacity-100');
-        } else {
-          // Scrolling down - hide header
-          stickyHeader.classList.remove('translate-y-0', 'opacity-100');
-          stickyHeader.classList.add('-translate-y-full', 'opacity-0');
-        }
-      } else {
-        // At the top - hide header
-        stickyHeader.classList.remove('translate-y-0', 'opacity-100');
-        stickyHeader.classList.add('-translate-y-full', 'opacity-0');
-      }
-      
-      lastScrollY = currentScrollY;
-    }
-    
-    // Add event listeners
-    window.addEventListener('scroll', handleScroll);
-    
-    // Scroll to top button functionality
-    if (scrollToTopBtn) {
-      scrollToTopBtn.addEventListener('click', function() {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      });
-    }
-    
-    // FAB menu toggle
-    const fabToggle = document.getElementById('fab-toggle');
-    const fabMenu = document.getElementById('fab-menu');
-    
-    if (fabToggle && fabMenu) {
-      fabToggle.addEventListener('click', function() {
-        if (fabMenu.classList.contains('hidden')) {
-          fabMenu.classList.remove('hidden', 'scale-95', 'opacity-0');
-          fabMenu.classList.add('flex', 'scale-100', 'opacity-100');
-        } else {
-          fabMenu.classList.remove('flex', 'scale-100', 'opacity-100');
-          fabMenu.classList.add('scale-95', 'opacity-0');
-          setTimeout(() => {
-            fabMenu.classList.add('hidden');
-          }, 300);
-        }
-      });
-    }
-    
-    // Share functionality
-    const shareButtons = document.querySelectorAll('[data-share]');
-    const shareModal = document.getElementById('share-modal');
-    const shareModalContent = document.getElementById('share-modal-content');
-    const shareModalBackdrop = document.getElementById('share-modal-backdrop');
-    const closeShareModal = document.getElementById('close-share-modal');
-    const shareFab = document.getElementById('share-fab');
-    
-    function openShareModal() {
-      shareModal.classList.remove('hidden');
-      shareModal.classList.add('flex');
-      setTimeout(() => {
-        shareModalContent.classList.remove('scale-95', 'opacity-0');
-        shareModalContent.classList.add('scale-100', 'opacity-100');
-      }, 10);
-    }
-    
-    function closeShareModalFn() {
-      shareModalContent.classList.remove('scale-100', 'opacity-100');
-      shareModalContent.classList.add('scale-95', 'opacity-0');
-      setTimeout(() => {
-        shareModal.classList.remove('flex');
-        shareModal.classList.add('hidden');
-      }, 300);
-    }
-    
-    if (shareFab) {
-      shareFab.addEventListener('click', openShareModal);
-    }
-    
-    if (closeShareModal) {
-      closeShareModal.addEventListener('click', closeShareModalFn);
-    }
-    
-    if (shareModalBackdrop) {
-      shareModalBackdrop.addEventListener('click', closeShareModalFn);
-    }
-    
-    // Copy URL functionality
-    const copyUrlBtn = document.getElementById('copy-url');
-    const shareUrlInput = document.getElementById('share-url');
-    const copyMessage = document.getElementById('copy-message');
-    
-    if (copyUrlBtn && shareUrlInput) {
-      copyUrlBtn.addEventListener('click', function() {
-        shareUrlInput.select();
-        document.execCommand('copy');
-        
-        if (copyMessage) {
-          copyMessage.classList.remove('opacity-0');
-          copyMessage.classList.add('opacity-100');
-          
-          setTimeout(() => {
-            copyMessage.classList.remove('opacity-100');
-            copyMessage.classList.add('opacity-0');
-          }, 2000);
-        }
-      });
-    }
-    
-    if (shareButtons.length > 0) {
-      shareButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          const platform = this.getAttribute('data-share');
-          const url = encodeURIComponent(window.location.href);
-          const title = encodeURIComponent(document.title);
-          
-          let shareUrl = '';
-          
-          switch (platform) {
-            case 'twitter':
-              shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`;
-              break;
-            case 'facebook':
-              shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-              break;
-            case 'linkedin':
-              shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-              break;
-            case 'whatsapp':
-              shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(url)}`;
-              break;
-          }
-          
-          if (shareUrl) {
-            window.open(shareUrl, '_blank').focus();
-          }
-        });
-      });
-    }
-    
-    // Comment navigation
-    const commentsFab = document.getElementById('comments-fab');
-    const commentsSection = document.getElementById('post_comments');
-    
-    if (commentsFab && commentsSection) {
-      commentsFab.addEventListener('click', function() {
-        commentsSection.scrollIntoView({ behavior: 'smooth' });
-      });
-    }
-    
-    // Print functionality
-    const printFab = document.getElementById('print-fab');
-    
-    if (printFab) {
-      printFab.addEventListener('click', function() {
-        window.print();
-      });
-    }
-    
-    // Initialize the sticky header on page load to check initial scroll position
-    handleScroll();
-  });
-</script>
-
-<!-- Print Styles -->
-<style media="print">
-  .no-print {
-    display: none !important;
-  }
-  
-  .print-break-after {
-    page-break-after: always;
-  }
-  
-  body {
-    font-size: 12pt;
-    line-height: 1.5;
-    color: #000;
-    background: #fff;
-  }
-  
-  a {
-    text-decoration: none;
-    color: #000;
-  }
-  
-  .container {
-    max-width: 100%;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .prose {
-    max-width: 100%;
-  }
-</style>

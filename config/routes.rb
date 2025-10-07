@@ -7,9 +7,10 @@ Rails.application.routes.draw do
     resources :users do
       member do
         patch :toggle_admin
+        patch :promote_to_moderator
+        patch :demote_user
         patch :ban
         patch :unban
-        patch :toggle_admin
         patch :toggle_suspend
         patch :update_role
       end
@@ -50,9 +51,7 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   end
 
   resources :posts do
-    resources :comments do
-      resources :replies, only: [:create], controller: 'comments'
-    end
+    resources :comments
   end
 
   resources :tags, only: [ :index, :show ]

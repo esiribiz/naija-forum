@@ -1,5 +1,7 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_admin, :toggle_suspend]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_admin, :toggle_suspend, :promote_to_moderator, :demote_user, :ban, :unban]
+  before_action :ensure_can_manage_user_roles, only: [:edit, :update, :destroy, :toggle_admin, :promote_to_moderator, :demote_user, :ban, :unban]
+  before_action :ensure_can_create_users, only: [:new, :create]
 
   def index
     @users = User.includes(:posts, :comments)
@@ -114,8 +116,29 @@ class Admin::UsersController < Admin::BaseController
       return
     end
     
-    @user.destroy
-    redirect_to admin_users_path, notice: 'User was successfully deleted.'
+    username = @user.username
+    email = @user.email
+    posts_count = @user.posts.count
+    comments_count = @user.comments.count
+    
+    begin
+      # Log the deletion for audit purposes
+      Rails.logger.warn "ADMIN USER DELETION: Admin #{current_user.username} (ID: #{current_user.id}) is deleting user #{username} (ID: #{@user.id}, Email: #{email}). Posts: #{posts_count}, Comments: #{comments_count}"
+      
+      # Perform the deletion (this will cascade delete associated records due to dependent: :destroy)
+      @user.destroy!
+      
+      # Success message with details
+      redirect_to admin_users_path, 
+                  notice: "User account deleted: #{username} (#{email}). Removed #{posts_count} posts and #{comments_count} comments."
+    rescue => e
+      # Log the error
+      Rails.logger.error "Failed to delete user #{username} (ID: #{@user.id}): #{e.message}"
+      
+      # Redirect with error message
+      redirect_to admin_users_path, 
+                  alert: "Failed to delete user #{username}: #{e.message}"
+    end
   end
 
     # toggle_suspend
@@ -148,18 +171,92 @@ class Admin::UsersController < Admin::BaseController
     action = @user.admin? ? 'granted' : 'removed'
     redirect_to admin_users_path, notice: "Admin privileges #{action} for #{@user.username}."  
   end
+  
+  # Promote user to moderator
+  def promote_to_moderator
+    if @user == current_user
+      redirect_to admin_users_path, alert: 'You cannot change your own role.'
+      return
+    end
+    
+    # Set the current admin user for the email notification
+    Thread.current[:current_admin_user] = current_user
+    
+    @user.update!(role: 'moderator')
+    redirect_to admin_users_path, notice: "#{@user.username} has been promoted to moderator."  
+  end
+  
+  # Demote user (admin to user, moderator to user)
+  def demote_user
+    if @user == current_user
+      redirect_to admin_users_path, alert: 'You cannot change your own role.'
+      return
+    end
+    
+    old_role = @user.role
+    
+    # Set the current admin user for the email notification
+    Thread.current[:current_admin_user] = current_user
+    
+    @user.update!(role: 'user')
+    redirect_to admin_users_path, notice: "#{@user.username} has been demoted from #{old_role} to regular user."  
+  end
+  
+  # Ban/Unban user  
+  def ban
+    if @user == current_user
+      redirect_to admin_users_path, alert: 'You cannot ban yourself.'
+      return
+    end
+    
+    @user.update!(suspended: true)
+    redirect_to admin_users_path, alert: "#{@user.username} has been banned."  
+  end
+  
+  def unban
+    if @user == current_user
+      redirect_to admin_users_path, alert: 'You cannot unban yourself.'
+      return
+    end
+    
+    @user.update!(suspended: false)
+    redirect_to admin_users_path, notice: "#{@user.username} has been unbanned."  
+  end
 
   private
 
   def set_user
     @user = User.find(params[:id])
   end
+  
+  def ensure_can_manage_user_roles
+    unless current_user&.admin?
+      redirect_to admin_users_path, alert: 'Only administrators can manage user roles.'
+    end
+  end
+  
+  def ensure_can_create_users
+    unless current_user&.admin?
+      redirect_to admin_users_path, alert: 'Only administrators can create new users.'
+    end
+  end
 
   def user_params
-    # Allow more user fields for editing
-    permitted_params = params.require(:user).permit(:username, :email, :first_name, :last_name, :role, :bio)
+    # Base permitted parameters (everyone can edit these)
+    base_params = [:username, :email, :first_name, :last_name, :bio]
     
-    # Additional security: validate role value
+    # Only admins can modify roles
+    if current_user&.admin?
+      permitted_params = params.require(:user).permit(*base_params, :role)
+    else
+      permitted_params = params.require(:user).permit(*base_params)
+      # If a non-admin tries to change role, log this attempt
+      if params[:user][:role].present?
+        Rails.logger.warn "Non-admin user #{current_user&.id} attempted to change user role"
+      end
+    end
+    
+    # Additional security: validate role value if present
     if permitted_params[:role].present?
       unless User::VALID_ROLES.include?(permitted_params[:role])
         raise ActionController::ParameterMissing.new("Invalid role specified")

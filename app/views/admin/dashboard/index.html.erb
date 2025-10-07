@@ -59,9 +59,9 @@
           <div class="flex-1 min-w-0">
             <!-- Main Greeting -->
             <div class="mb-4">
-              <h1 class="text-2xl lg:text-3xl font-bold text-emerald-100 mb-2 leading-tight drop-shadow-md">
-                <span class="bg-gradient-to-r from-emerald-200 via-green-200 to-teal-200 bg-clip-text text-transparent font-bold"><%= time_based_greeting %>,</span>
-                <span class="bg-gradient-to-r from-emerald-100 via-white to-green-200 bg-clip-text text-transparent font-extrabold">
+              <h1 class="text-2xl lg:text-3xl font-bold mb-2 leading-tight drop-shadow-md">
+                <span class="text-emerald-200 font-bold"><%= time_based_greeting %>,</span>
+                <span class="text-emerald-100 font-extrabold">
                   <%= current_user&.display_name || current_user&.username || 'Admin' %>
                 </span>! <span class="text-3xl">👋</span>
               </h1>
@@ -91,7 +91,7 @@
             <!-- Description -->
             <p class="text-emerald-100 text-lg leading-relaxed mb-4 drop-shadow-sm">
               Here's your comprehensive forum overview for 
-              <span class="bg-gradient-to-r from-emerald-200 to-teal-200 bg-clip-text text-transparent font-bold"><%= Date.current.strftime('%B %d, %Y') %></span>
+              <span class="text-emerald-200 font-bold"><%= Date.current.strftime('%B %d, %Y') %></span>
             </p>
           </div>
         </div>
@@ -221,19 +221,19 @@
         <!-- Quick Stats Summary -->
         <div class="flex items-center gap-8 text-sm mb-6">
           <div class="text-center">
-            <div class="text-3xl font-extrabold bg-gradient-to-br from-emerald-300 to-green-400 bg-clip-text text-transparent drop-shadow-lg"><%= number_with_delimiter(@stats[:users][:total]) %></div>
+            <div class="text-3xl font-extrabold text-emerald-300 drop-shadow-lg"><%= number_with_delimiter(@stats[:users][:total]) %></div>
             <div class="text-xs text-emerald-300 uppercase tracking-wider font-bold drop-shadow-sm">Users</div>
           </div>
           <div class="text-center">
-            <div class="text-3xl font-extrabold bg-gradient-to-br from-blue-300 to-cyan-400 bg-clip-text text-transparent drop-shadow-lg"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
-            <div class="text-xs text-blue-300 uppercase tracking-wider font-bold drop-shadow-sm">Posts</div>
+            <div class="text-3xl font-extrabold text-cyan-300 drop-shadow-lg"><%= number_with_delimiter(@stats[:posts][:total]) %></div>
+            <div class="text-xs text-cyan-300 uppercase tracking-wider font-bold drop-shadow-sm">Posts</div>
           </div>
           <div class="text-center">
-            <div class="text-3xl font-extrabold bg-gradient-to-br from-orange-300 to-amber-400 bg-clip-text text-transparent drop-shadow-lg"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
+            <div class="text-3xl font-extrabold text-orange-300 drop-shadow-lg"><%= number_with_delimiter(@stats[:comments][:total]) %></div>
             <div class="text-xs text-orange-300 uppercase tracking-wider font-bold drop-shadow-sm">Comments</div>
           </div>
           <div class="text-center">
-            <div class="text-3xl font-extrabold bg-gradient-to-br from-purple-300 to-pink-400 bg-clip-text text-transparent drop-shadow-lg"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
+            <div class="text-3xl font-extrabold text-purple-300 drop-shadow-lg"><%= number_with_delimiter(@stats[:categories][:total]) %></div>
             <div class="text-xs text-purple-300 uppercase tracking-wider font-bold drop-shadow-sm">Categories</div>
           </div>
         </div>

@@ -353,8 +353,14 @@
             <span><%= @users_today %> Today</span>
           </div>
         </div>
-        <%= link_to new_admin_user_path, class: "btn btn-primary hover:scale-105 transition-transform" do %>
-          <i class="fas fa-user-plus mr-2"></i> Add New User
+        <% if current_user_can?(:create_users) %>
+          <%= link_to new_admin_user_path, class: "btn btn-primary hover:scale-105 transition-transform" do %>
+            <i class="fas fa-user-plus mr-2"></i> Add New User
+          <% end %>
+        <% else %>
+          <div class="text-sm text-gray-500 px-3 py-2 bg-gray-100 rounded-lg">
+            <i class="fas fa-lock mr-1"></i> User creation: Admin only
+          </div>
         <% end %>
       </div>
     </div>
@@ -425,9 +431,16 @@
                   
                   <!-- Activity Status -->
                   <div class="mt-3">
-                    <% if user.online? %>
+                    <% if user.suspended? %>
+                      <div class="enhanced-status-indicator bg-red-100 text-red-800 border-red-200">
+                        🚫 Account Suspended
+                      </div>
+                      <div class="text-xs text-red-600 font-medium mt-1">
+                        User is banned from the site
+                      </div>
+                    <% elsif user.online? %>
                       <div class="enhanced-status-indicator enhanced-status-online">
-                        🟢 Currently Online
+                        �︢ Currently Online
                       </div>
                       <div class="text-xs text-slate-500 mt-1">
                         Active now
@@ -472,57 +485,134 @@
             <!-- Role & Permissions Column -->
             <td>
               <div class="space-y-3">
-                <% case user.role %>
-                <% when 'admin' %>
-                  <div class="enhanced-badge enhanced-badge-danger">
-                    <i class="fas fa-crown mr-1"></i>
-                    Administrator
-                  </div>
-                  <div class="text-xs text-slate-500 mt-1">
-                    Full system access & control
-                  </div>
-                <% when 'moderator' %>
-                  <div class="enhanced-badge enhanced-badge-warning">
-                    <i class="fas fa-shield-alt mr-1"></i>
-                    Moderator
-                  </div>
-                  <div class="text-xs text-slate-500 mt-1">
-                    Content moderation privileges
-                  </div>
-                <% else %>
-                  <div class="enhanced-badge enhanced-badge-primary">
-                    <i class="fas fa-user mr-1"></i>
-                    Regular User
-                  </div>
-                  <div class="text-xs text-slate-500 mt-1">
-                    Standard community member
-                  </div>
-                <% end %>
-                
-                <!-- Role assignment buttons -->
-                <div class="mt-3 space-y-1">
-                  <% unless user == current_user %>
-                    <% if user.role != 'admin' %>
-                      <%= link_to toggle_admin_admin_user_path(user), 
-                            method: :patch,
-                            class: "enhanced-action-btn enhanced-action-btn-danger",
-                            title: "Promote to Admin",
-                            data: { confirm: "Grant administrator privileges to #{user.username}?" } do %>
-                        <i class="fas fa-crown"></i>
-                      <% end %>
-                    <% end %>
-                    <% if user.role == 'user' %>
-                      <%= link_to admin_user_path(user), 
-                            method: :patch,
-                            params: { user: { role: 'moderator' } },
-                            class: "enhanced-action-btn enhanced-action-btn-warning",
-                            title: "Promote to Moderator",
-                            data: { confirm: "Grant moderator privileges to #{user.username}?" } do %>
-                        <i class="fas fa-shield-alt"></i>
-                      <% end %>
-                    <% end %>
+                <div class="flex items-center gap-2">
+                  <% case user.role %>
+                  <% when 'admin' %>
+                    <div class="enhanced-badge enhanced-badge-danger">
+                      <i class="fas fa-crown mr-1"></i>
+                      Administrator
+                    </div>
+                  <% when 'moderator' %>
+                    <div class="enhanced-badge enhanced-badge-warning">
+                      <i class="fas fa-shield-alt mr-1"></i>
+                      Moderator
+                    </div>
+                  <% else %>
+                    <div class="enhanced-badge enhanced-badge-primary">
+                      <i class="fas fa-user mr-1"></i>
+                      Regular User
+                    </div>
+                  <% end %>
+                  
+                  <% if user.suspended? %>
+                    <div class="enhanced-badge bg-red-100 text-red-800 border-red-200">
+                      <i class="fas fa-ban mr-1"></i>
+                      BANNED
+                    </div>
                   <% end %>
                 </div>
+                
+                <div class="text-xs text-slate-500">
+                  <% case user.role %>
+                  <% when 'admin' %>
+                    Full system access & control
+                  <% when 'moderator' %>
+                    Content moderation privileges
+                  <% else %>
+                    Standard community member
+                  <% end %>
+                  <% if user.suspended? %>
+                    <span class="text-red-600 font-medium">• Account suspended</span>
+                  <% end %>
+                </div>
+                
+                <!-- Role Management Actions - Only visible to admins -->
+                <% if current_user_can?(:manage_user_roles) %>
+                  <% unless user == current_user %>
+                    <div class="mt-3 space-y-2">
+                      <!-- Role Change Actions -->
+                      <div class="flex flex-wrap gap-1">
+                        <% if user.role == 'user' %>
+                          <!-- Promote from User -->
+                          <%= link_to promote_to_moderator_admin_user_path(user), 
+                                method: :patch,
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-md hover:bg-yellow-200 transition-colors",
+                                title: "Promote to Moderator",
+                                data: { confirm: "Promote #{user.username} to Moderator?" } do %>
+                            <i class="fas fa-shield-alt mr-1"></i> Mod
+                          <% end %>
+                          <%= link_to toggle_admin_admin_user_path(user), 
+                                method: :patch,
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors",
+                                title: "Promote to Admin",
+                                data: { confirm: "⚠️ Grant ADMIN privileges to #{user.username}? This gives them full system access!" } do %>
+                            <i class="fas fa-crown mr-1"></i> Admin
+                          <% end %>
+                        <% elsif user.role == 'moderator' %>
+                          <!-- Moderator Actions -->
+                          <%= link_to toggle_admin_admin_user_path(user), 
+                                method: :patch,
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors",
+                                title: "Promote to Admin",
+                                data: { confirm: "⚠️ Promote #{user.username} to ADMIN? This gives them full system control!" } do %>
+                            <i class="fas fa-crown mr-1"></i> Admin
+                          <% end %>
+                          <%= link_to demote_user_admin_user_path(user), 
+                                method: :patch,
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors",
+                                title: "Demote to User",
+                                data: { confirm: "Demote #{user.username} to regular user? They will lose moderator privileges." } do %>
+                            <i class="fas fa-user mr-1"></i> User
+                          <% end %>
+                        <% elsif user.role == 'admin' %>
+                          <!-- Admin Actions -->
+                          <%= link_to demote_user_admin_user_path(user), 
+                                method: :patch,
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors",
+                                title: "Demote to User",
+                                data: { confirm: "⚠️ DEMOTE ADMIN #{user.username}? They will lose all admin privileges!" } do %>
+                            <i class="fas fa-user mr-1"></i> User
+                          <% end %>
+                        <% end %>
+                      </div>
+                      
+                      <!-- Ban/Unban Actions -->
+                      <div class="flex gap-1">
+                        <% if user.suspended? %>
+                          <%= link_to unban_admin_user_path(user), 
+                                method: :patch,
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors",
+                                title: "Unban User",
+                                data: { confirm: "Unban #{user.username}? They will regain access to the site." } do %>
+                            <i class="fas fa-user-check mr-1"></i> Unban
+                          <% end %>
+                        <% else %>
+                          <%= link_to ban_admin_user_path(user), 
+                                method: :patch,
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors",
+                                title: "Ban User",
+                                data: { confirm: "⚠️ BAN #{user.username}? They will be unable to access the site." } do %>
+                            <i class="fas fa-ban mr-1"></i> Ban
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% else %>
+                    <!-- Current User -->
+                    <div class="mt-3">
+                      <div class="text-xs text-blue-600 font-medium">
+                        <i class="fas fa-user-check mr-1"></i> Your Account
+                      </div>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <!-- Moderator view: Show role without edit actions -->
+                  <div class="mt-3">
+                    <div class="text-xs text-gray-500">
+                      <i class="fas fa-lock mr-1"></i> Role management: Admin only
+                    </div>
+                  </div>
+                <% end %>
               </div>
             </td>
             
@@ -582,23 +672,48 @@
                   <i class="fas fa-eye"></i>
                 <% end %>
                 
-                <%= link_to edit_admin_user_path(user), 
-                      class: "enhanced-action-btn enhanced-action-btn-edit", 
-                      title: "Edit user details" do %>
-                  <i class="fas fa-user-edit"></i>
+                <% if current_user_can?(:manage_user_roles) %>
+                  <%= link_to edit_admin_user_path(user), 
+                        class: "enhanced-action-btn enhanced-action-btn-edit", 
+                        title: "Edit user role and details" do %>
+                    <i class="fas fa-user-edit"></i>
+                  <% end %>
+                <% else %>
+                  <!-- Moderators can view but not edit user roles -->
+                  <div class="enhanced-action-btn enhanced-action-btn-secondary" title="View only (Moderator permissions)">
+                    <i class="fas fa-eye"></i>
+                  </div>
                 <% end %>
                 
-                <% unless user == current_user %>
+                <% if current_user_can?(:manage_user_roles) && user != current_user %>
                   <%= link_to admin_user_path(user), 
                         method: :delete,
                         class: "enhanced-action-btn enhanced-action-btn-danger",
-                        title: "Delete user account",
-                        data: { confirm: "⚠️ WARNING: This will permanently delete #{user.username}'s account and all associated data.\n\nThis action cannot be undone. Are you absolutely sure?" } do %>
-                    <i class="fas fa-user-times"></i>
+                        title: "Delete user account permanently",
+                        data: { 
+                          confirm: "⚠️ DANGER: DELETE USER ACCOUNT\n\n" +
+                                   "User: #{user.username}\n" +
+                                   "Email: #{user.email}\n" +
+                                   "Role: #{user.role.humanize}\n" +
+                                   "Posts: #{user.posts.count}\n" +
+                                   "Comments: #{user.comments.count}\n\n" +
+                                   "This will PERMANENTLY DELETE:\n" +
+                                   "• User account and profile\n" +
+                                   "• All posts and comments\n" +
+                                   "• All associated data\n\n" +
+                                   "THIS CANNOT BE UNDONE!\n\n" +
+                                   "Type 'DELETE' to confirm:",
+                          confirm_text: "DELETE" 
+                        } do %>
+                    <i class="fas fa-trash-alt"></i>
                   <% end %>
-                <% else %>
+                <% elsif user == current_user %>
                   <div class="enhanced-action-btn enhanced-action-btn-secondary" title="Your account">
                     <i class="fas fa-user-check"></i>
+                  </div>
+                <% else %>
+                  <div class="enhanced-action-btn enhanced-action-btn-secondary" title="Admin only">
+                    <i class="fas fa-lock"></i>
                   </div>
                 <% end %>
               </div>

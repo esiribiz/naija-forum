@@ -1,0 +1,32 @@
+<%= turbo_frame_tag "reply-form-#{comment.parent_id}" do %>
+  <div class="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
+    <%= form_with(model: [post, comment]) do |f| %>
+      <%= f.hidden_field :parent_id, value: comment.parent_id %>
+      
+      <div class="mb-4">
+        <%= f.text_area :content, 
+            placeholder: "Write your reply...", 
+            rows: 3, 
+            class: "w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-naija-green/20 focus:border-naija-green transition-all duration-200 text-gray-700 placeholder-gray-400" %>
+      </div>
+      
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2 text-sm text-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+          </svg>
+          <span>Replying inline</span>
+        </div>
+        <div class="flex space-x-3">
+          <button type="button"
+                  onclick="this.closest('turbo-frame').innerHTML='';"
+                  class="px-4 py-2 text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-lg font-medium transition-colors text-sm">
+            Cancel
+          </button>
+          <%= f.submit "💬 Reply", 
+              class: "px-4 py-2 bg-naija-green hover:bg-naija-green-600 text-white font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-sm" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

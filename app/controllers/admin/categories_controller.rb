@@ -1,5 +1,6 @@
 class Admin::CategoriesController < Admin::BaseController
   before_action :set_category, only: [:show, :edit, :update, :destroy]
+  before_action :ensure_can_manage_categories, only: [:new, :create, :destroy]
   
   def index
     @categories = Category.includes(:posts)
@@ -69,6 +70,12 @@ class Admin::CategoriesController < Admin::BaseController
   
   def set_category
     @category = Category.find(params[:id])
+  end
+  
+  def ensure_can_manage_categories
+    unless current_user&.admin?
+      redirect_to admin_categories_path, alert: 'Only administrators can create or delete categories. Moderators can edit existing categories.'
+    end
   end
   
   def category_params

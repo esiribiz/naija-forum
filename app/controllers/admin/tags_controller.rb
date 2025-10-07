@@ -1,5 +1,6 @@
 class Admin::TagsController < Admin::BaseController
   before_action :set_tag, only: [:show, :edit, :update, :destroy]
+  before_action :ensure_can_manage_tags, only: [:new, :create, :destroy]
   
   def index
     @tags = Tag.includes(:posts)
@@ -60,6 +61,12 @@ class Admin::TagsController < Admin::BaseController
   
   def set_tag
     @tag = Tag.find(params[:id])
+  end
+  
+  def ensure_can_manage_tags
+    unless current_user&.admin?
+      redirect_to admin_tags_path, alert: 'Only administrators can create or delete tags. Moderators can edit existing tags.'
+    end
   end
   
   def tag_params

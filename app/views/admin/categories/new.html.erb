@@ -1,22 +1,46 @@
 <% content_for :page_title, "New Category" %>
 
-<div class="space-y-6">
-  <!-- Page Header -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Create New Category</h1>
-      <p class="mt-1 text-sm text-gray-600">Add a new category to organize forum posts</p>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+      <div class="mx-auto h-16 w-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">
+        <%= @category.new_record? ? "Create a New Category" : "Edit Your Category" %>
+      </h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        <%= @category.new_record? ? "Create a category to organize forum content and help users find relevant discussions." : "Update your category to keep it organized and relevant." %>
+      </p>
     </div>
-    <div>
-      <%= link_to "← Back to Categories", admin_categories_path, 
-          class: "bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500" %>
-    </div>
-  </div>
 
-  <!-- Form Card -->
-  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-    <div class="px-4 py-5 sm:p-6">
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 lg:p-10">
       <%= render 'form' %>
+    </div>
+    
+    <!-- Category Tips -->
+    <div class="mt-8 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl p-6">
+      <h3 class="text-lg font-semibold text-green-900 mb-4 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        💡 Tips for Great Categories
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-green-800">
+        <div class="space-y-2">
+          <p>• <strong>Be descriptive:</strong> Clear names help users understand the category purpose</p>
+          <p>• <strong>Add descriptions:</strong> Help users know what content belongs here</p>
+          <p>• <strong>Choose colors wisely:</strong> Consistent color schemes improve navigation</p>
+        </div>
+        <div class="space-y-2">
+          <p>• <strong>Use hierarchy:</strong> Parent categories can organize related topics</p>
+          <p>• <strong>Keep it simple:</strong> Too many categories can overwhelm users</p>
+          <p>• <strong>Include images:</strong> Visual icons make categories more engaging</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>

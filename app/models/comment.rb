@@ -7,6 +7,9 @@ belongs_to :post, counter_cache: true
 belongs_to :parent, class_name: "Comment", optional: true
 has_many :replies, class_name: "Comment", foreign_key: "parent_id", dependent: :destroy
 
+# Scope for top-level comments (not replies)
+scope :top_level, -> { where(parent_id: nil) }
+
 validates :content, presence: true
 validates :user, presence: true
 validates :post, presence: true

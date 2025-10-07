@@ -464,10 +464,10 @@
               shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(title)}%20${encodeURIComponent(url)}`;
               break;
           }
-
-          }
           
-          window.open(shareUrl, '_blank').focus();
+          if (shareUrl) {
+            window.open(shareUrl, '_blank').focus();
+          }
         });
       });
     }

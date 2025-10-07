@@ -79,6 +79,15 @@ class CommentsController < ApplicationController
   def edit
     authorize @comment
     
+    # Check if comment can still be edited
+    unless @comment.can_be_edited_by?(current_user)
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("comment_#{@comment.id}", partial: "shared/error", locals: { message: "Comment can no longer be edited (2-minute limit expired)." }) }
+        format.html { redirect_to post_path(@post), alert: "Comment can no longer be edited (2-minute limit expired)." }
+      end
+      return
+    end
+    
     respond_to do |format|
       format.turbo_stream {
         if @comment.parent_id.present?
@@ -103,6 +112,15 @@ class CommentsController < ApplicationController
 
   def update
     authorize @comment
+    
+    # Check if comment can still be edited
+    unless @comment.can_be_edited_by?(current_user)
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("comment_#{@comment.id}", partial: "shared/error", locals: { message: "Comment can no longer be edited (2-minute limit expired)." }) }
+        format.html { redirect_to post_path(@post), alert: "Comment can no longer be edited (2-minute limit expired)." }
+      end
+      return
+    end
     
     respond_to do |format|
       if @comment.update(comment_params)
@@ -132,12 +150,25 @@ class CommentsController < ApplicationController
   end
 
   def destroy
-    @comment.destroy
     authorize @comment
-
+    
+    # Check if comment can still be deleted
+    unless @comment.can_be_deleted_by?(current_user)
+      respond_to do |format|
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("comment_#{@comment.id}", partial: "shared/error", locals: { message: "Comment can no longer be deleted (2-minute limit expired)." }) }
+        format.html { redirect_to post_path(@post), alert: "Comment can no longer be deleted (2-minute limit expired)." }
+      end
+      return
+    end
+    
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove("comment_#{@comment.id}") }
-      format.html { redirect_to post_path(@post), notice: "Comment deleted." }
+      if @comment.destroy
+        format.turbo_stream { render turbo_stream: turbo_stream.remove("comment_#{@comment.id}") }
+        format.html { redirect_to post_path(@post), notice: "Comment deleted." }
+      else
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("comment_#{@comment.id}", partial: "shared/error", locals: { message: "Could not delete comment." }) }
+        format.html { redirect_to post_path(@post), alert: "Could not delete comment." }
+      end
     end
   end
 

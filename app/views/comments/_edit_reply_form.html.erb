@@ -39,14 +39,14 @@
           </div>
 
           <div class="flex justify-end space-x-2 pt-2 border-t border-gray-200">
-            <button type="button"
-                    onclick="location.reload()"
-                    class="inline-flex items-center px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 text-xs font-medium shadow-sm">
+            <%= link_to post_path(post), 
+                    class: "inline-flex items-center px-3 py-1.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 text-xs font-medium shadow-sm",
+                    data: { turbo_stream: true } do %>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
               Cancel
-            </button>
+            <% end %>
             
             <%= f.submit "💾 Update Reply", 
                 class: "inline-flex items-center px-4 py-1.5 border border-transparent rounded-lg text-white font-medium bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-sm hover:shadow-md text-xs" %>

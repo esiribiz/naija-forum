@@ -17,20 +17,18 @@ validates :post, presence: true
 validate :prevent_self_reply
 validate :prevent_nested_replies
 
-scope :top_level, -> { where(parent_id: nil) }
-
 before_save :process_html_content
 after_create :notify_post_author
 
 # Time-based restrictions for editing and deleting
 def can_be_edited_by?(user)
   return false unless user == self.user
-  created_at > 2.minutes.ago
+  Time.current - created_at < 2.minutes
 end
 
 def can_be_deleted_by?(user)
   return false unless user == self.user
-  created_at > 2.minutes.ago
+  Time.current - created_at < 2.minutes
 end
 
 private

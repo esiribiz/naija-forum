@@ -19,15 +19,24 @@ def create?
     user.present?
 end
 
+def edit?
+    update?
+end
+
 def update?
-    # Comment author or admin can update
+    # Comment author or admin can update (with time restrictions for regular users)
     return false unless user.present?
-    user.admin? || record.user_id == user.id
+    return true if user.admin?
+    return false unless record.user_id == user.id
+    record.can_be_edited_by?(user)
 end
 
 def destroy?
-    # Comment author, post owner, or admin can delete
+    # Comment author, post owner, or admin can delete (with time restrictions for comment authors)
     return false unless user.present?
-    user.admin? || record.user_id == user.id || user.id == record.post.user_id
+    return true if user.admin?
+    return true if user.id == record.post.user_id  # Post authors can always delete comments on their posts
+    return false unless record.user_id == user.id
+    record.can_be_deleted_by?(user)
 end
 end

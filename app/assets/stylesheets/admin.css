@@ -251,6 +251,7 @@
   overflow: hidden;
   background: var(--admin-gray-50);
   z-index: 10;
+  position: relative;
 }
 
 /* Let Tailwind classes handle the layout spacing */
@@ -1001,19 +1002,22 @@ img.avatar-md,
 /* Mobile sidebar fixes */
 @media (max-width: 1023px) {
   .admin-sidebar {
-    position: fixed;
-    left: -16rem;
-    z-index: 1001;
-    transition: left 0.3s ease-in-out;
+    position: fixed !important;
+    left: -16rem !important;
+    z-index: 1001 !important;
+    transition: left 0.3s ease-in-out !important;
+    transform: translateX(-100%) !important;
   }
   
-  .admin-sidebar.show {
-    left: 0;
+  .admin-sidebar.show,
+  .admin-sidebar.active {
+    left: 0 !important;
+    transform: translateX(0) !important;
   }
   
   .main-content {
-    margin-left: 0;
-    width: 100%;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
   
   /* Mobile sidebar overlay */
@@ -2214,8 +2218,17 @@ video, iframe, embed, object {
     padding-left: 0 !important;
   }
   
-  .admin-layout .main-content {
+  .main-content {
     margin-left: 16rem !important; /* 256px = w-64 */
+    width: calc(100% - 16rem) !important;
+  }
+  
+  /* Ensure sidebar is visible on desktop */
+  .admin-sidebar {
+    display: flex !important;
+    position: fixed !important;
+    left: 0 !important;
+    transform: translateX(0) !important;
   }
 }
 

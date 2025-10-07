@@ -1,7 +1,7 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!, except: [:index]
   before_action :set_post
-  before_action :set_comment, only: [:destroy]
+  before_action :set_comment, only: [:show, :edit, :update, :destroy]
 
   def index
     @comments = @post.comments.includes(:user, :replies).where(parent_id: nil).order(created_at: :desc)
@@ -72,6 +72,61 @@ class CommentsController < ApplicationController
             redirect_to post_path(@post), alert: @comment.errors.full_messages.join(", ")
           end
         }
+      end
+    end
+  end
+
+  def edit
+    authorize @comment
+    
+    respond_to do |format|
+      format.turbo_stream {
+        if @comment.parent_id.present?
+          # For replies - replace the reply with edit form
+          render turbo_stream: turbo_stream.replace(
+            "reply_#{@comment.id}",
+            partial: "comments/edit_reply_form",
+            locals: { comment: @comment, post: @post }
+          )
+        else
+          # For top-level comments - replace the comment with edit form
+          render turbo_stream: turbo_stream.replace(
+            "comment_#{@comment.id}",
+            partial: "comments/edit_comment_form",
+            locals: { comment: @comment, post: @post }
+          )
+        end
+      }
+      format.html # Render the edit.html.erb template for direct navigation
+    end
+  end
+
+  def update
+    authorize @comment
+    
+    respond_to do |format|
+      if @comment.update(comment_params)
+        format.turbo_stream {
+          if @comment.parent_id.present?
+            render turbo_stream: turbo_stream.replace(
+              "reply_#{@comment.id}",
+              partial: "comments/reply",
+              locals: { reply: @comment }
+            )
+          else
+            render turbo_stream: turbo_stream.replace(
+              "comment_#{@comment.id}",
+              partial: "comments/comment",
+              locals: { comment: @comment, post: @post }
+            )
+          end
+        }
+        format.html { redirect_to post_path(@post), notice: "Comment updated successfully." }
+      else
+        format.turbo_stream {
+          render :edit
+        }
+        format.html { render :edit }
       end
     end
   end

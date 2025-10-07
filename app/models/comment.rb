@@ -22,6 +22,17 @@ scope :top_level, -> { where(parent_id: nil) }
 before_save :process_html_content
 after_create :notify_post_author
 
+# Time-based restrictions for editing and deleting
+def can_be_edited_by?(user)
+  return false unless user == self.user
+  created_at > 2.minutes.ago
+end
+
+def can_be_deleted_by?(user)
+  return false unless user == self.user
+  created_at > 2.minutes.ago
+end
+
 private
 
 def prevent_self_reply

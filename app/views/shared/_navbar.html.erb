@@ -44,14 +44,6 @@
           <span>Tags</span>
         <% end %>
         
-        <% if user_signed_in? %>
-          <%= link_to new_post_path, class: "flex items-center bg-white text-green-700 hover:bg-green-50 px-4 py-2 rounded-full font-medium transition-all duration-300 group shadow-md" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Create Post</span>
-          <% end %>
-        <% end %>
       </div>
       
       <!-- Right side: Profile section -->
@@ -276,15 +268,6 @@
       </div>
       
       <% if user_signed_in? %>
-        <!-- Create Post Button for Mobile -->
-        <div class="pt-3">
-          <%= link_to new_post_path, class: "flex items-center justify-center px-4 py-3 rounded-lg text-base font-semibold bg-white text-green-700 hover:bg-green-50 transition-all duration-300 shadow-md" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Create New Post</span>
-          <% end %>
-        </div>
         
         <!-- Mobile Notifications Link -->
         <div class="pt-3">

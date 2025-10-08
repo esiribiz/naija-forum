@@ -75,9 +75,14 @@
         if user_signed_in? && controller_name == "home" && action_name == "index"
           show_sidebar = true
         end
+
+        # Also show main sidebar on All Posts page (posts#index)
+        if user_signed_in? && controller_name == "posts" && action_name == "index"
+          show_sidebar = true
+        end
       %>
       
-      <div class="<%= show_sidebar ? 'flex flex-col md:flex-row gap-6' : 'flex justify-center' %> min-h-screen mb-6">
+      <div class="<%= show_sidebar ? 'flex flex-col md:flex-row items-start gap-6' : 'flex justify-center' %> min-h-screen mb-6">
         <% if show_sidebar %>
           <!-- Sidebar -->
           <% if user_signed_in? && (controller_name == "users" && action_name == "show") %>
@@ -97,6 +102,9 @@
             <%= render "shared/profile_sidebar" %>
           <% elsif user_signed_in? && controller_name == "home" && action_name == "index" %>
             <!-- Main Site Sidebar - On homepage for logged-in users only -->
+            <%= render "shared/sidebar" %>
+          <% elsif user_signed_in? && controller_name == "posts" && action_name == "index" %>
+            <!-- Main Site Sidebar - On All Posts page for logged-in users -->
             <%= render "shared/sidebar" %>
           <% end %>
         <% end %>

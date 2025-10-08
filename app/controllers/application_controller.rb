@@ -28,8 +28,9 @@ rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [ :username, :avatar ])
-    devise_parameter_sanitizer.permit(:account_update, keys: [ :username, :avatar ])
+    # Ensure extra fields persist on invalid sign up without wiping user input
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :username, :first_name, :last_name, :avatar ])
+    devise_parameter_sanitizer.permit(:account_update, keys: [ :username, :first_name, :last_name, :avatar ])
   end
 
 private

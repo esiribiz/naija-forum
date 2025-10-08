@@ -1,9 +1,9 @@
-<turbo-stream action="append" target="comment_<%= @comment.parent_id %>_replies">
+<turbo-stream action="prepend" target="comment_<%= @comment.parent_id %>_replies">
   <template>
     <%= render partial: "comments/reply", locals: { reply: @comment } %>
   </template>
 </turbo-stream>
 
-<turbo-stream action="replace" target="reply_form_<%= @comment.parent_id %>">
+<turbo-stream action="replace" target="reply-form-<%= @comment.parent_id %>">
   <template></template> <!-- Clears the reply form after submission -->
 </turbo-stream>

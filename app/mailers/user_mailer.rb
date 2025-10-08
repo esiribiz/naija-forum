@@ -15,6 +15,19 @@ class UserMailer < ApplicationMailer
     )
   end
   
+  # Email notification for replies to user's comments
+  def reply_notification(notification)
+    @notification = notification
+    @recipient = notification.recipient
+    @actor = notification.actor
+    @notifiable = notification.notifiable
+    
+    mail(
+      to: @recipient.email,
+      subject: "#{@actor.username} replied to your comment"
+    )
+  end
+  
   # Email notification for new likes on user's content
   def new_like_notification(notification)
     @notification = notification

@@ -33,7 +33,7 @@ class CommentsController < ApplicationController
         format.turbo_stream {
           if @comment.parent_id.present?
             render turbo_stream: [
-              turbo_stream.append(
+              turbo_stream.prepend(
                 "comment_#{@comment.parent_id}_replies",
                 partial: "comments/reply",
                 locals: { reply: @comment }
@@ -42,7 +42,7 @@ class CommentsController < ApplicationController
             ]
           else
             render turbo_stream: [
-              turbo_stream.append(
+              turbo_stream.prepend(
                 "post_comments",
                 partial: "comments/comment",
                 locals: { comment: @comment, post: @post }

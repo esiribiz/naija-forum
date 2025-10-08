@@ -22,7 +22,7 @@
       </div>
       
       <div class="text-gray-700 text-sm prose prose-sm max-w-none">
-        <%= simple_format(reply.content) %>
+        <%= linkify_content(reply.content) %>
       </div>
       
       <% if reply.can_be_edited_by?(current_user) || reply.can_be_deleted_by?(current_user) %>

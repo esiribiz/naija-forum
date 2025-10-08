@@ -167,4 +167,27 @@ module ApplicationHelper
   def formatted_current_time(time = Time.current)
     time.strftime("%l:%M %p, %B %d, %Y").strip
   end
+
+  # Safely autolink URLs in user-generated content and preserve line breaks
+  # - Strips any existing HTML first
+  # - Converts plain URLs/emails to clickable links
+  # - Adds rel and target attributes for safety and SEO (ugc/nofollow)
+  # - Preserves line breaks as <br>
+  def linkify_content(text)
+    # Remove any existing HTML tags
+    stripped = sanitize(text.to_s, tags: [], attributes: [])
+
+    # Auto-link URLs and emails, opening in a new tab with safe rel attributes
+    linked = Rinku.auto_link(
+      stripped,
+      :all,
+      'target="_blank" rel="nofollow ugc noopener noreferrer"'
+    )
+
+    # Preserve newlines
+    with_breaks = linked.gsub(/\r?\n/, "<br>")
+
+    # Final sanitize allowing only anchor and br tags
+    sanitize(with_breaks, tags: %w[a br], attributes: %w[href target rel]).html_safe
+  end
 end

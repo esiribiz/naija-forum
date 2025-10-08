@@ -56,7 +56,7 @@
       <%= render "shared/hero_header" %>
     <% end %>
     <!-- Main Layout -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1600px] mx-auto px-2">
       <!-- Content Wrapper -->
       <% 
         # Determine if we should show a sidebar
@@ -80,9 +80,27 @@
         if user_signed_in? && controller_name == "posts" && action_name == "index"
           show_sidebar = true
         end
+
+        # Show main sidebar on Post Show page (posts#show)
+        if user_signed_in? && controller_name == "posts" && action_name == "show"
+          show_sidebar = true
+        end
+
+        # Show main sidebar on category/tag/search and special post listings
+        if user_signed_in?
+          if controller_name == "categories" && ["index", "show"].include?(action_name)
+            show_sidebar = true
+          elsif controller_name == "tags" && ["index", "show"].include?(action_name)
+            show_sidebar = true
+          elsif controller_name == "search" && action_name == "index"
+            show_sidebar = true
+          elsif controller_name == "posts" && ["latest", "popular"].include?(action_name)
+            show_sidebar = true
+          end
+        end
       %>
       
-      <div class="<%= show_sidebar ? 'flex flex-col md:flex-row items-start gap-6' : 'flex justify-center' %> min-h-screen mb-6">
+      <div class="<%= show_sidebar ? 'flex flex-col md:flex-row items-start gap-4' : 'flex justify-center' %> min-h-screen mb-6">
         <% if show_sidebar %>
           <!-- Sidebar -->
           <% if user_signed_in? && (controller_name == "users" && action_name == "show") %>
@@ -106,6 +124,12 @@
           <% elsif user_signed_in? && controller_name == "posts" && action_name == "index" %>
             <!-- Main Site Sidebar - On All Posts page for logged-in users -->
             <%= render "shared/sidebar" %>
+          <% elsif user_signed_in? && controller_name == "posts" && action_name == "show" %>
+            <!-- Main Site Sidebar - On Post Show page for logged-in users -->
+            <%= render "shared/sidebar" %>
+          <% else %>
+            <!-- Default to main site sidebar when show_sidebar is true and no profile sidebar matched -->
+            <%= render "shared/sidebar" %>
           <% end %>
         <% end %>
         
@@ -117,7 +141,7 @@
              (controller_name == "tags" && action_name == "index") ||
              (controller_name == "search" && action_name == "index")
            ) %>
-        <% content_width_class = (show_sidebar ? 'flex-1' : 'w-full') %>
+        <% content_width_class = (show_sidebar ? 'flex-1 min-w-0' : 'w-full') %>
         <% content_skin_class = wide_pages ? 'p-0 bg-transparent border-0 shadow-none' : 'p-6 bg-white shadow-md border border-gray-300 rounded-2xl' %>
         <div class="<%= [content_width_class, content_skin_class].join(' ') %>">
           <%= yield %>

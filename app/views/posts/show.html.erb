@@ -195,7 +195,7 @@
     </div>
     
     <div class="prose prose-lg max-w-none text-gray-700 leading-relaxed mt-8 prose-headings:text-naija-green-800 prose-a:text-naija-green-600 prose-a:no-underline prose-a:font-medium hover:prose-a:text-naija-green-700">
-      <%= simple_format(@post.body) %>
+      <%= linkify_content(@post.body) %>
     </div>
     
   </div>

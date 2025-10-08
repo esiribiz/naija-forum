@@ -56,6 +56,8 @@ class Notification < ApplicationRecord
       "#{actor&.username || 'Someone'} liked your #{notifiable_type.downcase}"
     when 'commented'
       "#{actor&.username || 'Someone'} commented on your #{notifiable_type.downcase}"
+    when 'replied'
+      "#{actor&.username || 'Someone'} replied to your comment"
     when 'mentioned'
       "#{actor&.username || 'Someone'} mentioned you in a #{notifiable_type.downcase}"
     when 'followed'

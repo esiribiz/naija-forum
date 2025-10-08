@@ -18,7 +18,7 @@ validate :prevent_self_reply
 validate :prevent_nested_replies
 
 before_save :process_html_content
-after_create :notify_post_author
+after_create :notify_post_author, :notify_parent_comment_author
 
 # Time-based restrictions for editing and deleting
 def can_be_edited_by?(user)
@@ -52,6 +52,19 @@ def notify_post_author
       recipient: post.user,
       actor: user,
       action: 'commented',
+      notifiable: self
+    )
+end
+
+def notify_parent_comment_author
+    return unless parent.present? # Only for replies
+    return if user_id == parent.user_id # Don't notify if replying to own comment
+    return if user_id == post.user_id && parent.user_id == post.user_id # Avoid duplicate notification if post author replies to their own comment
+    
+    Notification.notify(
+      recipient: parent.user,
+      actor: user,
+      action: 'replied',
       notifiable: self
     )
 end

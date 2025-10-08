@@ -10,6 +10,8 @@ class EmailNotificationJob < ApplicationJob
     case notification.action
     when 'commented'
       UserMailer.new_comment_notification(notification).deliver_now
+    when 'replied'
+      UserMailer.reply_notification(notification).deliver_now
     when 'liked'
       UserMailer.new_like_notification(notification).deliver_now
     when 'mentioned'

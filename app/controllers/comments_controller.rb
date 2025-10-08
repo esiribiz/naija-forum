@@ -37,7 +37,7 @@ class CommentsController < ApplicationController
             
             if parent_comment.parent_id.present?
               # This is a nested reply - append to the parent reply's nested replies container
-              target_container = "reply_#{@comment.parent_id}"
+              target_container = "reply_#{@comment.parent_id}_nested"
               render turbo_stream: [
                 turbo_stream.append(
                   target_container,

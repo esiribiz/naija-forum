@@ -2,10 +2,6 @@
   <div class="mt-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm">
     <%= form_with(model: [post, comment], data: { turbo_frame: "_top" }) do |f| %>
       <%= f.hidden_field :parent_id, value: comment.id %>
-      <!-- DEBUG: Show parent_id value -->
-      <div class="text-xs text-gray-500 mb-2">
-        Replying to comment ID: <%= comment.id %> (parent_id will be: <%= comment.id %>)
-      </div>
       
       <div class="mb-4">
         <%= f.text_area :content, 

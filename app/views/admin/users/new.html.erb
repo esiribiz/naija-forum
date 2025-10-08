@@ -1,0 +1,205 @@
+<% content_for :page_title, "Create New User" %>
+<% content_for :page_subtitle, "Add a new user account to the forum" %>
+
+<!-- Main Content Container -->
+<div class="max-w-4xl mx-auto">
+  <!-- Header Section -->
+  <div class="bg-gradient-to-r from-green-50 via-white to-emerald-50 rounded-2xl border border-green-200 p-8 mb-8">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-800 flex items-center mb-4">
+          <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+            </svg>
+          </div>
+          Create New User
+        </h1>
+        <p class="text-slate-600">Create a new user account with role assignment and basic information</p>
+      </div>
+      <%= link_to admin_users_path, class: "inline-flex items-center px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg transition-colors" do %>
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        Back to Users
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="bg-white rounded-2xl shadow-lg border border-gray-200">
+    <div class="p-8">
+      <%= form_with model: [:admin, @user], local: true, class: "space-y-8" do |form| %>
+        
+        <!-- Display Errors -->
+        <% if @user.errors.any? %>
+          <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+            <div class="flex items-start">
+              <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16c-.77.833.192 2.5 1.732 2.5z"/>
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">Please correct the following errors:</h3>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                  <% @user.errors.full_messages.each do |error| %>
+                    <li><%= error %></li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Basic Information Section -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+          <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
+            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            Basic Information
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Username -->
+            <div class="form-group">
+              <%= form.label :username, class: "form-label required" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Username
+              <% end %>
+              <%= form.text_field :username, class: "form-input", placeholder: "Enter unique username", required: true %>
+              <p class="form-help">This will be the user's login identifier and display name</p>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <%= form.label :email, class: "form-label required" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+                Email Address
+              <% end %>
+              <%= form.email_field :email, class: "form-input", placeholder: "Enter email address", required: true %>
+              <p class="form-help">Used for notifications and account recovery</p>
+            </div>
+
+            <!-- First Name -->
+            <div class="form-group">
+              <%= form.label :first_name, class: "form-label" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                First Name
+              <% end %>
+              <%= form.text_field :first_name, class: "form-input", placeholder: "Enter first name" %>
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group">
+              <%= form.label :last_name, class: "form-label" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Last Name
+              <% end %>
+              <%= form.text_field :last_name, class: "form-input", placeholder: "Enter last name" %>
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div class="form-group mt-6">
+            <%= form.label :bio, class: "form-label" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              Bio
+            <% end %>
+            <%= form.text_area :bio, rows: 3, class: "form-input", placeholder: "Optional bio or description" %>
+          </div>
+        </div>
+
+        <!-- Account Settings Section -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
+          <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center">
+            <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            Account Settings
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Password -->
+            <div class="form-group">
+              <%= form.label :password, class: "form-label required" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Password
+              <% end %>
+              <%= form.password_field :password, class: "form-input", placeholder: "Enter secure password", required: true %>
+              <p class="form-help">Minimum 8 characters with mixed case, numbers, and symbols</p>
+            </div>
+
+            <!-- Password Confirmation -->
+            <div class="form-group">
+              <%= form.label :password_confirmation, class: "form-label required" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Confirm Password
+              <% end %>
+              <%= form.password_field :password_confirmation, class: "form-input", placeholder: "Confirm password", required: true %>
+            </div>
+
+            <!-- Role -->
+            <div class="form-group">
+              <%= form.label :role, class: "form-label required" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                User Role
+              <% end %>
+              <%= form.select :role, 
+                  options_for_select([
+                    ['👤 Regular User', 'user'],
+                    ['🛡️ Moderator', 'moderator'],
+                    ['👑 Administrator', 'admin']
+                  ], 'user'), 
+                  {}, 
+                  { class: "form-select", required: true } %>
+              <p class="form-help">Determines user permissions and access levels</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-between pt-8 border-t border-gray-200">
+          <div class="text-sm text-slate-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            User will receive a welcome email with login instructions
+          </div>
+          <div class="flex space-x-4">
+            <%= link_to admin_users_path, class: "btn btn-secondary" do %>
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+              Cancel
+            <% end %>
+            <%= form.submit "Create User Account", class: "btn btn-primary" %>
+          </div>
+        </div>
+
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -25,13 +25,62 @@ class Admin::CommentsController < Admin::BaseController
   end
   
   def approve
-    # Add approval logic if needed
-    redirect_to admin_comments_path, notice: 'Comment approved successfully.'
+    # Update comment status if there's an approved field
+    if @comment.respond_to?(:approved=)
+      @comment.update!(approved: true)
+      
+      # Notify the comment author if different from current user
+      if @comment.user != current_user && defined?(Notification)
+        begin
+          Notification.create!(
+            user: @comment.user,
+            actor: current_user,
+            action: 'comment_approved',
+            notifiable: @comment,
+            message: "Your comment on '#{@comment.post.title}' has been approved"
+          )
+        rescue => e
+          Rails.logger.warn "Failed to create approval notification: #{e.message}"
+        end
+      end
+      
+      redirect_to admin_comments_path, notice: 'Comment approved successfully.'
+    else
+      # If no approval system, just show success message
+      redirect_to admin_comments_path, notice: 'Comment marked as reviewed.'
+    end
   end
   
   def reject
-    # Add rejection logic if needed  
-    redirect_to admin_comments_path, notice: 'Comment rejected successfully.'
+    # Update comment status if there's an approved field
+    if @comment.respond_to?(:approved=)
+      @comment.update!(approved: false)
+      
+      # Notify the comment author if different from current user
+      if @comment.user != current_user && defined?(Notification)
+        begin
+          Notification.create!(
+            user: @comment.user,
+            actor: current_user,
+            action: 'comment_rejected',
+            notifiable: @comment,
+            message: "Your comment on '#{@comment.post.title}' requires revision"
+          )
+        rescue => e
+          Rails.logger.warn "Failed to create rejection notification: #{e.message}"
+        end
+      end
+      
+      redirect_to admin_comments_path, notice: 'Comment rejected successfully.'
+    else
+      # If no approval system, hide or flag the comment
+      if @comment.respond_to?(:hidden=)
+        @comment.update!(hidden: true)
+        redirect_to admin_comments_path, notice: 'Comment hidden successfully.'
+      else
+        redirect_to admin_comments_path, notice: 'Comment flagged for review.'
+      end
+    end
   end
   
   def destroy

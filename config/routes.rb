@@ -5,6 +5,9 @@ Rails.application.routes.draw do
     get 'dashboard', to: 'dashboard#index'
     
     resources :users do
+      collection do
+        get :export
+      end
       member do
         patch :toggle_admin
         patch :promote_to_moderator

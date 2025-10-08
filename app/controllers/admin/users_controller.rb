@@ -52,6 +52,11 @@ class Admin::UsersController < Admin::BaseController
       @users = @users.left_joins(:comments).group('users.id').having('COUNT(comments.id) >= ?', params[:min_comments].to_i)
     end
     
+    # Handle export before pagination
+    if params[:format] == 'csv'
+      return export_users_csv
+    end
+    
     # Apply sorting
     case params[:sort]
     when 'oldest'
@@ -70,6 +75,9 @@ class Admin::UsersController < Admin::BaseController
       @users = @users.order(created_at: :desc)
     end
     
+    # Store filtered users for stats (before pagination)
+    @filtered_users_count = @users.count
+    
     # Apply pagination
     per_page = params[:per_page].present? ? params[:per_page].to_i : 25
     per_page = [per_page, 100].min # Max 100 per page
@@ -87,10 +95,65 @@ class Admin::UsersController < Admin::BaseController
     @never_logged_in_users = User.never_logged_in.count
   end
   
+  def export
+    # Export users as CSV
+    redirect_to admin_users_path(format: 'csv', **request.query_parameters.except('action', 'controller', 'format'))
+  end
+  
   def show
     # Admin access is already validated by Admin::BaseController
     @user_posts = @user.posts.includes(:category).order(created_at: :desc).limit(10)
     @user_comments = @user.comments.includes(:post).order(created_at: :desc).limit(10)
+  end
+
+  def new
+    @user = User.new
+  end
+
+  def create
+    @user = User.new(user_params)
+    
+    # If password not provided, generate a secure one
+    if @user.password.blank?
+      generated_password = SecureRandom.hex(8)
+      @user.password = generated_password
+      @user.password_confirmation = generated_password
+    end
+    
+    # Auto-confirm admin-created users if email_confirmed field exists
+    @user.email_confirmed = true if @user.respond_to?(:email_confirmed=)
+    
+    if @user.save
+      # Log the user creation
+      Rails.logger.info "Admin #{current_user.username} created user #{@user.username} with role #{@user.role}"
+      
+      # Send welcome email if mailer exists
+      begin
+        if defined?(UserMailer) && UserMailer.respond_to?(:account_created)
+          UserMailer.account_created(@user, @user.password, current_user).deliver_now
+        end
+      rescue => e
+        Rails.logger.warn "Failed to send welcome email to #{@user.email}: #{e.message}"
+      end
+      
+      # Create notification for the new user if Notification model exists
+      begin
+        if defined?(Notification)
+          Notification.create!(
+            user: @user,
+            actor: current_user,
+            action: 'account_created',
+            message: "Your account has been created by administrator #{current_user.display_name}"
+          )
+        end
+      rescue => e
+        Rails.logger.warn "Failed to create notification for new user: #{e.message}"
+      end
+      
+      redirect_to admin_users_path, notice: "User #{@user.username} created successfully."
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   def edit
@@ -232,6 +295,46 @@ class Admin::UsersController < Admin::BaseController
   end
 
   private
+  
+  def export_users_csv
+    require 'csv'
+    
+    # Get filtered users (without pagination)
+    users = @users.includes(:posts, :comments)
+    
+    csv_data = CSV.generate(headers: true) do |csv|
+      # CSV Headers
+      csv << [
+        'ID', 'Username', 'Email', 'First Name', 'Last Name', 'Role',
+        'Created At', 'Last Sign In', 'Posts Count', 'Comments Count',
+        'Status', 'Suspended'
+      ]
+      
+      # CSV Data
+      users.find_each do |user|
+        csv << [
+          user.id,
+          user.username,
+          user.email,
+          user.first_name,
+          user.last_name,
+          user.role.capitalize,
+          user.created_at&.strftime('%Y-%m-%d %H:%M:%S'),
+          user.last_sign_in_at&.strftime('%Y-%m-%d %H:%M:%S'),
+          user.posts.count,
+          user.comments.count,
+          user.activity_status,
+          user.suspended? ? 'Yes' : 'No'
+        ]
+      end
+    end
+    
+    # Send CSV file
+    send_data csv_data,
+              filename: "users_export_#{Date.current.strftime('%Y%m%d')}.csv",
+              type: 'text/csv',
+              disposition: 'attachment'
+  end
 
   def set_user
     @user = User.find(params[:id])
@@ -253,9 +356,14 @@ class Admin::UsersController < Admin::BaseController
     # Base permitted parameters (everyone can edit these)
     base_params = [:username, :email, :first_name, :last_name, :bio]
     
+    # For new user creation, allow password
+    if action_name == 'create'
+      base_params += [:password, :password_confirmation]
+    end
+    
     # Only admins can modify roles
     if current_user&.admin?
-      permitted_params = params.require(:user).permit(*base_params, :role)
+      permitted_params = params.require(:user).permit(*base_params, :role, :suspended)
     else
       permitted_params = params.require(:user).permit(*base_params)
       # If a non-admin tries to change role, log this attempt

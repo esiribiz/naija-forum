@@ -534,42 +534,47 @@
                       <div class="flex flex-wrap gap-1">
                         <% if user.role == 'user' %>
                           <!-- Promote from User -->
-                          <%= link_to promote_to_moderator_admin_user_path(user.id), 
+                          <%= button_to promote_to_moderator_admin_user_path(user.id), 
                                 method: :patch,
-                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-md hover:bg-yellow-200 transition-colors",
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-md hover:bg-yellow-200 transition-colors border-0",
                                 title: "Promote to Moderator",
+                                form_class: "inline-block",
                                 data: { confirm: "Promote #{user.username} to Moderator?" } do %>
                             <i class="fas fa-shield-alt mr-1"></i> Mod
                           <% end %>
-                          <%= link_to toggle_admin_admin_user_path(user.id), 
+                          <%= button_to toggle_admin_admin_user_path(user.id), 
                                 method: :patch,
-                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors",
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors border-0",
                                 title: "Promote to Admin",
+                                form_class: "inline-block",
                                 data: { confirm: "⚠️ Grant ADMIN privileges to #{user.username}? This gives them full system access!" } do %>
                             <i class="fas fa-crown mr-1"></i> Admin
                           <% end %>
                         <% elsif user.role == 'moderator' %>
                           <!-- Moderator Actions -->
-                          <%= link_to toggle_admin_admin_user_path(user.id), 
+                          <%= button_to toggle_admin_admin_user_path(user.id), 
                                 method: :patch,
-                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors",
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors border-0",
                                 title: "Promote to Admin",
+                                form_class: "inline-block",
                                 data: { confirm: "⚠️ Promote #{user.username} to ADMIN? This gives them full system control!" } do %>
                             <i class="fas fa-crown mr-1"></i> Admin
                           <% end %>
-                          <%= link_to demote_user_admin_user_path(user.id), 
+                          <%= button_to demote_user_admin_user_path(user.id), 
                                 method: :patch,
-                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors",
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors border-0",
                                 title: "Demote to User",
+                                form_class: "inline-block",
                                 data: { confirm: "Demote #{user.username} to regular user? They will lose moderator privileges." } do %>
                             <i class="fas fa-user mr-1"></i> User
                           <% end %>
                         <% elsif user.role == 'admin' %>
                           <!-- Admin Actions -->
-                          <%= link_to demote_user_admin_user_path(user.id), 
+                          <%= button_to demote_user_admin_user_path(user.id), 
                                 method: :patch,
-                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors",
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors border-0",
                                 title: "Demote to User",
+                                form_class: "inline-block",
                                 data: { confirm: "⚠️ DEMOTE ADMIN #{user.username}? They will lose all admin privileges!" } do %>
                             <i class="fas fa-user mr-1"></i> User
                           <% end %>
@@ -579,18 +584,20 @@
                       <!-- Ban/Unban Actions -->
                       <div class="flex gap-1">
                         <% if user.suspended? %>
-                          <%= link_to unban_admin_user_path(user.id), 
+                          <%= button_to unban_admin_user_path(user.id), 
                                 method: :patch,
-                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors",
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors border-0",
                                 title: "Unban User",
+                                form_class: "inline-block",
                                 data: { confirm: "Unban #{user.username}? They will regain access to the site." } do %>
                             <i class="fas fa-user-check mr-1"></i> Unban
                           <% end %>
                         <% else %>
-                          <%= link_to ban_admin_user_path(user.id), 
+                          <%= button_to ban_admin_user_path(user.id), 
                                 method: :patch,
-                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors",
+                                class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors border-0",
                                 title: "Ban User",
+                                form_class: "inline-block",
                                 data: { confirm: "⚠️ BAN #{user.username}? They will be unable to access the site." } do %>
                             <i class="fas fa-ban mr-1"></i> Ban
                           <% end %>

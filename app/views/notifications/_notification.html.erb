@@ -79,12 +79,12 @@
         <% when 'commented' %>
           <span class="font-semibold text-green-600"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
           <span class="text-gray-700">commented on your</span>
-          <%= link_to "post", post_path(notification.notifiable.post), 
+          <%= link_to "post", post_path(notification.notifiable.post, anchor: "comment_#{notification.notifiable.id}"), 
               class: "font-semibold text-green-600 hover:text-green-800 hover:underline transition-colors duration-200" %>
         <% when 'replied' %>
           <span class="font-semibold text-blue-600"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
           <span class="text-gray-700">replied to your</span>
-          <%= link_to "comment", post_path(notification.notifiable.post, anchor: "comment_#{notification.notifiable.parent.id}"), 
+          <%= link_to "comment", post_path(notification.notifiable.post, anchor: "reply_#{notification.notifiable.id}"), 
               class: "font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-200" %>
         <% when 'liked' %>
           <span class="font-semibold text-red-600"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
@@ -95,7 +95,7 @@
           <span class="font-semibold text-green-600"><%= notification.actor.username if notification.actor.respond_to?(:username) %></span> 
           <span class="text-gray-700">mentioned you</span>
           <% if notification.notifiable.is_a?(Comment) %>
-            <span class="text-gray-700">in a</span> <%= link_to "comment", post_path(notification.notifiable.post, anchor: "comment-#{notification.notifiable.id}"), 
+            <span class="text-gray-700">in a</span> <%= link_to "comment", post_path(notification.notifiable.post, anchor: "comment_#{notification.notifiable.id}"), 
                 class: "font-semibold text-green-600 hover:text-green-800 hover:underline transition-colors duration-200" %>
           <% else %>
             <span class="text-gray-700">in a</span> <%= link_to "post", post_path(notification.notifiable), 
@@ -134,12 +134,18 @@
             <% 
               view_path = case notification.notifiable
               when Comment
-                post_path(notification.notifiable.post, anchor: "comment-#{notification.notifiable.id}")
+                if notification.notifiable.parent_id.present?
+                  # This is a reply
+                  post_path(notification.notifiable.post, anchor: "reply_#{notification.notifiable.id}")
+                else
+                  # This is a top-level comment
+                  post_path(notification.notifiable.post, anchor: "comment_#{notification.notifiable.id}")
+                end
               else
                 begin
                   polymorphic_path(notification.notifiable)
                 rescue
-                  "#"
+                "#"
                 end
               end
             %>

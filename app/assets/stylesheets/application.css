@@ -55,3 +55,54 @@
     max-width: 100%;
   }
 }
+
+/* Comment highlighting for direct links */
+@layer utilities {
+    /* Comment target highlighting */
+    .comment-target {
+        scroll-margin-top: 100px;
+    }
+    
+    /* Targeted comment highlighting effect */
+    :target {
+        animation: highlightComment 3s ease-in-out;
+    }
+    
+    @keyframes highlightComment {
+        0% {
+            transform: scale(1.02);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05));
+            border-left-color: rgb(34, 197, 94);
+            border-left-width: 6px;
+            box-shadow: 0 10px 25px rgba(34, 197, 94, 0.2);
+        }
+        50% {
+            transform: scale(1.01);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.03));
+            border-left-color: rgb(34, 197, 94);
+            border-left-width: 5px;
+            box-shadow: 0 6px 15px rgba(34, 197, 94, 0.15);
+        }
+        100% {
+            transform: scale(1);
+            background: rgba(34, 197, 94, 0.02);
+            border-left-color: rgb(34, 197, 94);
+            border-left-width: 4px;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.1);
+        }
+    }
+    
+    /* Smooth scroll behavior */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Keep highlight visible for longer on replies */
+    [id^="reply_"]:target,
+    [id^="comment_"]:target {
+        animation: highlightComment 4s ease-in-out;
+        background: rgba(34, 197, 94, 0.03) !important;
+        border-left-color: rgb(34, 197, 94) !important;
+        border-left-width: 4px !important;
+    }
+}

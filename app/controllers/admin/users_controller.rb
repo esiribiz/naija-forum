@@ -214,7 +214,7 @@ class Admin::UsersController < Admin::BaseController
     @user.update!(suspended: true)
     Rails.logger.info "ADMIN BAN SUCCESS: User #{@user.username} (ID: #{@user.id}) suspended status is now: #{@user.suspended?}"
     
-    redirect_to admin_users_path, alert: "#{@user.username} has been banned."  
+    redirect_to admin_users_path(page: params[:page], search: params[:search]), alert: "#{@user.username} has been banned."
   end
   
   def unban
@@ -228,7 +228,7 @@ class Admin::UsersController < Admin::BaseController
     @user.update!(suspended: false)
     Rails.logger.info "ADMIN UNBAN SUCCESS: User #{@user.username} (ID: #{@user.id}) suspended status is now: #{@user.suspended?}"
     
-    redirect_to admin_users_path, notice: "#{@user.username} has been unbanned."  
+    redirect_to admin_users_path(page: params[:page], search: params[:search]), notice: "#{@user.username} has been unbanned."
   end
 
   private

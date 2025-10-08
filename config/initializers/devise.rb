@@ -7,6 +7,9 @@ require 'devise-security'
 # breaking changes in upgrades (i.e., in the event that future versions of
 # Devise change the default values for those options).
 #
+# Require custom failure app
+require Rails.root.join('lib', 'custom_devise_failure')
+
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Devise.setup do |config|
@@ -308,6 +311,7 @@ Devise.setup do |config|
 # If you want to use other strategies, that are not supported by Devise, or
 # change the failure app, you can configure them inside the config.warden block.
   config.warden do |manager|
+    manager.failure_app = CustomDeviseFailure
     manager.default_strategies(scope: :user)
   end
   # ==> Mountable engine configurations

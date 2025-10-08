@@ -209,7 +209,11 @@ class Admin::UsersController < Admin::BaseController
       return
     end
     
+    Rails.logger.info "ADMIN BAN: Admin #{current_user.username} (ID: #{current_user.id}) is banning user #{@user.username} (ID: #{@user.id})"
+    
     @user.update!(suspended: true)
+    Rails.logger.info "ADMIN BAN SUCCESS: User #{@user.username} (ID: #{@user.id}) suspended status is now: #{@user.suspended?}"
+    
     redirect_to admin_users_path, alert: "#{@user.username} has been banned."  
   end
   
@@ -219,7 +223,11 @@ class Admin::UsersController < Admin::BaseController
       return
     end
     
+    Rails.logger.info "ADMIN UNBAN: Admin #{current_user.username} (ID: #{current_user.id}) is unbanning user #{@user.username} (ID: #{@user.id}). Current suspended status: #{@user.suspended?}"
+    
     @user.update!(suspended: false)
+    Rails.logger.info "ADMIN UNBAN SUCCESS: User #{@user.username} (ID: #{@user.id}) suspended status is now: #{@user.suspended?}"
+    
     redirect_to admin_users_path, notice: "#{@user.username} has been unbanned."  
   end
 

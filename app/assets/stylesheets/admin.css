@@ -2214,6 +2214,7 @@ video, iframe, embed, object {
 /* Base admin layout */
 .admin-layout {
   display: flex;
+  align-items: flex-start;
   min-height: 100vh;
   position: relative;
 }
@@ -2239,6 +2240,13 @@ video, iframe, embed, object {
   .admin-layout {
     padding: 1rem;
     gap: 1.5rem;
+  }
+
+  /* Make sidebar sticky on desktop */
+  .admin-sidebar {
+    position: sticky;
+    top: 1rem; /* matches .admin-layout padding */
+    align-self: flex-start; /* ensure it doesn't stretch vertically */
   }
 }
 

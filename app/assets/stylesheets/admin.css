@@ -2247,6 +2247,8 @@ video, iframe, embed, object {
     position: sticky;
     top: 1rem; /* matches .admin-layout padding */
     align-self: flex-start; /* ensure it doesn't stretch vertically */
+    max-height: calc(100vh - 2rem); /* keep entire sidebar within viewport */
+    overflow: hidden; /* let inner nav scroll instead */
   }
 }
 

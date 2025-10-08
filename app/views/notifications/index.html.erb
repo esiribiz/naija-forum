@@ -1,5 +1,5 @@
 <!-- Modern Notifications Page -->
-<div class="notifications-page">
+<div class="notifications-page" data-controller="notification-interactions">
   <div class="w-full max-w-6xl mx-auto px-4 py-6">
     
     <!-- Header Section with Stats -->
@@ -45,16 +45,24 @@
           <div class="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center">
             <div class="flex flex-wrap gap-3">
               <% if @notifications.unread.any? %>
-                <%= form_with url: mark_all_as_read_notifications_path, method: :post, local: true, class: "inline-block" do |f| %>
+                <%= form_with url: mark_all_as_read_notifications_path, method: :post, local: false, class: "inline-block" do |f| %>
                   <%= f.submit "Mark All as Read", 
-                      class: "gradient-button" %>
+                      class: "gradient-button",
+                      data: { 
+                        disable_with: "Marking...",
+                        action: "mark-all-as-read"
+                      } %>
                 <% end %>
               <% end %>
               
-              <%= form_with url: clear_notifications_path, method: :delete, local: true, class: "inline-block", 
-                  data: { confirm: "⚠️ This will permanently delete all your notifications. Are you sure?" } do |f| %>
+              <%= form_with url: clear_notifications_path, method: :delete, local: false, class: "inline-block", 
+                  data: { 
+                    confirm: "⚠️ This will permanently delete all your notifications. Are you sure?",
+                    action: "clear-all"
+                  } do |f| %>
                 <%= f.submit "Clear All", 
-                    class: "gradient-button-red" %>
+                    class: "gradient-button-red",
+                    data: { disable_with: "Clearing..." } %>
               <% end %>
             </div>
             
@@ -447,6 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* Force color application */
 .text-green-600 { color: #16a34a !important; }
+.text-blue-600 { color: #2563eb !important; }
 .text-red-600 { color: #dc2626 !important; }
 .text-yellow-600 { color: #ca8a04 !important; }
 .text-gray-700 { color: #374151 !important; }
@@ -460,5 +469,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* Hover states */
 .hover\:bg-green-100:hover { background-color: #dcfce7 !important; }
+.hover\:bg-blue-100:hover { background-color: #dbeafe !important; }
 .hover\:bg-red-100:hover { background-color: #fee2e2 !important; }
 </style>

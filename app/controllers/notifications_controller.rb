@@ -45,7 +45,9 @@ class NotificationsController < ApplicationController
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "All notifications marked as read.") }
         format.json { head :no_content }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("notifications", partial: "notifications/notifications", locals: { notifications: current_user.notifications.includes(:actor, :notifiable).order(created_at: :desc) }) }
+        format.turbo_stream { 
+          redirect_to notifications_path, notice: "All notifications marked as read."
+        }
       end
     else
       respond_to do |format|
@@ -81,7 +83,9 @@ class NotificationsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to notifications_path, notice: "All notifications cleared." }
         format.json { head :no_content }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("notifications", partial: "notifications/notifications", locals: { notifications: [] }) }
+        format.turbo_stream { 
+          redirect_to notifications_path, notice: "All notifications cleared."
+        }
       end
     else
       respond_to do |format|

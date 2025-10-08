@@ -1,48 +1,9 @@
-<div class="flex min-h-screen p-6 gap-6 bg-gray-50">
+<div class="space-y-8">
+  <%= render 'shared/navigation_menu' %>
 
-  <div class="w-full">
-    <!-- Enhanced Nigerian Themed Header with Flag Colors -->
-    <div class="bg-gradient-to-r from-green-600 via-green-700 to-green-800 text-white p-8 rounded-xl mb-8 shadow-lg relative overflow-hidden border border-green-400">
-      <!-- Nigerian flag-inspired decorative elements -->
-      <div class="absolute top-0 right-0 w-40 h-40 bg-white opacity-10 rounded-full -mr-10 -mt-10"></div>
-      <div class="absolute bottom-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -ml-8 -mb-8"></div>
-      <div class="absolute bottom-20 right-20 w-16 h-16 bg-white opacity-10 rounded-full"></div>
-      
-      <div class="relative z-10 flex justify-between items-center">
-        <div>
-          <h1 class="text-4xl font-bold mb-3 flex items-center">
-            <span class="text-white text-opacity-90">You are welcome to</span>
-            <span class="text-white ml-2 relative">
-              This Forum
-              <span class="absolute bottom-0 left-0 h-1 w-full bg-white bg-opacity-50 rounded"></span>
-            </span>
-          </h1>
-          <p class="text-green-100 text-lg max-w-2xl">Let us discussions, share ideas, and connect with our vibrant community across the world</p>
-        </div>
-        
-        <% if user_signed_in? %>
-          <%= link_to new_post_path, class: "px-5 py-3 bg-white text-green-700 rounded-lg hover:bg-green-50 font-medium shadow-sm transition duration-300 flex items-center space-x-2 hover:shadow-md transform hover:-translate-y-1" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-              <path fill-rule="evenodd" d="M12 3.75a.75.75 0 01.75.75v6.75h6.75a.75.75 0 010 1.5h-6.75v6.75a.75.75 0 01-1.5 0v-6.75H4.5a.75.75 0 010-1.5h6.75V4.5a.75.75 0 01.75-.75z" clip-rule="evenodd" />
-            </svg>
-            <span>Create Post</span>
-          <% end %>
-        <% else %>
-          <%= link_to new_user_session_path, class: "px-5 py-3 bg-white text-green-700 rounded-lg hover:bg-green-50 font-medium shadow-sm transition duration-300 flex items-center space-x-2 hover:shadow-md transform hover:-translate-y-1" do %>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
-              <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
-            </svg>
-            <span>Sign In</span>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-    
-    <%= render 'shared/navigation_menu' %>
-    
-    
-    <!-- Posts List -->
-    <table class="w-full table-auto border-collapse overflow-hidden rounded-xl">
+  <!-- Posts List -->
+  <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+    <table class="w-full table-auto">
       <!-- Table Headers -->
       <thead>
         <tr class="bg-gradient-to-r from-green-600 via-green-700 to-green-800 text-white">
@@ -168,11 +129,12 @@
         <% end %>
         </tbody>
     </table>
-    <!-- Enhanced Pagination with Nigerian theme -->
-    <div class="mt-8 flex justify-center">
-      <div class="bg-white rounded-xl shadow-md p-4 border border-green-100">
-        <nav class="pagination flex items-center space-x-1" role="navigation" aria-label="Pagination Navigation">
-          <%= paginate @posts do |paginator| %>
+  </div>
+  <!-- Enhanced Pagination with Nigerian theme -->
+  <div class="flex justify-center">
+    <div class="bg-white rounded-xl shadow-md p-4 border border-green-100">
+      <nav class="pagination flex items-center space-x-1" role="navigation" aria-label="Pagination Navigation">
+        <%= paginate @posts do |paginator| %>
             <% if paginator.prev_page %>
               <%= link_to paginator.prev_page_url, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-white border border-gray-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors duration-200" do %>
                 <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -217,6 +179,5 @@
           <% end %>
         </nav>
       </div>
-    </div>
     </div>
 </div>

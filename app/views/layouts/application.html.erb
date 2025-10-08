@@ -17,7 +17,7 @@
 <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body class="bg-gray-100 font-sans" data-controller="notification-badge">
+  <body class="bg-gray-50 font-sans" data-controller="notification-badge">
     <!-- Flash Messages -->
     <% if notice || alert %>
     <div data-controller="flash" 
@@ -52,9 +52,11 @@
     <% end %>
     <!-- Navbar -->
     <%= render "shared/navbar" %>
-    <%= render "shared/hero_header" %>
+    <% if controller_name == "home" && action_name == "index" %>
+      <%= render "shared/hero_header" %>
+    <% end %>
     <!-- Main Layout -->
-    <div class="container mx-auto px-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <!-- Content Wrapper -->
       <% 
         # Determine if we should show a sidebar
@@ -100,7 +102,16 @@
         <% end %>
         
         <!-- Main Content -->
-        <div class="<%= show_sidebar ? 'flex-1' : 'w-full max-w-6xl' %> p-6 bg-white shadow-md border border-gray-300 rounded-2xl">
+        <% wide_pages = (
+             (controller_name == "home" && action_name == "index") ||
+             (controller_name == "posts" && ["index","latest","popular"].include?(action_name)) ||
+             (controller_name == "categories" && action_name == "index") ||
+             (controller_name == "tags" && action_name == "index") ||
+             (controller_name == "search" && action_name == "index")
+           ) %>
+        <% content_width_class = (show_sidebar ? 'flex-1' : 'w-full') %>
+        <% content_skin_class = wide_pages ? 'p-0 bg-transparent border-0 shadow-none' : 'p-6 bg-white shadow-md border border-gray-300 rounded-2xl' %>
+        <div class="<%= [content_width_class, content_skin_class].join(' ') %>">
           <%= yield %>
         </div>
       </div>

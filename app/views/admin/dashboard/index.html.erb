@@ -606,7 +606,7 @@
             
             <div id="recent-posts-container" class="space-y-6">
               <% @recent_posts.limit(3).each do |post| %>
-                <%= link_to post_path(post), class: "post-card block bg-gradient-to-r from-white via-green-50/30 to-white dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-xl border border-green-200/30 dark:border-green-700/20 p-6 m-3 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 group cursor-pointer transform active:scale-95 backdrop-blur-sm", data: { post_date: post.created_at.iso8601, category_id: post.category.id } do %>
+                <%= link_to admin_post_path(post.id), class: "post-card block bg-gradient-to-r from-white via-green-50/30 to-white dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-xl border border-green-200/30 dark:border-green-700/20 p-6 m-3 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 group cursor-pointer transform active:scale-95 backdrop-blur-sm", data: { post_date: post.created_at.iso8601, category_id: post.category.id } do %>
                   <div class="flex items-start space-x-6 px-2">
                     <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:scale-110 transition-transform duration-200">
                       <i class="fas fa-newspaper text-green-600 dark:text-green-400 text-base"></i>
@@ -658,7 +658,7 @@
             
             <div class="space-y-6">
               <% @recent_comments.limit(3).each do |comment| %>
-                <%= link_to post_path(comment.post), class: "block bg-gradient-to-r from-white via-yellow-50/30 to-white dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-xl border border-yellow-200/30 dark:border-yellow-700/20 p-6 m-3 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 group cursor-pointer transform active:scale-95 backdrop-blur-sm" do %>
+                <%= link_to admin_post_path(comment.post.id), class: "block bg-gradient-to-r from-white via-yellow-50/30 to-white dark:bg-gradient-to-r dark:from-gray-800 dark:via-gray-700 dark:to-gray-800 rounded-xl border border-yellow-200/30 dark:border-yellow-700/20 p-6 m-3 shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 group cursor-pointer transform active:scale-95 backdrop-blur-sm" do %>
                   <div class="flex items-start space-x-6 px-2">
                     <div class="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg group-hover:scale-110 transition-transform duration-200">
                       <i class="fas fa-comments text-yellow-600 dark:text-yellow-400 text-base"></i>

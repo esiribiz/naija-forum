@@ -1,0 +1,239 @@
+/* 
+ * POST VIEW TOGGLE STYLES - DISABLED FOR NOW
+ * TODO: Re-enable when ready to implement posts grid/list toggle functionality
+ */
+/*
+.view-toggle-container {
+  display: flex;
+  align-items: center;
+}
+
+.view-toggle-group {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.view-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-toggle-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.view-toggle-btn.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Posts Container Styles */
+#posts-container {
+  transition: all 0.3s ease;
+}
+
+/* ============= GRID VIEW (Default) ============= */
+#posts-container.posts-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  #posts-container.posts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Grid view: Normal card layout */
+#posts-container.posts-grid .post-item {
+  display: block;
+  flex-direction: column;
+}
+
+#posts-container.posts-grid .post-content {
+  display: flex;
+  flex-direction: column;
+}
+
+#posts-container.posts-grid .post-avatar {
+  display: block;
+}
+
+#posts-container.posts-grid .post-image {
+  display: block;
+}
+
+#posts-container.posts-grid .post-body {
+  display: block;
+}
+
+#posts-container.posts-grid .post-footer {
+  display: block;
+}
+
+/* ============= LIST VIEW ============= */
+#posts-container.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* List view: Horizontal layout */
+#posts-container.posts-list .post-item {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 120px;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+#posts-container.posts-list .post-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: stretch;
+}
+
+/* User info as left sidebar */
+#posts-container.posts-list .post-avatar {
+  flex-shrink: 0;
+  width: 180px;
+  border-right: 1px solid #e5e7eb;
+  border-bottom: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+#posts-container.posts-list .post-avatar .flex {
+  flex-direction: column;
+  text-align: center;
+  space-x: 0 !important;
+}
+
+#posts-container.posts-list .post-avatar .flex > div:first-child {
+  margin-bottom: 0.5rem;
+}
+
+/* Hide image in list view */
+#posts-container.posts-list .post-image {
+  display: none;
+}
+
+/* Main content area */
+#posts-container.posts-list .post-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem !important;
+  min-height: 120px;
+}
+
+#posts-container.posts-list .post-title {
+  font-size: 1.125rem !important;
+  line-height: 1.4 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+#posts-container.posts-list .post-excerpt {
+  font-size: 0.875rem !important;
+  line-height: 1.4 !important;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Footer adjustments */
+#posts-container.posts-list .post-footer {
+  display: none;
+}
+
+/* Add a compact footer inside post-body for list view */
+#posts-container.posts-list .post-body::after {
+  content: '';
+  margin-top: auto;
+}
+
+#posts-container.posts-list .post-body {
+  position: relative;
+}
+
+#posts-container.posts-list .post-body .post-title::after {
+  content: attr(data-comments);
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: normal;
+}
+
+/* ============= RESPONSIVE ADJUSTMENTS ============= */
+@media (max-width: 768px) {
+  /* On mobile, list view becomes more like stacked cards */
+  #posts-container.posts-list .post-item {
+    flex-direction: column;
+    max-height: none;
+  }
+  
+  #posts-container.posts-list .post-content {
+    flex-direction: column;
+  }
+  
+  #posts-container.posts-list .post-avatar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem;
+  }
+  
+  #posts-container.posts-list .post-avatar .flex {
+    flex-direction: row !important;
+    text-align: left;
+    justify-content: flex-start;
+  }
+  
+  #posts-container.posts-list .post-avatar .flex > div:first-child {
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+  
+  #posts-container.posts-list .post-footer {
+    display: block;
+    padding: 0 1rem 1rem 1rem !important;
+  }
+}
+
+/* ============= ANIMATION ============= */
+.post-item {
+  transition: all 0.3s ease;
+}
+
+/* Smooth transition when switching views */
+#posts-container {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+#posts-container.transitioning {
+  opacity: 0.7;
+}
+*/

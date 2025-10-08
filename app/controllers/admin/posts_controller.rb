@@ -117,6 +117,7 @@ class Admin::PostsController < Admin::BaseController
   private
   
   def set_post
+    # Admin interface uses numeric IDs for consistency and security
     @post = Post.find(params[:id])
   end
 

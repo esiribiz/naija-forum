@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import post view toggle styles */
+@import "components/post_view_toggle.css";
+
 /* Custom styles for proper z-index layering */
 @layer utilities {
     /* Navigation and dropdown z-index hierarchy */

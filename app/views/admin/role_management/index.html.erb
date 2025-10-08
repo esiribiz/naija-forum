@@ -359,7 +359,7 @@
       </thead>
       <tbody>
         <% @users.each do |user| %>
-          <tr class="enhanced-fade-in">
+          <tr class="enhanced-fade-in" data-user-id="<%= user.id %>" data-username="<%= user.username %>">
             <td>
               <div class="enhanced-user-info">
                 <div class="flex-shrink-0">
@@ -483,9 +483,13 @@
             <td class="text-right">
               <% if user != current_user %>
                 <div class="enhanced-action-group">
-                  <button class="enhanced-action-btn enhanced-action-btn-secondary" onclick="viewUserDetails(<%= user.id %>)" title="View user details">
+                  <%= link_to user_path(user.username.present? ? user.username : user.id), 
+                        class: "enhanced-action-btn enhanced-action-btn-secondary", 
+                        title: "View user profile (opens in new tab)", 
+                        target: "_blank" do %>
                     <i class="fas fa-eye"></i>
-                  </button>
+                    <i class="fas fa-external-link-alt text-xs ml-1 opacity-60"></i>
+                  <% end %>
                   <button class="enhanced-action-btn enhanced-action-btn-primary user-actions-toggle" data-user-id="<%= user.id %>" title="More actions">
                     <i class="fas fa-ellipsis-v"></i>
                   </button>
@@ -499,9 +503,13 @@
                       <button class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center" onclick="sendMessage(<%= user.id %>)">
                         <i class="fas fa-envelope mr-3 text-blue-500"></i> Send Message
                       </button>
-                      <button class="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors flex items-center" onclick="viewUserDetails(<%= user.id %>)">
-                        <i class="fas fa-user-circle mr-3 text-purple-500"></i> View Full Profile
-                      </button>
+                      <%= link_to user_path(user.username.present? ? user.username : user.id), 
+                            class: "w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors flex items-center", 
+                            target: "_blank" do %>
+                        <i class="fas fa-user-circle mr-3 text-purple-500"></i> 
+                        <span class="flex-1">View Full Profile</span>
+                        <i class="fas fa-external-link-alt text-xs text-gray-400 ml-2"></i>
+                      <% end %>
                       <% unless user.admin? && User.where(role: 'admin').count <= 1 %>
                         <div class="border-t border-gray-100 my-1"></div>
                         <button class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center" onclick="suspendUser(<%= user.id %>)">
@@ -681,8 +689,15 @@ function updateUserRole(userId, newRole) {
 }
 
 function viewUserDetails(userId) {
-  alert('View user details feature - coming soon!');
-  // TODO: Implement user details modal or redirect
+  // This function is now deprecated - profile links are handled directly via Rails links
+  // Keeping for backward compatibility in case any buttons still use onclick
+  const user = document.querySelector(`tr[data-user-id="${userId}"]`);
+  if (user) {
+    const username = user.getAttribute('data-username') || userId;
+    window.open(`/profile/${username}`, '_blank');
+  } else {
+    window.open(`/profile/${userId}`, '_blank');
+  }
 }
 
 function sendMessage(userId) {

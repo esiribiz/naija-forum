@@ -60,7 +60,10 @@ has_many :posts, dependent: :destroy
 has_many :comments, dependent: :destroy
 has_many :login_activities, dependent: :destroy
 has_many :likes, dependent: :destroy
+has_many :mentions, dependent: :destroy
+has_many :security_question_attempts, dependent: :destroy
 has_many :notifications, foreign_key: "user_id", dependent: :destroy
+has_many :actor_notifications, class_name: "Notification", foreign_key: "actor_id", dependent: :destroy
 has_many :followings, class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
 has_many :followers, class_name: "Follow", foreign_key: "followed_id", dependent: :destroy
 has_many :followed_users, through: :followings, source: :followed

@@ -14,7 +14,7 @@ class CommentsController < ApplicationController
     respond_to do |format|
       format.turbo_stream {
         render turbo_stream: turbo_stream.replace(
-          "reply-form-#{@comment.parent_id}",
+          "reply-form-#{params[:parent_id]}",
           partial: "comments/reply_form",
           locals: { comment: @comment, post: @post }
         )
@@ -143,11 +143,23 @@ class CommentsController < ApplicationController
       if @comment.update(comment_params)
         format.turbo_stream {
           if @comment.parent_id.present?
-            render turbo_stream: turbo_stream.replace(
-              "reply_#{@comment.id}",
-              partial: "comments/reply",
-              locals: { reply: @comment }
-            )
+            # Check if this is a nested reply or direct reply
+            parent_comment = Comment.find(@comment.parent_id)
+            if parent_comment.parent_id.present?
+              # This is a nested reply - use nested_reply partial
+              render turbo_stream: turbo_stream.replace(
+                "reply_#{@comment.id}",
+                partial: "comments/nested_reply",
+                locals: { nested_reply: @comment }
+              )
+            else
+              # This is a direct reply - use reply partial
+              render turbo_stream: turbo_stream.replace(
+                "reply_#{@comment.id}",
+                partial: "comments/reply",
+                locals: { reply: @comment }
+              )
+            end
           else
             render turbo_stream: turbo_stream.replace(
               "comment_#{@comment.id}",
@@ -180,10 +192,17 @@ class CommentsController < ApplicationController
     
     respond_to do |format|
       if @comment.destroy
-        format.turbo_stream { render turbo_stream: turbo_stream.remove("comment_#{@comment.id}") }
+        format.turbo_stream { 
+          # Use correct element ID based on whether it's a comment or reply
+          element_id = @comment.parent_id.present? ? "reply_#{@comment.id}" : "comment_#{@comment.id}"
+          render turbo_stream: turbo_stream.remove(element_id)
+        }
         format.html { redirect_to post_path(@post), notice: "Comment deleted." }
       else
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("comment_#{@comment.id}", partial: "shared/error", locals: { message: "Could not delete comment." }) }
+        format.turbo_stream { 
+          element_id = @comment.parent_id.present? ? "reply_#{@comment.id}" : "comment_#{@comment.id}"
+          render turbo_stream: turbo_stream.replace(element_id, partial: "shared/error", locals: { message: "Could not delete comment." })
+        }
         format.html { redirect_to post_path(@post), alert: "Could not delete comment." }
       end
     end

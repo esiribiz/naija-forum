@@ -175,7 +175,14 @@ end
 
 # Finds the post before performing actions
 def set_post
-@post = Post.includes(:user, :category).find(params[:id])
+@post = Post.includes(
+  :user, 
+  :category,
+  comments: [
+    :user, 
+    { replies: [:user, { replies: :user }] }
+  ]
+).find(params[:id])
 rescue ActiveRecord::RecordNotFound
 raise ActiveRecord::RecordNotFound, "Post not found"
 end

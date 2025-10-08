@@ -534,14 +534,14 @@
                       <div class="flex flex-wrap gap-1">
                         <% if user.role == 'user' %>
                           <!-- Promote from User -->
-                          <%= link_to promote_to_moderator_admin_user_path(user), 
+                          <%= link_to promote_to_moderator_admin_user_path(user.id), 
                                 method: :patch,
                                 class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-md hover:bg-yellow-200 transition-colors",
                                 title: "Promote to Moderator",
                                 data: { confirm: "Promote #{user.username} to Moderator?" } do %>
                             <i class="fas fa-shield-alt mr-1"></i> Mod
                           <% end %>
-                          <%= link_to toggle_admin_admin_user_path(user), 
+                          <%= link_to toggle_admin_admin_user_path(user.id), 
                                 method: :patch,
                                 class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors",
                                 title: "Promote to Admin",
@@ -550,14 +550,14 @@
                           <% end %>
                         <% elsif user.role == 'moderator' %>
                           <!-- Moderator Actions -->
-                          <%= link_to toggle_admin_admin_user_path(user), 
+                          <%= link_to toggle_admin_admin_user_path(user.id), 
                                 method: :patch,
                                 class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-md hover:bg-red-200 transition-colors",
                                 title: "Promote to Admin",
                                 data: { confirm: "⚠️ Promote #{user.username} to ADMIN? This gives them full system control!" } do %>
                             <i class="fas fa-crown mr-1"></i> Admin
                           <% end %>
-                          <%= link_to demote_user_admin_user_path(user), 
+                          <%= link_to demote_user_admin_user_path(user.id), 
                                 method: :patch,
                                 class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors",
                                 title: "Demote to User",
@@ -566,7 +566,7 @@
                           <% end %>
                         <% elsif user.role == 'admin' %>
                           <!-- Admin Actions -->
-                          <%= link_to demote_user_admin_user_path(user), 
+                          <%= link_to demote_user_admin_user_path(user.id), 
                                 method: :patch,
                                 class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors",
                                 title: "Demote to User",
@@ -579,7 +579,7 @@
                       <!-- Ban/Unban Actions -->
                       <div class="flex gap-1">
                         <% if user.suspended? %>
-                          <%= link_to unban_admin_user_path(user), 
+                          <%= link_to unban_admin_user_path(user.id), 
                                 method: :patch,
                                 class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-md hover:bg-green-200 transition-colors",
                                 title: "Unban User",
@@ -587,7 +587,7 @@
                             <i class="fas fa-user-check mr-1"></i> Unban
                           <% end %>
                         <% else %>
-                          <%= link_to ban_admin_user_path(user), 
+                          <%= link_to ban_admin_user_path(user.id), 
                                 method: :patch,
                                 class: "inline-flex items-center px-2 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-md hover:bg-orange-200 transition-colors",
                                 title: "Ban User",
@@ -673,7 +673,7 @@
                 <% end %>
                 
                 <% if current_user_can?(:manage_user_roles) %>
-                  <%= link_to edit_admin_user_path(user), 
+                  <%= link_to edit_admin_user_path(user.id), 
                         class: "enhanced-action-btn enhanced-action-btn-edit", 
                         title: "Edit user role and details" do %>
                     <i class="fas fa-user-edit"></i>
@@ -686,7 +686,7 @@
                 <% end %>
                 
                 <% if current_user_can?(:manage_user_roles) && user != current_user %>
-                  <%= link_to admin_user_path(user), 
+                  <%= link_to admin_user_path(user.id), 
                         method: :delete,
                         class: "enhanced-action-btn enhanced-action-btn-danger",
                         title: "Delete user account permanently",

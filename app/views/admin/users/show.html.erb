@@ -20,16 +20,16 @@
 
       <!-- Suspend / Unsuspend -->
       <% if @user.suspended? %>
-        <%= button_to "Unsuspend User", toggle_suspend_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" %>
+        <%= button_to "Unsuspend User", toggle_suspend_admin_user_path(@user.id), method: :patch, class: "px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" %>
       <% else %>
-        <%= button_to "Suspend User", toggle_suspend_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500" %>
+        <%= button_to "Suspend User", toggle_suspend_admin_user_path(@user.id), method: :patch, class: "px-4 py-2 bg-yellow-400 text-white rounded hover:bg-yellow-500" %>
       <% end %>
 
       <!-- Grant / Remove Admin -->
       <% if @user.admin? %>
-        <%= button_to "Remove Admin", toggle_admin_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" %>
+        <%= button_to "Remove Admin", toggle_admin_admin_user_path(@user.id), method: :patch, class: "px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700" %>
       <% else %>
-        <%= button_to "Grant Admin", toggle_admin_admin_user_path(@user), method: :patch, class: "px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" %>
+        <%= button_to "Grant Admin", toggle_admin_admin_user_path(@user.id), method: :patch, class: "px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600" %>
       <% end %>
 
       <!-- Delete User -->

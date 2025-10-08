@@ -37,6 +37,11 @@ class Users::SessionsController < Devise::SessionsController
 
   protected
 
+  # Redirect to user dashboard after successful sign in
+  def after_sign_in_path_for(resource)
+    user_path(resource)
+  end
+
   def check_location_restrictions
     # Skip for non-production environments for easier development/testing
     return unless Rails.env.production?

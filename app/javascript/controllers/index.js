@@ -4,6 +4,7 @@ import { application } from "controllers/application"
 // Import all controllers explicitly
 import AlertsController from "controllers/alerts"
 import CharacterCountController from "controllers/character_count_controller"
+import CollapsibleRepliesController from "controllers/collapsible_replies_controller"
 import CommentsController from "controllers/comments_controller"
 import FlashController from "controllers/flash_controller"
 import NavbarController from "controllers/navbar_controller"
@@ -16,6 +17,7 @@ import ResetFormController from "controllers/reset_form_controller"
 // Register all controllers
 application.register("alerts", AlertsController)
 application.register("character-count", CharacterCountController)
+application.register("collapsible-replies", CollapsibleRepliesController)
 application.register("comments", CommentsController)
 application.register("flash", FlashController)
 application.register("navbar", NavbarController)

@@ -51,7 +51,11 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   end
 
   resources :posts do
-    resources :comments
+    resources :comments do
+      member do
+        get :cancel_edit
+      end
+    end
   end
 
   resources :tags, only: [ :index, :show ]

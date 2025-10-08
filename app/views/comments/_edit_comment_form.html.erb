@@ -30,7 +30,7 @@
           <h4 class="text-sm font-semibold text-gray-900">Editing Comment</h4>
         </div>
         
-        <%= form_with(model: [post, comment], class: "space-y-4") do |f| %>
+        <%= form_with(model: [post, comment], class: "space-y-4", data: { turbo_frame: "_top" }) do |f| %>
           <div class="relative">
             <%= f.text_area :content, 
                 rows: 4,
@@ -39,16 +39,16 @@
           </div>
 
           <div class="flex justify-end space-x-3 pt-3 border-t border-gray-200">
-            <%= link_to post_path(post), 
-                    class: "inline-flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 text-sm font-medium shadow-sm",
-                    data: { turbo_stream: true } do %>
+            <%= link_to cancel_edit_post_comment_path(post, comment), 
+                    data: { turbo_stream: true },
+                    class: "inline-flex items-center px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 text-sm font-medium shadow-sm" do %>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
               Cancel
             <% end %>
             
-            <%= f.submit "💾 Update Comment", 
+            <%= f.submit comment.parent_id.present? ? "💾 Update Reply" : "💾 Update Comment", 
                 class: "inline-flex items-center px-5 py-2 border border-transparent rounded-xl text-white font-medium bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 shadow-sm hover:shadow-md text-sm" %>
           </div>
         <% end %>

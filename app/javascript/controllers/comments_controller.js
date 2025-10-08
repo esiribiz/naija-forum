@@ -1,14 +1,16 @@
+// app/javascript/controllers/comment_controller.js
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  connect() {
-    console.log("Comments controller connected")
+  toggleReplyForm(event) {
+    const id = event.currentTarget.dataset.commentId
+    const form = document.getElementById(`reply-form-${id}`)
+    if (form) form.classList.toggle("hidden")
   }
-  
-  // Simple method to clear all reply forms
-  clearAllReplyForms() {
-    document.querySelectorAll('.reply-form').forEach(form => {
-      form.innerHTML = ''
-    })
+
+  cancelReplyForm(event) {
+    const id = event.currentTarget.dataset.commentId
+    const form = document.getElementById(`reply-form-${id}`)
+    if (form) form.classList.add("hidden")
   }
 }

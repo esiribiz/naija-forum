@@ -1,81 +1,63 @@
 class Comment < ApplicationRecord
-include Mentionable
-include HtmlProcessor
+  include Mentionable
+  include HtmlProcessor
 
-belongs_to :user, counter_cache: true
-belongs_to :post, counter_cache: true
-belongs_to :parent, class_name: "Comment", optional: true
-has_many :replies, class_name: "Comment", foreign_key: "parent_id", dependent: :destroy
+  belongs_to :user, counter_cache: true
+  belongs_to :post, counter_cache: true
+  belongs_to :parent, class_name: "Comment", optional: true
+  has_many :replies, class_name: "Comment", foreign_key: "parent_id", dependent: :destroy
 
-# Scope for top-level comments (not replies)
-scope :top_level, -> { where(parent_id: nil) }
+  # Scope for top-level comments
+  scope :top_level, -> { where(parent_id: nil) }
 
-validates :content, presence: true
-validates :user, presence: true
-validates :post, presence: true
+  validates :content, presence: true
+  validates :user, presence: true
+  validates :post, presence: true
 
-validate :prevent_self_reply
-validate :prevent_nested_replies
+  validate :prevent_self_reply
 
-before_save :process_html_content
-after_create :notify_post_author, :notify_parent_comment_author
+  before_save :process_html_content
+  after_create :notify_post_author, :notify_parent_comment_author
 
-# Time-based restrictions for editing and deleting
-def can_be_edited_by?(user)
-  return false unless user == self.user
-  Time.current - created_at < 2.minutes
-end
+  def can_be_edited_by?(user)
+    user == self.user && Time.current - created_at < 2.minutes
+  end
 
-def can_be_deleted_by?(user)
-  return false unless user == self.user
-  Time.current - created_at < 2.minutes
-end
+  def can_be_deleted_by?(user)
+    user == self.user && Time.current - created_at < 2.minutes
+  end
 
-private
+  private
 
-def prevent_self_reply
+  def prevent_self_reply
     if parent.present? && parent.user_id == user_id
-    errors.add(:base, "Cannot reply to your own comment")
+      errors.add(:base, "Cannot reply to your own comment")
     end
-end
+  end
 
-def prevent_nested_replies
-    if parent.present? && parent.parent_id.present?
-    errors.add(:base, "Cannot create nested replies beyond one level")
-    end
-end
-
-def notify_post_author
-    return if user_id == post.user_id # Don't notify if commenter is the post author
-    
+  def notify_post_author
+    return if user_id == post.user_id
     Notification.notify(
       recipient: post.user,
       actor: user,
       action: 'commented',
       notifiable: self
     )
-end
+  end
 
-def notify_parent_comment_author
-    return unless parent.present? # Only for replies
-    return if user_id == parent.user_id # Don't notify if replying to own comment
-    return if user_id == post.user_id && parent.user_id == post.user_id # Avoid duplicate notification if post author replies to their own comment
-    
+  def notify_parent_comment_author
+    return unless parent.present?
+    return if user_id == parent.user_id
+    return if user_id == post.user_id && parent.user_id == post.user_id
     Notification.notify(
       recipient: parent.user,
       actor: user,
       action: 'replied',
       notifiable: self
     )
-end
+  end
 
-# Sanitizes HTML content without auto-linking URLs to prevent XSS attacks
-# The HtmlProcessor module provides the process_html method that strips unsafe HTML
-def process_html_content
-    if content.present?
-    self.content = process_html(content)
-    end
+  def process_html_content
+    self.content = process_html(content) if content.present?
+  end
 end
-end
-
-

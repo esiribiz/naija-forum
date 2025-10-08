@@ -105,4 +105,26 @@
         border-left-color: rgb(34, 197, 94) !important;
         border-left-width: 4px !important;
     }
+    
+    /* Collapsible replies animations */
+    [data-collapsible-replies-target="repliesContainer"] {
+        transition: all 0.3s ease-in-out;
+        transform-origin: top;
+    }
+    
+    /* Smooth transitions for collapse/expand button */
+    [data-collapsible-replies-target="toggleButton"] {
+        transition: all 0.2s ease-in-out;
+    }
+    
+    [data-collapsible-replies-target="toggleButton"]:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Icon rotation for visual feedback */
+    [data-collapsible-replies-target="toggleButton"] span:first-child {
+        transition: transform 0.2s ease-in-out;
+        display: inline-block;
+    }
 }

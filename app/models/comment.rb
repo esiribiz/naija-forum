@@ -15,7 +15,7 @@ validates :user, presence: true
 validates :post, presence: true
 
 validate :prevent_self_reply
-# validate :prevent_nested_replies  # Commented out to allow deeper nesting
+validate :prevent_nested_replies
 
 before_save :process_html_content
 after_create :notify_post_author, :notify_parent_comment_author

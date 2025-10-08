@@ -180,7 +180,7 @@ def set_post
   :category,
   comments: [
     :user, 
-    { replies: [:user, { replies: :user }] }
+    { replies: :user }
   ]
 ).find(params[:id])
 rescue ActiveRecord::RecordNotFound

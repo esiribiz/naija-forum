@@ -61,14 +61,6 @@
           <% if comment.replies.any? %>
             <% comment.replies.order(created_at: :desc).each do |reply| %>
               <%= render partial: 'comments/reply', locals: { reply: reply } %>
-              <!-- Nested replies to this reply -->
-              <div id="reply_<%= reply.id %>_nested" class="mt-2 space-y-2">
-                <% if reply.replies.any? %>
-                  <% reply.replies.order(created_at: :asc).each do |nested_reply| %>
-                    <%= render partial: 'comments/nested_reply', locals: { nested_reply: nested_reply } %>
-                  <% end %>
-                <% end %>
-              </div>
             <% end %>
           <% end %>
         </div>

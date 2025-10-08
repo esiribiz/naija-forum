@@ -32,31 +32,15 @@ class CommentsController < ApplicationController
       if @comment.save
         format.turbo_stream {
           if @comment.parent_id.present?
-            # Check if this is a nested reply (reply to a reply) or direct reply to a comment
-            parent_comment = Comment.find(@comment.parent_id)
-            
-            if parent_comment.parent_id.present?
-              # This is a nested reply - append to the parent reply's nested replies container
-              target_container = "reply_#{@comment.parent_id}_nested"
-              render turbo_stream: [
-                turbo_stream.append(
-                  target_container,
-                  partial: "comments/nested_reply",
-                  locals: { nested_reply: @comment }
-                ),
-                turbo_stream.replace("reply-form-#{@comment.parent_id}", "")
-              ]
-            else
-              # This is a direct reply to a top-level comment
-              render turbo_stream: [
-                turbo_stream.prepend(
-                  "comment_#{@comment.parent_id}_replies",
-                  partial: "comments/reply",
-                  locals: { reply: @comment }
-                ),
-                turbo_stream.replace("reply-form-#{@comment.parent_id}", "")
-              ]
-            end
+            # This is a reply to a top-level comment
+            render turbo_stream: [
+              turbo_stream.prepend(
+                "comment_#{@comment.parent_id}_replies",
+                partial: "comments/reply",
+                locals: { reply: @comment }
+              ),
+              turbo_stream.replace("reply-form-#{@comment.parent_id}", "")
+            ]
           else
             render turbo_stream: [
               turbo_stream.prepend(
@@ -143,23 +127,12 @@ class CommentsController < ApplicationController
       if @comment.update(comment_params)
         format.turbo_stream {
           if @comment.parent_id.present?
-            # Check if this is a nested reply or direct reply
-            parent_comment = Comment.find(@comment.parent_id)
-            if parent_comment.parent_id.present?
-              # This is a nested reply - use nested_reply partial
-              render turbo_stream: turbo_stream.replace(
-                "reply_#{@comment.id}",
-                partial: "comments/nested_reply",
-                locals: { nested_reply: @comment }
-              )
-            else
-              # This is a direct reply - use reply partial
-              render turbo_stream: turbo_stream.replace(
-                "reply_#{@comment.id}",
-                partial: "comments/reply",
-                locals: { reply: @comment }
-              )
-            end
+            # This is a reply - use reply partial
+            render turbo_stream: turbo_stream.replace(
+              "reply_#{@comment.id}",
+              partial: "comments/reply",
+              locals: { reply: @comment }
+            )
           else
             render turbo_stream: turbo_stream.replace(
               "comment_#{@comment.id}",

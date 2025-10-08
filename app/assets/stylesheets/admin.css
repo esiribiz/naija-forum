@@ -84,9 +84,10 @@
 }
 
 .admin-layout {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+  /* Updated to support flexible container-based layout */
+  display: block;
+  min-height: 100vh;
+  /* Remove overflow hidden to allow natural scrolling */
 }
 
 /* =================================
@@ -94,17 +95,17 @@
    ================================= */
 
 .admin-sidebar {
-  width: 16rem;
+  width: 18rem;
   background: linear-gradient(180deg, var(--admin-slate-800) 0%, var(--admin-slate-900) 100%);
   color: white;
   box-shadow: var(--admin-shadow-2xl);
   border-right: 1px solid var(--admin-slate-700);
   transition: var(--admin-transition);
-  position: fixed;
-  z-index: 1000;
-  height: 100vh;
-  left: 0;
-  top: 0;
+  /* Removed fixed positioning for flexible layout */
+  position: relative;
+  /* Remove z-index override */
+  /* Remove fixed height for flexible sizing */
+  border-radius: 1rem;
 }
 
 .sidebar-header {
@@ -245,13 +246,13 @@
    ================================= */
 
 .main-content {
-  flex: 1;
+  /* Updated for flexible layout - let Tailwind handle flex properties */
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* Allow natural overflow behavior */
   background: var(--admin-gray-50);
-  z-index: 10;
   position: relative;
+  min-height: fit-content;
 }
 
 /* Let Tailwind classes handle the layout spacing */
@@ -270,9 +271,10 @@
 }
 
 .page-content {
-  flex: 1;
-  overflow-y: auto;
+  /* Let Tailwind handle flex properties */
+  /* Allow natural overflow behavior */
   background: linear-gradient(135deg, var(--admin-gray-50) 0%, white 50%, var(--admin-gray-100) 100%);
+  min-height: 100%;
 }
 
 /* =================================
@@ -990,33 +992,30 @@ img.avatar-md,
   .lg\\:flex { display: flex; }
   .lg\\:hidden { display: none; }
   
-  /* Desktop sidebar positioning */
-  .admin-sidebar {
+  /* Desktop sidebar positioning - REMOVED fixed positioning to allow flexible layout */
+  /* .admin-sidebar {
     position: fixed !important;
     z-index: 1000 !important;
-  }
+  } */
   
-  /* Let layout handle its own margin via Tailwind classes */
+  /* Let layout handle its own positioning via Tailwind classes */
 }
 
-/* Mobile sidebar fixes */
-@media (max-width: 1023px) {
+/* Mobile sidebar fixes - Updated for new flexible layout */
+@media (max-width: 767px) {
+  /* Mobile sidebar should be hidden by default - handled by Tailwind classes */
   .admin-sidebar {
-    position: fixed !important;
-    left: -16rem !important;
-    z-index: 1001 !important;
-    transition: left 0.3s ease-in-out !important;
-    transform: translateX(-100%) !important;
+    display: none !important;
   }
   
+  /* Mobile sidebar overlay positioning remains the same */
   .admin-sidebar.show,
   .admin-sidebar.active {
-    left: 0 !important;
-    transform: translateX(0) !important;
+    display: block !important;
   }
   
+  /* Main content takes full width on mobile */
   .main-content {
-    margin-left: 0 !important;
     width: 100% !important;
   }
   
@@ -2212,23 +2211,56 @@ video, iframe, embed, object {
   height: 0.875rem !important;
 }
 
-/* Ensure sidebar works on desktop */
-@media (min-width: 1024px) {
+/* Base admin layout */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+.admin-sidebar {
+  width: 16rem;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
   .admin-layout {
-    padding-left: 0 !important;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+}
+
+/* Mobile sidebar styles */
+@media (max-width: 767px) {
+  .admin-layout {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .admin-sidebar {
+    display: none; /* Hidden by default on mobile */
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .admin-sidebar.mobile-open {
+    display: flex; /* Show when mobile menu is opened */
   }
   
   .main-content {
-    margin-left: 16rem !important; /* 256px = w-64 */
-    width: calc(100% - 16rem) !important;
-  }
-  
-  /* Ensure sidebar is visible on desktop */
-  .admin-sidebar {
-    display: flex !important;
-    position: fixed !important;
-    left: 0 !important;
-    transform: translateX(0) !important;
+    width: 100%;
   }
 }
 
@@ -2330,6 +2362,33 @@ video, iframe, embed, object {
 .admin-body *:focus {
   outline: 2px solid rgba(59, 130, 246, 0.5);
   outline-offset: 2px;
+}
+
+/* Dashboard Utility Classes */
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom hover effects */
+.hover\\:bg-gray-50:hover {
+  background-color: #f9fafb;
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 /* Admin Notification System Styles */

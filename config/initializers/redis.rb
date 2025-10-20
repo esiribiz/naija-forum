@@ -18,24 +18,28 @@ end
 # Configure redis-objects to use the connection pool
 Redis::Objects.redis = REDIS
 
-# Verify Redis connection on startup
-begin
-REDIS.with do |redis|
-    redis.ping
-end
-Rails.logger.info "[Redis] Successfully connected to Redis server"
-rescue Redis::CannotConnectError => e
-Rails.logger.error "[Redis] Failed to connect to Redis server: #{e.message}"
-raise
-rescue Redis::ConnectionError => e
-Rails.logger.error "[Redis] Connection error: #{e.message}"
-raise
-rescue Redis::TimeoutError => e
-Rails.logger.error "[Redis] Timeout error: #{e.message}"
-raise
-rescue StandardError => e
-Rails.logger.error "[Redis] Unexpected error: #{e.message}"
-raise
+# Verify Redis connection on startup (skip during asset precompilation and db operations)
+unless Rails.env.test? || ENV["SECRET_KEY_BASE_DUMMY"] || Rails.application.assets&.compile || ENV["SKIP_REDIS_CONNECTION"]
+  begin
+    REDIS.with do |redis|
+      redis.ping
+    end
+    Rails.logger.info "[Redis] Successfully connected to Redis server"
+  rescue Redis::CannotConnectError => e
+    Rails.logger.error "[Redis] Failed to connect to Redis server: #{e.message}"
+    raise
+  rescue Redis::ConnectionError => e
+    Rails.logger.error "[Redis] Connection error: #{e.message}"
+    raise
+  rescue Redis::TimeoutError => e
+    Rails.logger.error "[Redis] Timeout error: #{e.message}"
+    raise
+  rescue StandardError => e
+    Rails.logger.error "[Redis] Unexpected error: #{e.message}"
+    raise
+  end
+else
+  Rails.logger.info "[Redis] Skipping Redis connection verification during asset precompilation"
 end
 
 # Monitor Redis connection in production

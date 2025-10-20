@@ -35,6 +35,16 @@ rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
 private
 
+def ensure_rules_accepted
+  if user_signed_in? && current_user.accepted_rules_at.blank? && !on_rules_page?
+    redirect_to rules_path, alert: "Please read and accept the community rules to continue."
+  end
+end
+
+def on_rules_page?
+  controller_name == "pages" && action_name.in?(%w[rules accept_rules])
+end
+
 def set_categories_and_tags
     @categories = Category.all
     @tags = Tag.all
@@ -50,21 +60,21 @@ end
   def verify_session_security
     # Skip all session security checks in development and test environments
     return if Rails.env.development? || Rails.env.test?
-    
+
     if session_expired? || suspicious_activity_detected?
       reset_session
-      redirect_to new_user_session_path, alert: 'Your session has expired. Please log in again.'
+      redirect_to new_user_session_path, alert: "Your session has expired. Please log in again."
     end
   end
 
   def track_user_activity
     return unless user_signed_in?
-    
+
     current_user.track_activity(request.remote_ip)
-    
+
     # Update last_active_at for online status tracking
     current_user.update_column(:last_active_at, Time.current) if current_user.last_active_at.nil? || current_user.last_active_at < 1.minute.ago
-    
+
     session[:last_activity] = Time.current
   end
 
@@ -80,16 +90,16 @@ end
 
   def session_expired?
     return false unless user_signed_in?
-    
+
     last_activity = session[:last_activity]
     return true if last_activity.nil?
-    
+
     Time.current - last_activity.to_time > SecurityConfig.session_timeout
   end
 
   def suspicious_activity_detected?
     return false unless user_signed_in?
-    
+
     current_user.suspicious_activity?
   end
 end

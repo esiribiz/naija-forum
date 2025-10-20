@@ -28,7 +28,7 @@
         <div class="text-center md:text-left">
           <h3 class="text-lg font-semibold border-b border-green-500 pb-2 mb-3 inline-block">Quick Links</h3>
           <ul class="mt-4 space-y-2">
-            <li><%= link_to "Home", root_path, class: "text-green-100 hover:text-white transition-colors" %></li>
+            <li><%= link_to "Home", forum_home_path, class: "text-green-100 hover:text-white transition-colors" %></li>
             <li><%= link_to "Categories", categories_path, class: "text-green-100 hover:text-white transition-colors" %></li>
             <li><%= link_to "Tags", tags_path, class: "text-green-100 hover:text-white transition-colors" %></li>
             <li><%= link_to "About Us", about_path, class: "text-green-100 hover:text-white transition-colors" %></li>
@@ -64,7 +64,10 @@
       
       <!-- Copyright section -->
       <div class="mt-8 pt-4 border-t border-green-500 text-center">
-        <p class="text-sm">© <%= Time.now.year %> Naija Forum. All rights reserved.</p>
+        <p class="text-sm">© <%= Time.now.year %> NaijaGlobalNet. All rights reserved.</p>
+        <p class="text-sm mt-2">
+          <%= link_to "Community Rules", rules_path, class: "text-green-100 hover:text-white transition-colors" %>
+        </p>
         <p class="text-sm mt-2 flex items-center justify-center">
           <span>Made with</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mx-1 text-red-400">

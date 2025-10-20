@@ -75,6 +75,11 @@
         if user_signed_in? && controller_name == "home" && action_name == "index"
           show_sidebar = true
         end
+        
+        # Show main sidebar on forum page (home#post_index) for all users
+        if controller_name == "home" && action_name == "post_index"
+          show_sidebar = true
+        end
 
         # Also show main sidebar on All Posts page (posts#index)
         if user_signed_in? && controller_name == "posts" && action_name == "index"
@@ -127,6 +132,9 @@
           <% elsif user_signed_in? && controller_name == "posts" && action_name == "show" %>
             <!-- Main Site Sidebar - On Post Show page for logged-in users -->
             <%= render "shared/sidebar" %>
+          <% elsif controller_name == "home" && action_name == "post_index" %>
+            <!-- Main Site Sidebar - On Forum page for all users -->
+            <%= render "shared/sidebar" %>
           <% else %>
             <!-- Default to main site sidebar when show_sidebar is true and no profile sidebar matched -->
             <%= render "shared/sidebar" %>
@@ -135,7 +143,7 @@
         
         <!-- Main Content -->
         <% wide_pages = (
-             (controller_name == "home" && action_name == "index") ||
+             (controller_name == "home" && ["index", "post_index"].include?(action_name)) ||
              (controller_name == "posts" && ["index","latest","popular"].include?(action_name)) ||
              (controller_name == "categories" && action_name == "index") ||
              (controller_name == "tags" && action_name == "index") ||

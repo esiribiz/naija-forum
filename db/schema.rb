@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_18_204655) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_23_174530) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -418,6 +418,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_18_204655) do
     t.integer "sign_in_count", default: 0
     t.string "last_sign_in_ip"
     t.string "current_sign_in_ip"
+    t.datetime "accepted_rules_at"
     t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["last_active_at"], name: "index_users_on_last_active_at"

@@ -1,0 +1,185 @@
+<%- content_for :title, "Forum - Naija Forum" %>
+
+<div class="space-y-8">
+  <%= render 'shared/navigation_menu' %>
+
+  <!-- Posts List -->
+  <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+    <table class="w-full table-auto">
+      <!-- Table Headers -->
+      <thead>
+        <tr class="bg-gradient-to-r from-green-600 via-green-700 to-green-800 text-white">
+          <th class="px-6 py-4 text-left text-sm font-semibold tracking-wider rounded-tl-xl">Topics</th>
+          <th class="px-6 py-4 text-center text-sm font-semibold tracking-wider">Replies</th>
+          <th class="px-6 py-4 text-center text-sm font-semibold tracking-wider rounded-tr-xl">Activity</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <% @posts.each do |post| %>
+          <tr class="hover:bg-green-50 transition-colors duration-200 group cursor-pointer">
+            <td class="px-6 py-5 w-2/3 relative">
+              <% if user_signed_in? %>
+                <%= link_to post_path(post), class: "absolute inset-0 z-10 rounded-lg" do %>
+                  <span class="sr-only">View <%= post.title %></span>
+                <% end %>
+              <% else %>
+                <%= link_to new_user_session_path, class: "absolute inset-0 z-10 rounded-lg" do %>
+                  <span class="sr-only">Sign in to view <%= post.title %></span>
+                <% end %>
+              <% end %>
+              
+              <div class="bg-white p-5 flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-x-6 w-full rounded-lg shadow-sm group-hover:shadow-md transition-all duration-200 relative">
+                
+                <!-- Avatar -->
+                <div class="flex-shrink-0">
+                  <% if post.user&.avatar&.attached? %>
+                    <%= image_tag post.user.avatar, class: "w-14 h-14 rounded-lg bg-gray-200 object-cover shadow-sm border-2 border-green-100 group-hover:border-green-300 transition-all" %>
+                  <% else %>
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-700 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                      <%= post.user&.email.to_s[0].upcase || 'U' %>
+                    </div>
+                  <% end %>
+                </div>
+
+                <!-- Post Content -->
+                <div class="flex-1">
+                  <h3 class="text-xl font-semibold text-gray-800 transition duration-200 group-hover:text-green-700">
+                    <%= post.title %>
+                    <% unless user_signed_in? %>
+                      <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
+                    <% end %>
+                  </h3>
+                  <p class="text-sm text-gray-500 mt-1">
+                    Posted by <span class="font-medium text-green-700"><%= post.user&.email.to_s.split('@').first || 'Anonymous' %></span>
+                  </p>
+
+                  <% if post.category || post.tags.any? %>
+                  <div class="text-sm font-medium mt-3 flex flex-wrap items-center gap-2 relative z-30">
+                    <% if post.category %>
+                      <a href="<%= category_path(post.category) %>" class="text-gray-700 hover:text-green-700 flex items-center gap-2 bg-green-50 px-3 py-1.5 rounded-full transition-colors hover:bg-green-100 relative z-30">
+                        
+                        <!-- Category Image with background color -->
+                        <% if post.category.image.attached? %>
+                          <div class="w-6 h-6 rounded-full overflow-hidden bg-green-600 shadow-sm">
+                            <%= image_tag post.category.image, class: "w-full h-full object-cover" %>
+                          </div>
+                        <% else %>
+                          <!-- If no image, show category name initials in a circle with color -->
+                          <span class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold text-white shadow-sm"
+                            style="background-color: <%= post.category.color || '#16a34a' %>;">
+                            <%= post.category.name.split.first[0].upcase + (post.category.name.split.second.present? ? post.category.name.split.second[0].upcase : '') %>
+                          </span>
+                        <% end %>
+
+        <!-- Category Name -->
+        <span><%= post.category.name %></span>
+      </a>
+    <% end %>
+
+    <!-- Tags Section -->
+        <% if post.tags.any? %>
+          <% post.tags.each do |tag| %>
+            <a href="<%= tag_path(tag) %>" class="inline-block text-gray-600 hover:text-green-700 text-xs px-3 py-1.5 rounded-full bg-gray-100 hover:bg-green-100 transition-all duration-200 border border-gray-200 hover:border-green-200 relative z-30">
+              #<%= tag.name %>
+            </a>
+          <% end %>
+        <% end %>
+        </div>
+      <% end %>
+
+            <div class="text-base text-gray-600 mt-4 line-clamp-2 group-hover:text-gray-800 transition-colors duration-200">
+              <%= truncate(post.body, length: 200) %>
+            </div>
+            </div>
+
+          </div>
+        </td>
+
+            <!-- Replies Count -->
+            <td class="px-6 py-4 text-center w-1/6">
+              <div class="flex flex-col items-center justify-center gap-1 text-green-600 group-hover:text-green-800 transition-colors p-3 rounded-full group-hover:bg-green-50">
+                <% if user_signed_in? %>
+                  <span class="text-xl">💬</span>
+                <% else %>
+                  <span class="text-xl">🔒</span>
+                <% end %>
+                <span class="font-semibold text-lg"><%= post.comments.count %></span>
+                <span class="text-xs text-gray-500"><%= user_signed_in? ? 'replies' : 'sign in' %></span>
+              </div>
+            </td>
+
+            <!-- Post Time Ago - Enhanced -->
+            <td class="px-6 py-4 w-1/6">
+              <div class="flex flex-col items-center justify-center">
+                <div class="relative group cursor-help" title="<%= post.created_at.strftime('%b %d, %Y %I:%M %p') %>">
+                  <div class="bg-gradient-to-r from-green-50 to-white px-4 py-2 rounded-full shadow-sm border border-green-100 group-hover:shadow-md group-hover:border-green-200 transition-all duration-300 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="text-sm font-medium text-gray-700 group-hover:text-green-700 transition-colors">
+                      <%= time_ago_in_words(post.created_at).gsub("about ", "") %> ago
+                    </span>
+                  </div>
+                  <div class="absolute -bottom-1 left-0 right-0 h-0.5 bg-green-300 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                </div>
+                <div class="text-xs text-gray-400 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <%= post.created_at.strftime('%b %d, %Y') %>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+    </table>
+  </div>
+  <!-- Enhanced Pagination with Nigerian theme -->
+  <div class="flex justify-center">
+    <div class="bg-white rounded-xl shadow-md p-4 border border-green-100">
+      <nav class="pagination flex items-center space-x-1" role="navigation" aria-label="Pagination Navigation">
+        <%= paginate @posts do |paginator| %>
+            <% if paginator.prev_page %>
+              <%= link_to paginator.prev_page_url, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-white border border-gray-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors duration-200" do %>
+                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Previous
+              <% end %>
+            <% else %>
+              <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-400 bg-gray-50 border border-gray-200 cursor-not-allowed">
+                <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                Previous
+              </span>
+            <% end %>
+
+            <% paginator.page_numbers.each do |number| %>
+              <% if number == paginator.current_page %>
+                <span class="relative inline-flex items-center px-4 py-2 text-sm font-bold rounded-md text-white bg-gradient-to-r from-green-600 to-green-700 border border-green-600 shadow-sm">
+                  <%= number %>
+                </span>
+              <% else %>
+                <%= link_to number, paginator.url_for_number(number), class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 bg-white border border-gray-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors duration-200" %>
+              <% end %>
+            <% end %>
+
+            <% if paginator.next_page %>
+              <%= link_to paginator.next_page_url, class: "relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-green-700 bg-white border border-gray-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-colors duration-200" do %>
+                Next
+                <svg class="h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              <% end %>
+            <% else %>
+              <span class="relative inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-400 bg-gray-50 border border-gray-200 cursor-not-allowed">
+                Next
+                <svg class="h-5 w-5 ml-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            <% end %>
+          <% end %>
+        </nav>
+      </div>
+    </div>
+</div>

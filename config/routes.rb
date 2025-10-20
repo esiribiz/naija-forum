@@ -73,7 +73,13 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
     end
   end
 
+  # NaijaGlobalNet Pages
   root "home#index"
+  get "/forum", to: "home#post_index", as: "forum_home"
+  get "/posts", to: "posts#index", as: "posts_page"
+  get "/welcome", to: "pages#welcome"
+  get "/rules", to: "pages#rules"
+  post "/rules/accept", to: "pages#accept_rules"
 
   get "search", to: "search#index", as: "search"
   get "latest", to: "posts#latest", as: "latest_posts"

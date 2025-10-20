@@ -2,6 +2,7 @@ class PostsController < ApplicationController
   include HtmlProcessor
   protect_from_forgery with: :exception
   before_action :authenticate_user!, except: %i[index latest popular]
+  before_action :ensure_rules_accepted, if: :user_signed_in?
   skip_after_action :verify_policy_scoped, only: [:index, :latest, :popular], unless: :user_signed_in?
   skip_after_action :verify_authorized, only: [:latest, :popular]
   before_action :set_security_headers

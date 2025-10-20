@@ -30,7 +30,8 @@ class NotificationsController < ApplicationController
         format.turbo_stream { 
           render turbo_stream: [
             turbo_stream.replace("notification_#{@notification.id}", partial: "notifications/notification", locals: { notification: @notification }),
-            turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge")
+            turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
+            turbo_stream.replace("user_notification_badge", partial: "shared/user_notification_badge")
           ]
         }
       end
@@ -53,6 +54,7 @@ class NotificationsController < ApplicationController
         format.turbo_stream { 
           render turbo_stream: [
             turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
+            turbo_stream.replace("user_notification_badge", partial: "shared/user_notification_badge"),
             turbo_stream.update("flash-container", partial: "shared/flash_message", locals: { message: "All notifications marked as read.", type: "success" })
           ]
         }
@@ -73,7 +75,13 @@ class NotificationsController < ApplicationController
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "Notification was successfully deleted.") }
         format.json { head :no_content }
-        format.turbo_stream { render turbo_stream: turbo_stream.remove("notification_#{@notification.id}") }
+        format.turbo_stream { 
+          render turbo_stream: [
+            turbo_stream.remove("notification_#{@notification.id}"),
+            turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
+            turbo_stream.replace("user_notification_badge", partial: "shared/user_notification_badge")
+          ]
+        }
       end
     else
       respond_to do |format|
@@ -94,6 +102,7 @@ class NotificationsController < ApplicationController
         format.turbo_stream { 
           render turbo_stream: [
             turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
+            turbo_stream.replace("user_notification_badge", partial: "shared/user_notification_badge"),
             turbo_stream.update("flash-container", partial: "shared/flash_message", locals: { message: "All notifications cleared.", type: "success" })
           ]
         }

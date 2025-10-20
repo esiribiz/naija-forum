@@ -287,12 +287,10 @@
               </div>
               
               <!-- Back to Forum Button -->
-              <div class="mr-4">
-                <%= link_to forum_home_path, class: "inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105", style: "background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; color: white !important; border: 1px solid #065f46; text-decoration: none !important;" do %>
-                  <i class="fas fa-comments mr-2" style="color: #dcfce7 !important;"></i>
-                  <span style="color: white !important;">Back to Forum</span>
-                <% end %>
-              </div>
+              <%= link_to forum_home_path, class: "inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105", style: "background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; color: white !important; border: 1px solid #065f46; text-decoration: none !important; margin-right: 24px !important;" do %>
+                <i class="fas fa-comments mr-2" style="color: #dcfce7 !important;"></i>
+                <span style="color: white !important;">Back to Forum</span>
+              <% end %>
               
               <!-- Notifications -->
               <div class="relative">

@@ -1,9 +1,8 @@
 class PostsController < ApplicationController
   include HtmlProcessor
   protect_from_forgery with: :exception
-  before_action :authenticate_user!, except: %i[index latest popular]
+  before_action :authenticate_user!
   before_action :ensure_rules_accepted, if: :user_signed_in?
-  skip_after_action :verify_policy_scoped, only: [:index, :latest, :popular], unless: :user_signed_in?
   skip_after_action :verify_authorized, only: [:latest, :popular]
   before_action :set_security_headers
   before_action :validate_request_format
@@ -17,86 +16,46 @@ class PostsController < ApplicationController
 def index
 @categories = Category.all
 
-if user_signed_in?
-  # Logged-in users: Use policy scope for authorized content
-  if params[:tag_id]
-      @tag = Tag.find(params[:tag_id])
-      @posts = policy_scope(Post)
-        .joins(:post_tags)
-        .where(post_tags: { tag_id: @tag.id })
-        .includes(:user, :category, :tags)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(20)
-  elsif params[:tag_category]
-      @tag_category = params[:tag_category]
-      @posts = policy_scope(Post)
-        .joins(:post_tags, :tags)
-        .where(tags: { category: @tag_category })
-        .includes(:user, :category, :tags)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(20)
-        .distinct
-  elsif params[:category_id]
-      @category = Category.find(params[:category_id])
-      @posts = policy_scope(@category.posts)
-      .includes(:user, :category)
+# Only authenticated users can access posts listing
+if params[:tag_id]
+    @tag = Tag.find(params[:tag_id])
+    @posts = policy_scope(Post)
+      .joins(:post_tags)
+      .where(post_tags: { tag_id: @tag.id })
+      .includes(:user, :category, :tags)
       .order(created_at: :desc)
       .page(params[:page])
       .per(20)
-  elsif params[:user]
-      @user = User.find(params[:user])
-      @posts = policy_scope(@user.posts)
-          .includes(:user, :category)
-          .order(created_at: :desc)
-          .page(params[:page])
-          .per(20)
-      else
-      @posts = policy_scope(Post)
-          .includes(:user, :category)
-          .order(created_at: :desc)
-          .page(params[:page])
-          .per(20)
-      end
+elsif params[:tag_category]
+    @tag_category = params[:tag_category]
+    @posts = policy_scope(Post)
+      .joins(:post_tags, :tags)
+      .where(tags: { category: @tag_category })
+      .includes(:user, :category, :tags)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(20)
+      .distinct
+elsif params[:category_id]
+    @category = Category.find(params[:category_id])
+    @posts = policy_scope(@category.posts)
+    .includes(:user, :category)
+    .order(created_at: :desc)
+    .page(params[:page])
+    .per(20)
+elsif params[:user]
+    @user = User.find(params[:user])
+    @posts = policy_scope(@user.posts)
+        .includes(:user, :category)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(20)
 else
-  # Guests: Show all posts but they can't view individual posts without login
-  if params[:tag_id]
-      @tag = Tag.find(params[:tag_id])
-      @posts = Post
-        .joins(:post_tags)
-        .where(post_tags: { tag_id: @tag.id })
-        .includes(:user, :category, :tags)
+    @posts = policy_scope(Post)
+        .includes(:user, :category)
         .order(created_at: :desc)
         .page(params[:page])
         .per(20)
-  elsif params[:tag_category]
-      @tag_category = params[:tag_category]
-      @posts = Post
-        .joins(:post_tags, :tags)
-        .where(tags: { category: @tag_category })
-        .includes(:user, :category, :tags)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(20)
-        .distinct
-  elsif params[:category_id]
-      @category = Category.find(params[:category_id])
-      @posts = @category.posts
-      .includes(:user, :category)
-      .order(created_at: :desc)
-      .page(params[:page])
-      .per(20)
-  elsif params[:user]
-      # Don't allow user-specific pages for guests
-      redirect_to new_user_session_path, alert: "Please sign in to view user profiles."
-      return
-  else
-      @posts = Post.includes(:user, :category)
-          .order(created_at: :desc)
-          .page(params[:page])
-          .per(20)
-  end
 end
 end
 
@@ -171,40 +130,24 @@ authorize @post
   def latest
     @categories = Category.all
 
-    if user_signed_in?
-      @posts = policy_scope(Post)
-        .includes(:user, :category)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(20)
-    else
-      @posts = Post.includes(:user, :category)
-        .order(created_at: :desc)
-        .page(params[:page])
-        .per(20)
-    end
+    @posts = policy_scope(Post)
+      .includes(:user, :category)
+      .order(created_at: :desc)
+      .page(params[:page])
+      .per(20)
   end
 
   # GET /popular - Shows popular posts (by comment count and recent activity)
   def popular
     @categories = Category.all
 
-    if user_signed_in?
-      @posts = policy_scope(Post)
-        .includes(:user, :category, :comments)
-        .left_joins(:comments)
-        .group("posts.id")
-        .order("COUNT(comments.id) DESC, posts.created_at DESC")
-        .page(params[:page])
-        .per(20)
-    else
-      @posts = Post.includes(:user, :category, :comments)
-        .left_joins(:comments)
-        .group("posts.id")
-        .order("COUNT(comments.id) DESC, posts.created_at DESC")
-        .page(params[:page])
-        .per(20)
-    end
+    @posts = policy_scope(Post)
+      .includes(:user, :category, :comments)
+      .left_joins(:comments)
+      .group("posts.id")
+      .order("COUNT(comments.id) DESC, posts.created_at DESC")
+      .page(params[:page])
+      .per(20)
   end
 
 private

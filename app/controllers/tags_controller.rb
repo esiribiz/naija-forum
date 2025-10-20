@@ -1,4 +1,5 @@
 class TagsController < ApplicationController
+before_action :authenticate_user!
 before_action :set_tag, only: [:show, :edit, :update, :destroy, :toggle_featured, :toggle_official]
 after_action :verify_authorized, except: [:index, :suggestions]
 after_action :verify_policy_scoped, only: :index

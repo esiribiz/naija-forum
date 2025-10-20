@@ -12,6 +12,54 @@
   </div>
 
   <div class="mt-6">
-    <%= button_to "I Accept the Rules", "/rules/accept", method: :post, class: "btn btn-success bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg" %>
+    <% if user_signed_in? && current_user.accepted_rules_at.present? %>
+      <!-- User has already accepted the rules -->
+      <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-green-800">
+              Rules Already Accepted
+            </h3>
+            <div class="mt-2 text-sm text-green-700">
+              <p>
+                You accepted these community rules on <%= current_user.accepted_rules_at.strftime("%B %d, %Y at %I:%M %p") %>.
+                Thank you for being part of our community! 🇳🇬
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% elsif user_signed_in? %>
+      <!-- User is signed in but hasn't accepted rules yet -->
+      <%= button_to "I Accept the Rules", "/rules/accept", method: :post, class: "btn btn-success bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg" %>
+    <% else %>
+      <!-- User is not signed in -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-blue-800">
+              Please Sign In First
+            </h3>
+            <div class="mt-2 text-sm text-blue-700">
+              <p>
+                You need to <a href="<%= new_user_session_path %>" class="font-medium text-blue-800 underline hover:text-blue-900">sign in</a> or 
+                <a href="<%= new_user_registration_path %>" class="font-medium text-blue-800 underline hover:text-blue-900">create an account</a> 
+                to accept the community rules and join NaijaGlobalNet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

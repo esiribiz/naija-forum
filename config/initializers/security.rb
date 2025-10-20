@@ -102,7 +102,12 @@ expire_after: 12.hours,
 same_site: :strict
 
 # Additional security configurations
-Rails.application.config.ssl_options = { hsts: true, redirect: true }
+Rails.application.config.ssl_options = { 
+  hsts: true, 
+  redirect: { 
+    exclude: ->(request) { request.path == "/up" }
+  }
+}
 Rails.application.config.force_ssl = Rails.env.production?
 Rails.application.config.action_controller.per_form_csrf_tokens = true
 Rails.application.config.action_controller.forgery_protection_origin_check = true

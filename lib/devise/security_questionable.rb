@@ -1,6 +1,10 @@
 require "devise"
 
 module Devise
+  module SecurityQuestionable
+    # This module exists to satisfy Zeitwerk's expectations
+  end
+
   # Number of security questions that need to be answered
   mattr_accessor :security_question_count
   @@security_question_count = 2

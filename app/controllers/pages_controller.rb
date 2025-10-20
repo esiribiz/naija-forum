@@ -1,6 +1,7 @@
 class PagesController < ApplicationController
   # Skip authentication and authorization for public pages
-  skip_before_action :authenticate_user!, except: [ :rules, :accept_rules, :welcome ]
+  # SECURITY FIX: Use :only instead of :except to be more explicit about which actions don't require authentication
+  skip_before_action :authenticate_user!, only: [:rules, :accept_rules, :welcome]
   skip_after_action :verify_authorized
 
   def about

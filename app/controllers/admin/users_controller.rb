@@ -361,22 +361,41 @@ class Admin::UsersController < Admin::BaseController
       base_params += [:password, :password_confirmation]
     end
     
-    # Only admins can modify roles
+    # Only admins can modify roles and suspension status - SECURITY: Separate role and suspension permissions
     if current_user&.admin?
-      permitted_params = params.require(:user).permit(*base_params, :role, :suspended)
+      # SECURITY FIX: Use explicit parameter lists instead of splat operator to prevent mass assignment
+      admin_params = [:username, :email, :first_name, :last_name, :bio]
+      admin_params += [:password, :password_confirmation] if action_name == 'create'
+      admin_params += [:role, :suspended]
+      permitted_params = params.require(:user).permit(admin_params)
     else
-      permitted_params = params.require(:user).permit(*base_params)
-      # If a non-admin tries to change role, log this attempt
-      if params[:user][:role].present?
-        Rails.logger.warn "Non-admin user #{current_user&.id} attempted to change user role"
+      # Non-admins can only edit basic profile information
+      permitted_params = params.require(:user).permit(base_params)
+      
+      # SECURITY: Log any attempts to modify privileged fields
+      if params[:user][:role].present? || params[:user][:suspended].present?
+        Rails.logger.warn "SECURITY: Non-admin user #{current_user&.id} attempted to change privileged user attributes (role/suspended)"
       end
     end
     
-    # Additional security: validate role value if present
+    # SECURITY: Additional validation for role changes
     if permitted_params[:role].present?
       unless User::VALID_ROLES.include?(permitted_params[:role])
+        Rails.logger.error "SECURITY: Invalid role specified: #{permitted_params[:role]} by user #{current_user&.id}"
         raise ActionController::ParameterMissing.new("Invalid role specified")
       end
+      
+      # Prevent privilege escalation - only super admins can create other admins
+      if permitted_params[:role] == 'admin' && !current_user&.admin?
+        Rails.logger.error "SECURITY: Non-admin user #{current_user&.id} attempted to create admin user"
+        raise SecurityError, "Insufficient privileges to create admin users"
+      end
+    end
+    
+    # SECURITY: Validate suspension changes
+    if permitted_params[:suspended].present? && !current_user&.admin?
+      Rails.logger.error "SECURITY: Non-admin user #{current_user&.id} attempted to modify user suspension status"
+      raise SecurityError, "Insufficient privileges to modify user suspension"
     end
     
     permitted_params

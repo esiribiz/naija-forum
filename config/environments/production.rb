@@ -26,17 +26,18 @@ Rails.application.configure do
 
   # ✅ FIXED HOST AUTHORIZATION
   config.hosts.clear
-  config.hosts << "naija-forum-main.fly.dev"        # Fly.io app domain
+  config.hosts << "naija-forum-main.fly.dev"
   config.hosts << "www.naija-forum-main.fly.dev"
-  config.hosts << "naijaglobalnet.com"              # Your custom domain
-  config.hosts << "www.naijaglobalnet.com"
+  config.hosts << ENV["APPLICATION_HOST"] if ENV["APPLICATION_HOST"].present?
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
 
   # ✉️ MAILER SETTINGS
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { host: "naijaglobalnet.com", protocol: "https" }
+  config.action_mailer.default_url_options = {host: ENV.fetch("APPLICATION_HOST", "naija-forum-main.fly.dev"), protocol: "https"}
+
 
   config.action_mailer.smtp_settings = {
     user_name: ENV["SMTP_USERNAME"],

@@ -18,20 +18,27 @@
     </p>
     
     <!-- Search Form -->
-    <div class="max-w-md mx-auto mb-8">
+    <div class="max-w-md mx-auto mb-8 relative" data-controller="tag-search" data-tag-search-category-value="<%= params[:category] %>">
       <%= form_with url: tags_path, method: :get, local: true, class: "relative" do |f| %>
         <div class="relative">
           <%= f.text_field :search, 
               value: params[:search],
               placeholder: "Search tags by name or description...", 
-              class: "w-full px-6 py-4 pl-12 pr-4 text-white placeholder-green-200 bg-white bg-opacity-20 border-2 border-white border-opacity-30 rounded-full focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent backdrop-blur-sm transition duration-200" %>
+              class: "w-full px-6 py-4 pl-12 pr-12 text-white placeholder-green-200 bg-white bg-opacity-20 border-2 border-white border-opacity-30 rounded-full focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent backdrop-blur-sm transition duration-200",
+              data: {
+                tag_search_target: "input",
+                action: "input->tag-search#search keydown->tag-search#handleKeydown"
+              },
+              autocomplete: "off" %>
+          <!-- Search icon -->
           <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            <svg class="h-6 w-6 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </div>
+          <!-- Clear button -->
           <% if params[:search].present? %>
-            <%= link_to tags_path, class: "absolute inset-y-0 right-0 pr-4 flex items-center text-green-200 hover:text-white transition duration-200" do %>
+            <%= link_to tags_path(category: params[:category]), class: "absolute inset-y-0 right-0 pr-4 flex items-center text-green-200 hover:text-white transition duration-200" do %>
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
@@ -43,6 +50,13 @@
           <%= f.hidden_field :category, value: params[:category] %>
         <% end %>
       <% end %>
+      
+      <!-- Search suggestions dropdown -->
+      <div data-tag-search-target="dropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-200 max-h-80 overflow-y-auto hidden z-50">
+        <div data-tag-search-target="results" class="py-2">
+          <!-- Results will be populated here -->
+        </div>
+      </div>
     </div>
     
     <!-- Filter tabs -->

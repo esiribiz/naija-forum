@@ -13,6 +13,7 @@ import NotificationsController from "controllers/notifications_controller"
 import ProfileDashboardController from "controllers/profile_dashboard_controller"
 import ReplyController from "controllers/reply_controller"
 import ResetFormController from "controllers/reset_form_controller"
+import TagSearchController from "controllers/tag_search_controller"
 import TagsController from "controllers/tags_controller"
 
 // Register all controllers
@@ -27,4 +28,5 @@ application.register("notifications", NotificationsController)
 application.register("profile-dashboard", ProfileDashboardController)
 application.register("reply", ReplyController)
 application.register("reset-form", ResetFormController)
+application.register("tag-search", TagSearchController)
 application.register("tags", TagsController)

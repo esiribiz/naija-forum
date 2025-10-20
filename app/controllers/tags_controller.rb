@@ -94,17 +94,41 @@ end
 def suggestions
     # Return tag suggestions for autocomplete
     query = params[:q]&.downcase&.strip
+    category_filter = params[:category]
     
     if query.present? && query.length >= 2
-      @tags = Tag.official.where('LOWER(name) LIKE ?', "%#{query}%")
-                 .order(:name)
-                 .limit(20)
-                 .group_by(&:category)
+      @tags = policy_scope(Tag).where('LOWER(name) LIKE ? OR LOWER(description) LIKE ?', 
+                                     "%#{query}%", "%#{query}%")
+      
+      # Apply category filter if provided
+      if category_filter.present? && Tag::CATEGORIES.key?(category_filter)
+        @tags = @tags.by_category(category_filter)
+      end
+      
+      @tags = @tags.includes(:posts)
+                   .order(:name)
+                   .limit(20)
+                   .group_by(&:category)
     else
-      @tags = Tag.official.featured.order(:name).limit(20).group_by(&:category)
+      @tags = policy_scope(Tag).featured.order(:name).limit(20).group_by(&:category)
     end
     
-    render json: @tags.transform_values { |tags| tags.map { |tag| { name: tag.name, category: tag.category } } }
+    # Return more detailed tag information
+    result = @tags.transform_values do |tags|
+      tags.map do |tag|
+        {
+          id: tag.id,
+          name: tag.name,
+          description: tag.description,
+          category: tag.category,
+          posts_count: tag.posts.count,
+          is_featured: tag.respond_to?(:is_featured) ? tag.is_featured : false,
+          is_official: tag.respond_to?(:is_official) ? tag.is_official : false
+        }
+      end
+    end
+    
+    render json: result
 end
 
 private

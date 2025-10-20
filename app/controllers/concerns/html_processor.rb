@@ -9,7 +9,7 @@ module HtmlProcessor
   # @param content [String] the HTML content to sanitize
   # @return [String] sanitized HTML with only allowed tags and attributes
   def process_html(content)
-    return '' if content.blank?
+    return "" if content.blank?
 
     # Define allowed tags (common formatting elements)
     allowed_tags = %w[
@@ -24,12 +24,12 @@ module HtmlProcessor
 
     # Define allowed attributes for specific tags
     allowed_attributes = {
-      'a' => %w[href title rel target],
-      'img' => %w[src alt title width height],
-      'table' => %w[summary width border cellspacing cellpadding align],
-      'th' => %w[colspan rowspan scope],
-      'td' => %w[colspan rowspan],
-      'all' => %w[class id style] # Attributes allowed on all elements
+      "a" => %w[href title rel target],
+      "img" => %w[src alt title width height],
+      "table" => %w[summary width border cellspacing cellpadding align],
+      "th" => %w[colspan rowspan scope],
+      "td" => %w[colspan rowspan],
+      "all" => %w[class id style] # Attributes allowed on all elements
     }
 
     # Use Rails' sanitize helper with custom configuration
@@ -47,4 +47,3 @@ module HtmlProcessor
     process_html(content)
   end
 end
-

@@ -238,7 +238,7 @@
       
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <% if @user.website.present? %>
-          <%= link_to @user.website, target: "_blank", class: "flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors" do %>
+          <%= link_to sanitize(@user.website), target: "_blank", class: "flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors" do %>
             <span class="text-2xl mr-3">🌍</span>
             <div>
               <p class="font-medium text-gray-900">Website</p>
@@ -258,7 +258,7 @@
         <% end %>
         
         <% if @user.linkedin.present? %>
-          <%= link_to @user.linkedin, target: "_blank", class: "flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors" do %>
+          <%= link_to sanitize(@user.linkedin), target: "_blank", class: "flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors" do %>
             <span class="text-2xl mr-3">💼</span>
             <div>
               <p class="font-medium text-gray-900">LinkedIn</p>

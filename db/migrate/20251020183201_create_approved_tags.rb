@@ -9,7 +9,7 @@ class CreateApprovedTags < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :approved_tags, :name, unique: true
     add_index :approved_tags, :category
     add_index :approved_tags, :is_active

@@ -5,7 +5,7 @@ class PostPolicy < ApplicationPolicy
       # Admins can see all posts including drafts
       if user&.admin?
         scope.all
-      else  
+      else
         scope.where(published: true)
       end
     end
@@ -17,7 +17,7 @@ end
 
 def show?
     # Anyone can see published posts
-    # Author can see their own unpublished posts 
+    # Author can see their own unpublished posts
     # Admins can see all posts
     record.published? || user&.admin? || record.user_id == user&.id
 end
@@ -42,4 +42,3 @@ def owner?
     record.user_id == user.id
 end
 end
-

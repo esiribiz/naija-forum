@@ -23,7 +23,7 @@ class HomeController < ApplicationController
         .page(params[:page])
         .per(10)
     end
-    
+
     @categories = Category.all
     @tags = Tag.all
   end

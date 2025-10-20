@@ -1,13 +1,13 @@
 namespace :blind_index do
-desc 'Compute blind index values for all existing users emails'
+desc "Compute blind index values for all existing users emails"
 task compute_email: :environment do
     puts "Starting to compute blind index values for user emails..."
-    
+
     begin
     total_users = User.count
     processed = 0
     failed = 0
-    
+
     User.find_each(batch_size: 100) do |user|
         begin
         # Save will trigger the blind index computation
@@ -17,7 +17,7 @@ task compute_email: :environment do
             failed += 1
             puts "Failed to update user #{user.id}: #{user.errors.full_messages.join(', ')}"
         end
-        
+
         # Show progress every 100 records
         if processed % 100 == 0
             puts "Processed #{processed}/#{total_users} users (#{failed} failed)"
@@ -27,7 +27,7 @@ task compute_email: :environment do
         puts "Error processing user #{user.id}: #{e.message}"
         end
     end
-    
+
     puts "\nCompleted processing blind index values:"
     puts "Total users: #{total_users}"
     puts "Successfully processed: #{processed}"
@@ -39,4 +39,3 @@ task compute_email: :environment do
     end
 end
 end
-

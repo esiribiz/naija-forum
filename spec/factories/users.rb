@@ -18,23 +18,23 @@ factory :user do
     username = username.ljust(3, charset.sample) if username.length < 3
     username
     end
-    password { 
+    password {
     # Generate complex password with:
     # - At least 12 characters
     # - At least one uppercase letter
     # - At least one lowercase letter
     # - At least one number
     # - At least one special character
-    
+
     # Explicitly include required character types
     uppercase = ('A'..'Z').to_a.sample(2).join
     lowercase = ('a'..'z').to_a.sample(2).join
     number = rand(100..999).to_s
     symbol = ['!', '@', '#', '$', '%', '^', '&', '*'].sample(2).join
-    
+
     # Create a base with all required elements
     base = uppercase + lowercase + number + symbol
-    
+
     # Add random characters if needed to reach minimum length
     # Make sure the password is at least 12 characters long
     if base.length < 12
@@ -42,7 +42,7 @@ factory :user do
         extra = extra_chars.sample(12 - base.length).join
         base += extra
     end
-    
+
     # Shuffle the characters to avoid predictable patterns
     # and ensure characters are randomly distributed
     base.chars.shuffle.join
@@ -60,18 +60,18 @@ factory :user do
         ]
       end
     end
-    
+
     # Add security questions when building a user (non-persisted)
     after(:build) do |user, evaluator|
       evaluator.security_question_list.each do |question|
-        user.security_questions << build(:security_question, 
-          user: user, 
-          question: question, 
+        user.security_questions << build(:security_question,
+          user: user,
+          question: question,
           answer: Faker::Lorem.word
         )
       end
     end
-    
+
     # Add security questions when creating a user (persisted to database)
     after(:create) do |user, evaluator|
       # Only create security questions if they weren't already created

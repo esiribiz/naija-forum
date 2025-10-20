@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   # Admin routes
   namespace :admin do
-    root 'dashboard#index'
-    get 'dashboard', to: 'dashboard#index'
-    
+    root "dashboard#index"
+    get "dashboard", to: "dashboard#index"
+
     resources :users do
       collection do
         get :export
@@ -18,33 +18,33 @@ Rails.application.routes.draw do
         patch :update_role
       end
     end
-    
-    get 'role_management', to: 'role_management#index'
-    post 'role_management/update_role', to: 'role_management#update_role'
-    
+
+    get "role_management", to: "role_management#index"
+    post "role_management/update_role", to: "role_management#update_role"
+
     resources :posts do
       member do
         patch :toggle_published
       end
     end
-    
+
     resources :comments do
       member do
         patch :approve
         patch :reject
       end
     end
-    
+
     resources :categories
     resources :tags
-    
+
     resources :approved_tags do
       member do
         patch :toggle_active
         patch :toggle_featured
       end
     end
-    
+
     resources :tag_suggestions do
       member do
         patch :approve
@@ -56,13 +56,13 @@ Rails.application.routes.draw do
       end
     end
   end
-devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }  # Using custom SessionsController and RegistrationsController
-  
+devise_for :users, controllers: { sessions: "users/sessions", registrations: "users/registrations" }  # Using custom SessionsController and RegistrationsController
+
   # Backup logout routes (wrapped in devise_scope)
   devise_scope :user do
-    get '/simple_logout', to: 'users/sessions#simple_logout', as: 'simple_logout'
-    get '/emergency_logout', to: 'users/sessions#emergency_logout', as: 'emergency_logout'
-    get '/force_logout', to: 'users/sessions#force_logout', as: 'force_logout'
+    get "/simple_logout", to: "users/sessions#simple_logout", as: "simple_logout"
+    get "/emergency_logout", to: "users/sessions#emergency_logout", as: "emergency_logout"
+    get "/force_logout", to: "users/sessions#force_logout", as: "force_logout"
   end
 
   resources :users, only: [ :show, :edit, :update ], path: "profile"
@@ -88,7 +88,7 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
       patch :toggle_official
     end
   end
-  
+
   resources :approved_tags, only: [:index] do
     collection do
       get :suggestions
@@ -116,7 +116,7 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   get "search", to: "search#index", as: "search"
   get "latest", to: "posts#latest", as: "latest_posts"
   get "popular", to: "posts#popular", as: "popular_posts"
-  
+
   # Tag filtering routes
   get "posts/tagged/:tag_id", to: "posts#index", as: "posts_by_tag"
   get "posts/category/:tag_category", to: "posts#index", as: "posts_by_tag_category"
@@ -125,7 +125,7 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   post "contact", to: "pages#submit_contact"
 
   get "up" => "rails/health#show", as: :rails_health_check
-  
+
   # API Routes - Currently disabled
   # Uncomment and implement controllers when API is needed
   # namespace :api do
@@ -140,7 +140,7 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   #         get :popular
   #       end
   #     end
-  #     
+  #
   #     # Users API
   #     resources :users, only: [:index, :show, :update] do
   #       member do
@@ -148,23 +148,23 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   #         get :comments
   #       end
   #     end
-  #     
+  #
   #     # Categories API
   #     resources :categories, only: [:index, :show] do
   #       member do
   #         get :posts
   #       end
   #     end
-  #     
+  #
   #     # Comments API
   #     resources :comments, only: [:create, :update, :destroy]
-  #     
+  #
   #     # Search API
   #     get :search, to: 'search#index'
-  #     
+  #
   #     # Tags API
   #     resources :tags, only: [:index, :show]
-  #     
+  #
   #     # Notifications API
   #     resources :notifications, only: [] do
   #       collection do
@@ -173,7 +173,7 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   #     end
   #   end
   # end
-  # 
+  #
   # # Notifications API (non-versioned for simplicity)
   # namespace :api do
   #   resources :notifications, only: [] do
@@ -183,4 +183,3 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   #   end
   # end
 end
-

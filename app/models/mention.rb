@@ -4,8 +4,7 @@ class Mention < ApplicationRecord
 
   validates :user, presence: true
   validates :mentionable, presence: true
-  
+
   # Prevent duplicate mentions of the same user in the same mentionable object
   validates :user_id, uniqueness: { scope: [:mentionable_id, :mentionable_type] }
 end
-

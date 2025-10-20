@@ -31,4 +31,3 @@ def owner?
     user == record
 end
 end
-

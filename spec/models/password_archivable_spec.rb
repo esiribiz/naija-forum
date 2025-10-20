@@ -23,7 +23,7 @@ describe "with password_archivable module" do
     current_password = user.password
     user.password = current_password
     user.password_confirmation = current_password
-    
+
     expect(user).not_to be_valid
     expect(user.errors[:password]).to include("was used previously")
     end
@@ -31,17 +31,17 @@ describe "with password_archivable module" do
     it "should not allow reusing recent passwords" do
     # Change password multiple times
     passwords = ["P@ssw0rd_One!", "P@ssw0rd_Two!", "P@ssw0rd_Three!", "P@ssw0rd_Four!"]
-    
+
     passwords.each do |new_password|
         user.password = new_password
         user.password_confirmation = new_password
         user.save
     end
-    
+
     # Try to reuse the first password
     user.password = passwords.first
     user.password_confirmation = passwords.first
-    
+
     expect(user).not_to be_valid
     expect(user.errors[:password]).to include("was used previously")
     end
@@ -49,14 +49,14 @@ describe "with password_archivable module" do
     it "should only keep the configured number of old passwords" do
     # Assuming config.password_archiving_count = 5 in initializers
     max_count = Devise.password_archiving_count
-    
+
     # Change password more times than the max count
     (max_count + 2).times do |i|
         user.password = "D1ffer3nt_P@ss_#{i}!"
         user.password_confirmation = "D1ffer3nt_P@ss_#{i}!"
         user.save
     end
-    
+
     # Verify only the configured number of old passwords are kept
     expect(user.old_passwords.count).to eq(max_count)
     end

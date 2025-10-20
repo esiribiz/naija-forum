@@ -6,7 +6,7 @@ extend ActiveSupport::Concern
 included do
     # Class level configurations
     class_attribute :rate_limit_configs, default: {}
-    
+
     # Add Redis connection through redis-objects
     include Redis::Objects
 end
@@ -47,7 +47,7 @@ def track_rate_limit_attempt!(action)
         "[RateLimit] Limit exceeded for #{self.class.name}##{id} " \
         "action: #{action}, count: #{current_count}"
     )
-    
+
     raise RateLimitExceeded.new(action: action, limit: rate_limit_configs[action][:limit])
     end
 
@@ -57,17 +57,17 @@ end
 # Get remaining attempts for an action
 def remaining_attempts(action)
     validate_rate_limit_action!(action)
-    
+
     config = rate_limit_configs[action]
     count = get_attempts_count(action)
-    
+
     [0, config[:limit] - count].max
 end
 
 # Get time until rate limit reset
 def time_until_reset(action)
     validate_rate_limit_action!(action)
-    
+
     counter = send("#{action}_counter")
     counter.ttl
 end
@@ -75,7 +75,7 @@ end
 # Reset rate limit counter for an action
 def reset_rate_limit!(action)
     validate_rate_limit_action!(action)
-    
+
     counter = send("#{action}_counter")
     counter.reset
 end
@@ -103,4 +103,3 @@ def initialize(action:, limit:)
     super("Rate limit exceeded for action: #{action} (limit: #{limit})")
 end
 end
-

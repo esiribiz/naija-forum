@@ -31,7 +31,7 @@ describe 'validations' do
     context 'email' do
     it { should validate_presence_of(:email) }
     it { should validate_uniqueness_of(:email).case_insensitive }
-    
+
     it 'validates email format' do
         valid_emails = ['user@example.com', 'user.name@domain.com', 'user+label@domain.co.uk']
         invalid_emails = ['user@', '@domain.com', 'user@.com', 'user@domain.', 'user.domain.com']
@@ -224,7 +224,7 @@ describe 'posts association' do
     post = create(:post, user: user)
     expect(user.posts).to include(post)
     end
-    
+
     it 'destroys dependent posts when user is destroyed' do
     user = create(:user)
     create(:post, user: user)
@@ -238,7 +238,7 @@ describe 'comments association' do
     comment = create(:comment, user: user)
     expect(user.comments).to include(comment)
     end
-    
+
     it 'destroys dependent comments when user is destroyed' do
     user = create(:user)
     create(:comment, user: user)
@@ -252,7 +252,7 @@ describe 'likes association' do
     like = create(:like, user: user)
     expect(user.likes).to include(like)
     end
-    
+
     it 'destroys dependent likes when user is destroyed' do
     user = create(:user)
     create(:like, user: user)
@@ -276,7 +276,7 @@ describe 'followers association' do
     follow = Follow.create(follower: follower, followed: user)
     expect(user.followers).to include(follow)
     end
-    
+
     it 'uses the correct class name and foreign key' do
     expect(User.reflect_on_association(:followers).options[:class_name]).to eq('Follow')
     expect(User.reflect_on_association(:followers).options[:foreign_key]).to eq('followed_id')
@@ -290,7 +290,7 @@ describe 'following association' do
     follow = Follow.create(follower: user, followed: followed)
     expect(user.following).to include(follow)
     end
-    
+
     it 'uses the correct class name and foreign key' do
     expect(User.reflect_on_association(:following).options[:class_name]).to eq('Follow')
     expect(User.reflect_on_association(:following).options[:foreign_key]).to eq('follower_id')
@@ -311,7 +311,7 @@ describe 'instance methods' do
 describe '#full_name' do
     context 'when first_name and last_name are present' do
     let(:user) { build(:user, first_name: 'John', last_name: 'Doe') }
-    
+
     it 'returns the full name' do
         expect(user.full_name).to eq('John Doe')
     end
@@ -319,7 +319,7 @@ describe '#full_name' do
 
     context 'when only first_name is present' do
     let(:user) { build(:user, first_name: 'John', last_name: nil) }
-    
+
     it 'returns only the first name' do
         expect(user.full_name).to eq('John')
     end
@@ -327,7 +327,7 @@ describe '#full_name' do
 
     context 'when only last_name is present' do
     let(:user) { build(:user, first_name: nil, last_name: 'Doe') }
-    
+
     it 'returns only the last name' do
         expect(user.full_name).to eq('Doe')
     end
@@ -335,7 +335,7 @@ describe '#full_name' do
 
     context 'when neither name is present' do
     let(:user) { build(:user, first_name: nil, last_name: nil) }
-    
+
     it 'returns an empty string' do
         expect(user.full_name).to eq('')
     end
@@ -345,7 +345,7 @@ end
 describe '#display_name' do
     context 'when full name is available' do
     let(:user) { build(:user, first_name: 'John', last_name: 'Doe', username: 'johndoe') }
-    
+
     it 'returns the full name' do
         expect(user.display_name).to eq('John Doe')
     end
@@ -353,7 +353,7 @@ describe '#display_name' do
 
     context 'when full name is not available' do
     let(:user) { build(:user, first_name: nil, last_name: nil, username: 'johndoe') }
-    
+
     it 'returns the username' do
         expect(user.display_name).to eq('johndoe')
     end
@@ -363,7 +363,7 @@ end
 describe '#active_for_authentication?' do
     context 'when user is active' do
     let(:user) { build(:user, suspended: false) }
-    
+
     it 'returns true' do
         expect(user.active_for_authentication?).to be true
     end
@@ -371,7 +371,7 @@ describe '#active_for_authentication?' do
 
     context 'when user is suspended' do
     let(:user) { build(:user, suspended: true) }
-    
+
     it 'returns false' do
         expect(user.active_for_authentication?).to be false
     end
@@ -381,7 +381,7 @@ end
 describe '#online?' do
     context 'when last active within 5 minutes' do
     let(:user) { build(:user, last_active_at: 4.minutes.ago) }
-    
+
     it 'returns true' do
         expect(user.online?).to be true
     end
@@ -389,7 +389,7 @@ describe '#online?' do
 
     context 'when last active more than 5 minutes ago' do
     let(:user) { build(:user, last_active_at: 6.minutes.ago) }
-    
+
     it 'returns false' do
         expect(user.online?).to be false
     end

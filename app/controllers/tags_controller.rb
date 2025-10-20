@@ -5,31 +5,31 @@ after_action :verify_policy_scoped, only: :index
 
 def index
     @tags = policy_scope(Tag).includes(:posts)
-    
+
     # Handle search
     if params[:search].present?
       search_term = params[:search].strip.downcase
-      @tags = @tags.where('LOWER(name) LIKE ? OR LOWER(description) LIKE ?', 
+      @tags = @tags.where("LOWER(name) LIKE ? OR LOWER(description) LIKE ?",
                          "%#{search_term}%", "%#{search_term}%")
     end
-    
+
     # Allow filtering by category
     if params[:category].present? && Tag::CATEGORIES.key?(params[:category])
       @tags = @tags.by_category(params[:category])
     end
-    
+
     # Allow sorting
     case params[:sort]
-    when 'trending'
+    when "trending"
       @tags = @tags.trending.limit(50)
-    when 'featured'
+    when "featured"
       @tags = @tags.featured
-    when 'official'
+    when "official"
       @tags = @tags.official
     else
       @tags = @tags.order(:name)
     end
-    
+
     @tags = @tags.page(params[:page]).per(50)
 end
 
@@ -52,7 +52,7 @@ def create
     authorize @tag
 
     if @tag.save
-    redirect_to @tag, notice: 'Tag was successfully created.'
+    redirect_to @tag, notice: "Tag was successfully created."
     else
     render :new
     end
@@ -61,7 +61,7 @@ end
 def update
     authorize @tag
     if @tag.update(tag_params)
-    redirect_to @tag, notice: 'Tag was successfully updated.'
+    redirect_to @tag, notice: "Tag was successfully updated."
     else
     render :edit
     end
@@ -70,7 +70,7 @@ end
 def destroy
     authorize @tag
     @tag.destroy
-    redirect_to tags_url, notice: 'Tag was successfully destroyed.'
+    redirect_to tags_url, notice: "Tag was successfully destroyed."
 end
 
 private
@@ -95,16 +95,16 @@ def suggestions
     # Return tag suggestions for autocomplete
     query = params[:q]&.downcase&.strip
     category_filter = params[:category]
-    
+
     if query.present? && query.length >= 2
-      @tags = policy_scope(Tag).where('LOWER(name) LIKE ? OR LOWER(description) LIKE ?', 
+      @tags = policy_scope(Tag).where("LOWER(name) LIKE ? OR LOWER(description) LIKE ?",
                                      "%#{query}%", "%#{query}%")
-      
+
       # Apply category filter if provided
       if category_filter.present? && Tag::CATEGORIES.key?(category_filter)
         @tags = @tags.by_category(category_filter)
       end
-      
+
       @tags = @tags.includes(:posts)
                    .order(:name)
                    .limit(20)
@@ -112,7 +112,7 @@ def suggestions
     else
       @tags = policy_scope(Tag).featured.order(:name).limit(20).group_by(&:category)
     end
-    
+
     # Return more detailed tag information
     result = @tags.transform_values do |tags|
       tags.map do |tag|
@@ -127,7 +127,7 @@ def suggestions
         }
       end
     end
-    
+
     render json: result
 end
 

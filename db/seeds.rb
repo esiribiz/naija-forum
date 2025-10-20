@@ -125,8 +125,8 @@ special_project_tags.each do |tag_data|
     t.description = tag_data[:description]
   end
   tag.update!(
-    category: 'special_project', 
-    is_official: true, 
+    category: 'special_project',
+    is_official: true,
     is_featured: true,
     description: tag_data[:description]
   ) unless tag.category == 'special_project'
@@ -139,4 +139,3 @@ puts "   💼 Professional: #{Tag.by_category('professional').count}"
 puts "   🌎 Country/Region: #{Tag.by_category('country_region').count}"
 puts "   🚀 Special Projects: #{Tag.by_category('special_project').count}"
 puts "   ⭐ Featured tags: #{Tag.featured.count}"
-

@@ -9,4 +9,3 @@ class SearchPolicy < ApplicationPolicy
     true
   end
 end
-

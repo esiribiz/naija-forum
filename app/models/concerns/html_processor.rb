@@ -19,15 +19,15 @@ ALLOWED_TAGS = %w[
 
 # Define allowed attributes for specific tags
 ALLOWED_ATTRIBUTES = {
-    'a' => %w[href target rel],
-    'img' => %w[src alt title],
-    'figure' => %w[class],
-    'figcaption' => %w[class]
+    "a" => %w[href target rel],
+    "img" => %w[src alt title],
+    "figure" => %w[class],
+    "figcaption" => %w[class]
 }.freeze
 
 
 def process_html(text)
-    return '' if text.blank?
+    return "" if text.blank?
 
     # Initial sanitization
     safe_html = sanitize(text.to_s, tags: ALLOWED_TAGS, attributes: ALLOWED_ATTRIBUTES)
@@ -52,13 +52,13 @@ def process_text_nodes(doc)
 end
 
 def secure_links(doc)
-    doc.css('a').each do |link|
-    href = link['href']
+    doc.css("a").each do |link|
+    href = link["href"]
 
     # Ensure href is present and uses a safe protocol
     if href.present? && href.match?(/\A(?:http|https):\/\//i)
-        link['target'] = '_blank'
-        link['rel'] = 'noopener noreferrer'
+        link["target"] = "_blank"
+        link["rel"] = "noopener noreferrer"
     else
         # Remove links with unsafe protocols
         link.replace(link.inner_html)
@@ -67,7 +67,7 @@ def secure_links(doc)
 end
 
 def clean_attributes(doc)
-    doc.css('*').each do |element|
+    doc.css("*").each do |element|
     allowed_attrs = ALLOWED_ATTRIBUTES[element.name] || []
 
     element.attributes.each_key do |attr|

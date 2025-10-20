@@ -13,9 +13,8 @@ class CreateLoginActivities < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
-    
+
     add_index :login_activities, [:user_id, :login_at]
     add_index :login_activities, :ip_address
   end
 end
-

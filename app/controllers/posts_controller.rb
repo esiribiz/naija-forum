@@ -170,7 +170,7 @@ authorize @post
   # GET /latest - Shows latest posts (chronological order)
   def latest
     @categories = Category.all
-    
+
     if user_signed_in?
       @posts = policy_scope(Post)
         .includes(:user, :category)
@@ -184,24 +184,24 @@ authorize @post
         .per(20)
     end
   end
-  
+
   # GET /popular - Shows popular posts (by comment count and recent activity)
   def popular
     @categories = Category.all
-    
+
     if user_signed_in?
       @posts = policy_scope(Post)
         .includes(:user, :category, :comments)
         .left_joins(:comments)
-        .group('posts.id')
-        .order('COUNT(comments.id) DESC, posts.created_at DESC')
+        .group("posts.id")
+        .order("COUNT(comments.id) DESC, posts.created_at DESC")
         .page(params[:page])
         .per(20)
     else
       @posts = Post.includes(:user, :category, :comments)
         .left_joins(:comments)
-        .group('posts.id')
-        .order('COUNT(comments.id) DESC, posts.created_at DESC')
+        .group("posts.id")
+        .order("COUNT(comments.id) DESC, posts.created_at DESC")
         .page(params[:page])
         .per(20)
     end
@@ -217,10 +217,10 @@ end
 # Finds the post before performing actions
 def set_post
 @post = Post.includes(
-  :user, 
+  :user,
   :category,
   comments: [
-    :user, 
+    :user,
     { replies: :user }
   ]
 ).find(params[:id])
@@ -230,11 +230,11 @@ end
 
 def set_security_headers
   # CSP is now handled by Rails configuration in config/initializers/content_security_policy.rb
-  response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-  response.headers['X-XSS-Protection'] = '1; mode=block'
-  response.headers['X-Content-Type-Options'] = 'nosniff'
-  response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
-  response.headers['Permissions-Policy'] = 'geolocation=(), microphone=()'
+  response.headers["X-Frame-Options"] = "SAMEORIGIN"
+  response.headers["X-XSS-Protection"] = "1; mode=block"
+  response.headers["X-Content-Type-Options"] = "nosniff"
+  response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+  response.headers["Permissions-Policy"] = "geolocation=(), microphone=()"
 end
 
 # Strong parameters with sanitization
@@ -262,32 +262,32 @@ end
 
 def not_found
 respond_to do |format|
-    format.html { render file: Rails.public_path.join('404.html'), status: :not_found }
-    format.json { render json: { error: 'Resource not found' }, status: :not_found }
+    format.html { render file: Rails.public_path.join("404.html"), status: :not_found }
+    format.json { render json: { error: "Resource not found" }, status: :not_found }
 end
 end
 
 def user_not_authorized
 respond_to do |format|
-    format.html { redirect_to root_path, alert: 'You are not authorized to perform this action.' }
-    format.json { render json: { error: 'Unauthorized' }, status: :forbidden }
+    format.html { redirect_to root_path, alert: "You are not authorized to perform this action." }
+    format.json { render json: { error: "Unauthorized" }, status: :forbidden }
 end
 end
 
 def invalid_auth_token
 respond_to do |format|
-    format.html { redirect_to new_user_session_path, alert: 'Your session has expired. Please sign in again.' }
-    format.json { render json: { error: 'Invalid authenticity token' }, status: :unprocessable_entity }
+    format.html { redirect_to new_user_session_path, alert: "Your session has expired. Please sign in again." }
+    format.json { render json: { error: "Invalid authenticity token" }, status: :unprocessable_entity }
 end
 end
 
   # Handle tag suggestions after post save
   def handle_tag_suggestions(post)
     return unless post.unapproved_tags&.any?
-    
+
     flash[:info] = "Some tags were not recognized and have been submitted for review: #{post.unapproved_tags.map(&:name).join(', ')}"
   end
-  
+
   # Generate appropriate success notice based on tag suggestions
   def post_creation_notice(post)
     if post.unapproved_tags&.any?
@@ -296,7 +296,7 @@ end
       "Post was successfully created."
     end
   end
-  
+
   def post_update_notice(post)
     if post.unapproved_tags&.any?
       "Post was successfully updated! Some tags are pending approval."

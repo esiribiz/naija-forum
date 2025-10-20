@@ -3,7 +3,7 @@
 # This initializer adds security_questionable configuration options to Devise
 # It needs to load before the main Devise initializer
 
-require 'devise'
+require "devise"
 
 module Devise
   # Configure security questionable settings
@@ -23,6 +23,5 @@ module Devise
   @@security_question_unlock_in = 1.hour
 
   # Load security_questionable module
-  require 'devise/models/security_questionable' if defined?(Devise)
+  require "devise/models/security_questionable" if defined?(Devise)
 end
-

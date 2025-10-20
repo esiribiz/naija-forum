@@ -8,7 +8,7 @@ Geocoder.configure(
   use_https: true,              # use HTTPS for lookup requests? (if supported)
   ssl_verify: true,             # use HTTPS with SSL verification
   http_headers: { },            # HTTP request headers
-  
+
   # API keys for geocoding services (configure in credentials.yml or environment variables)
   api_key: Rails.application.credentials.dig(:ipinfo, :api_key),
 
@@ -39,7 +39,7 @@ Geocoder.configure(
   # IP address restriction options
   # Comma-separated list of ISO country codes that are considered restricted regions
   # For example, countries in Africa: ZA,NG,EG,KE,ET,TZ,DZ,MA,SD,GH
-  restricted_countries: ENV.fetch('GEOCODER_RESTRICTED_COUNTRIES', 'ZA,NG,EG,KE,ET,TZ,DZ,MA,SD,GH'),
+  restricted_countries: ENV.fetch("GEOCODER_RESTRICTED_COUNTRIES", "ZA,NG,EG,KE,ET,TZ,DZ,MA,SD,GH"),
 
   # Exceptions that can be raised
   always_raise: [
@@ -53,4 +53,3 @@ Geocoder.configure(
   units: :km,                   # :km for kilometers or :mi for miles
   distances: :linear            # :spherical or :linear
 )
-

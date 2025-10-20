@@ -29,7 +29,7 @@ class << self
     # Session Configuration
     def session_config
     {
-        key: '_app_session',
+        key: "_app_session",
         http_only: true,
         secure: force_ssl?,
         expire_after: current_env_config[:session_timeout],
@@ -68,26 +68,26 @@ class << self
     # Security Headers Configuration
     def security_headers
     {
-        'X-Frame-Options' => 'SAMEORIGIN',
-        'X-XSS-Protection' => '1; mode=block',
-        'X-Content-Type-Options' => 'nosniff',
-        'X-Download-Options' => 'noopen',
-        'X-Permitted-Cross-Domain-Policies' => 'none',
-        'Referrer-Policy' => 'strict-origin-when-cross-origin'
+        "X-Frame-Options" => "SAMEORIGIN",
+        "X-XSS-Protection" => "1; mode=block",
+        "X-Content-Type-Options" => "nosniff",
+        "X-Download-Options" => "noopen",
+        "X-Permitted-Cross-Domain-Policies" => "none",
+        "Referrer-Policy" => "strict-origin-when-cross-origin"
     }.merge(content_security_policy_headers)
     end
 
     # Content Security Policy
     def content_security_policy_headers
     script_src = %w['self']
-    
+
     # Allow unsafe-inline and unsafe-eval in development for Stimulus and debugging
     if Rails.env.development?
         script_src += %w['unsafe-inline' 'unsafe-eval']
     end
-    
+
     {
-        'Content-Security-Policy' => [
+        "Content-Security-Policy" => [
         "default-src 'self'",
         "img-src 'self' data: blob: https:",
         "script-src #{script_src.join(' ')}",
@@ -96,7 +96,7 @@ class << self
         "form-action 'self'",
         "frame-ancestors 'none'",
         "connect-src 'self' ws: wss:"
-        ].join('; ')
+        ].join("; ")
     }
     end
 
@@ -105,7 +105,7 @@ class << self
     {
         max_bad_requests: 100,
         block_duration: 1.hour,
-        whitelist: ['127.0.0.1'],
+        whitelist: ["127.0.0.1"],
         blacklist: []
     }
     end
@@ -168,4 +168,3 @@ class << self
     end
 end
 end
-

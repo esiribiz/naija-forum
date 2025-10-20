@@ -8,11 +8,11 @@
     from around the world — to build a better, stronger Nigeria.
   </p>
 
-  <% if user_signed_in? %>
+  <%- if user_signed_in? -%>
     <%= link_to "Enter the Forum", forum_home_path, class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md" %>
-  <% else %>
+  <%- else -%>
     <%= link_to "Join Now", new_user_registration_path, class: "inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md" %>
-  <% end %>
+  <%- end -%>
 </section>
 
 <!-- Mission Section -->
@@ -46,10 +46,10 @@
       Let's turn the lessons we've learned abroad into systems that transform our homeland.
       From innovation to governance — your experience counts.
     </p>
-    <% if user_signed_in? %>
+    <%- if user_signed_in? -%>
       <%= link_to "Go to Dashboard", user_path(current_user), class: "bg-white text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block", style: "background-color: white !important; color: #15803d !important;" %>
-    <% else %>
+    <%- else -%>
       <%= link_to "Sign Up & Join Discussions", new_user_registration_path, class: "bg-white text-green-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 inline-block", style: "background-color: white !important; color: #15803d !important;" %>
-    <% end %>
+    <%- end -%>
   </div>
 </section>

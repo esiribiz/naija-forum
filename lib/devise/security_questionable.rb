@@ -1,4 +1,4 @@
-require 'devise'
+require "devise"
 
 module Devise
   # Number of security questions that need to be answered
@@ -27,5 +27,4 @@ module Devise
 end
 
 # Load the security_questionable model extension
-require 'devise/models/security_questionable'
-
+require "devise/models/security_questionable"

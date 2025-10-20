@@ -37,7 +37,7 @@ end
 test "processes HTML on save" do
     comment = Comment.new(content: "Initial", post: @post, user: @user)
     comment.save
-    comment.content = '<p>Safe</p><script>unsafe()</script>'
+    comment.content = "<p>Safe</p><script>unsafe()</script>"
     comment.save
     assert_equal "<p>Safe</p>", comment.content
 end
@@ -72,6 +72,6 @@ test "auto-links URLs alongside HTML sanitization" do
     comment.save
     assert_includes comment.content, '<p>Check <a href="https://safe.com" target="_blank" rel="noopener noreferrer">https://safe.com</a></p>'
     assert_includes comment.content, '<a href="http://another.com" target="_blank" rel="noopener noreferrer">http://another.com</a>'
-    refute_includes comment.content, '<script>'
+    refute_includes comment.content, "<script>"
 end
 end

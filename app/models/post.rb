@@ -23,9 +23,9 @@ has_many :likes, dependent: :destroy
 has_many :liked_by_users, through: :likes, source: :user
 
 # Validations
-validates :title, presence: true, 
+validates :title, presence: true,
                 length: { minimum: 3, maximum: 200 },
-                format: { with: /\A[a-zA-Z0-9\s\-_.,!?()]+\z/, 
+                format: { with: /\A[a-zA-Z0-9\s\-_.,!?()]+\z/,
                         message: "contains invalid characters" }
 
 validates :body, presence: true,
@@ -50,10 +50,10 @@ def tag_list=(names)
   self.tags = names.split(",").map do |name|
     cleaned_name = name.strip
     next if cleaned_name.blank?
-    
+
     # Only allow approved tags
-    approved_tag = ApprovedTag.active.find_by('LOWER(name) = ?', cleaned_name.downcase)
-    
+    approved_tag = ApprovedTag.active.find_by("LOWER(name) = ?", cleaned_name.downcase)
+
     if approved_tag
       # Find or create the Tag record that corresponds to this ApprovedTag
       Tag.find_or_create_by(
@@ -76,21 +76,21 @@ attr_accessor :unapproved_tags, :user_for_suggestions
 
 def create_tag_suggestion(tag_name)
   return unless user_for_suggestions
-  
+
   # Don't create duplicate suggestions
   existing_suggestion = TagSuggestion.find_by(
     name: tag_name,
     user: user_for_suggestions,
     approved: false
   )
-  
+
   unless existing_suggestion
     suggestion = TagSuggestion.create(
       name: tag_name,
       user: user_for_suggestions,
       category: detect_category_for_suggestion(tag_name)
     )
-    
+
     # Store for later notification
     self.unapproved_tags ||= []
     self.unapproved_tags << suggestion if suggestion.persisted?
@@ -164,7 +164,7 @@ images.each do |image|
     if image.blob.byte_size > 5.megabytes
     errors.add(:images, "size must be less than 5MB")
     end
-    
+
     unless image.content_type.in?(%w[image/jpeg image/png image/gif])
     errors.add(:images, "must be JPEG, PNG, or GIF")
     end
@@ -173,12 +173,12 @@ end
 
 def detect_category_for_suggestion(tag_name)
   # Check if it matches any predefined categories
-  return 'geographic' if ApprovedTag.geographic_tags.include?(tag_name)
-  return 'professional' if ApprovedTag.professional_tags.include?(tag_name)
-  return 'country_region' if ApprovedTag.country_region_tags.include?(tag_name)
-  return 'special_project' if ApprovedTag.special_project_tags.include?(tag_name)
-  
+  return "geographic" if ApprovedTag.geographic_tags.include?(tag_name)
+  return "professional" if ApprovedTag.professional_tags.include?(tag_name)
+  return "country_region" if ApprovedTag.country_region_tags.include?(tag_name)
+  return "special_project" if ApprovedTag.special_project_tags.include?(tag_name)
+
   # Default to thematic for user-generated suggestions
-  'thematic'
+  "thematic"
 end
 end

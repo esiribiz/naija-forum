@@ -16,7 +16,7 @@ unless Rails.env.development?
       policy.style_src   :self, :unsafe_inline
       policy.connect_src :self, :https, "ws:", "wss:"
       policy.frame_ancestors :none
-      
+
       # Specify URI for violation reports
       # policy.report_uri "/csp-violation-report-endpoint"
     end

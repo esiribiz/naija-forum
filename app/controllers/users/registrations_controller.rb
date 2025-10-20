@@ -51,7 +51,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def set_user_for_sidebar
     @user = current_user
   end
-  
+
   # Override to ensure @user is available in error scenarios
   def respond_with(resource, _opts = {})
     @user = resource if resource.is_a?(User)
@@ -83,4 +83,3 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super(resource)
   # end
 end
-

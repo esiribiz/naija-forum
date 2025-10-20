@@ -2,7 +2,7 @@ class MigrateTagsToApprovedTags < ActiveRecord::Migration[8.0]
   def up
     # Populate ApprovedTags from existing Tag data
     puts "Migrating existing tags to approved tag system..."
-    
+
     # Geographic tags (Nigerian states)
     geographic_tags = [
       'Abia', 'Abuja', 'Adamawa', 'AkwaIbom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'CrossRiver',
@@ -39,16 +39,16 @@ class MigrateTagsToApprovedTags < ActiveRecord::Migration[8.0]
 
     # Migrate existing tags first
     existing_tags = execute("SELECT name, category, description, is_official FROM tags").to_a
-    
+
     existing_tags.each do |tag_data|
       name = tag_data['name']
       category = tag_data['category'] || 'thematic'
       description = tag_data['description']
       is_official = tag_data['is_official']
-      
+
       # Skip if already exists
       next if execute("SELECT COUNT(*) FROM approved_tags WHERE LOWER(name) = '#{name.downcase}'").first['count'] > 0
-      
+
       execute <<-SQL
         INSERT INTO approved_tags (name, category, description, is_active, is_featured, created_at, updated_at)
         VALUES ('#{name}', '#{category}', #{description ? "'#{description}'" : 'NULL'}, #{is_official || true}, #{is_official && ['BuildNaija', 'DiasporaInvest', 'NaijaTech', 'CleanEnergy', 'ThinkNaija', 'ReturnHome', 'NaijaRising'].include?(name)}, NOW(), NOW())
@@ -58,7 +58,7 @@ class MigrateTagsToApprovedTags < ActiveRecord::Migration[8.0]
     # Create geographic tags
     geographic_tags.each do |tag_name|
       next if execute("SELECT COUNT(*) FROM approved_tags WHERE LOWER(name) = '#{tag_name.downcase}'").first['count'] > 0
-      
+
       execute <<-SQL
         INSERT INTO approved_tags (name, category, description, is_active, is_featured, created_at, updated_at)
         VALUES ('#{tag_name}', 'geographic', 'Discussions related to #{tag_name} state/region', true, false, NOW(), NOW())
@@ -68,7 +68,7 @@ class MigrateTagsToApprovedTags < ActiveRecord::Migration[8.0]
     # Create professional tags
     professional_tags.each do |tag_name|
       next if execute("SELECT COUNT(*) FROM approved_tags WHERE LOWER(name) = '#{tag_name.downcase}'").first['count'] > 0
-      
+
       description = case tag_name
                    when 'Technology' then 'Tech innovation, software development, digital transformation'
                    when 'Education' then 'Educational systems, learning, academic development'
@@ -80,7 +80,7 @@ class MigrateTagsToApprovedTags < ActiveRecord::Migration[8.0]
                    when 'WomenInTech' then 'Women in technology and innovation'
                    else "Professional discussions about #{tag_name.downcase}"
                    end
-      
+
       execute <<-SQL
         INSERT INTO approved_tags (name, category, description, is_active, is_featured, created_at, updated_at)
         VALUES ('#{tag_name}', 'professional', '#{description}', true, false, NOW(), NOW())
@@ -90,7 +90,7 @@ class MigrateTagsToApprovedTags < ActiveRecord::Migration[8.0]
     # Create country tags
     country_tags.each do |tag_name|
       next if execute("SELECT COUNT(*) FROM approved_tags WHERE LOWER(name) = '#{tag_name.downcase}'").first['count'] > 0
-      
+
       execute <<-SQL
         INSERT INTO approved_tags (name, category, description, is_active, is_featured, created_at, updated_at)
         VALUES ('#{tag_name}', 'country_region', 'Nigerian diaspora community in #{tag_name}', true, false, NOW(), NOW())
@@ -100,7 +100,7 @@ class MigrateTagsToApprovedTags < ActiveRecord::Migration[8.0]
     # Create special project tags
     special_project_data.each do |tag_data|
       next if execute("SELECT COUNT(*) FROM approved_tags WHERE LOWER(name) = '#{tag_data[:name].downcase}'").first['count'] > 0
-      
+
       execute <<-SQL
         INSERT INTO approved_tags (name, category, description, is_active, is_featured, created_at, updated_at)
         VALUES ('#{tag_data[:name]}', 'special_project', '#{tag_data[:description]}', true, true, NOW(), NOW())

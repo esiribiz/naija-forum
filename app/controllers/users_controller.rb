@@ -32,5 +32,5 @@ end
   def user_params
     params.require(:user).permit(:name, :username, :email, :avatar, :bio, :location, :website, :twitter, :linkedin, :facebook, :first_name, :last_name)
   end
-  
+
 end

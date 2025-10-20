@@ -5,4 +5,3 @@ FactoryBot.define do
     # Example: color { "#FF5733" }
   end
 end
-

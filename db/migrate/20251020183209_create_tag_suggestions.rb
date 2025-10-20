@@ -11,7 +11,7 @@ class CreateTagSuggestions < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
-    
+
     add_index :tag_suggestions, :name
     add_index :tag_suggestions, :category
     add_index :tag_suggestions, :approved

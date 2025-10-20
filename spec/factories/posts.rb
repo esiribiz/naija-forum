@@ -6,4 +6,3 @@ FactoryBot.define do
     body { "This is a valid post body with enough content to pass validation requirements." }
   end
 end
-

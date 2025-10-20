@@ -69,7 +69,7 @@ class CommentsController < ApplicationController
 
   def edit
     authorize @comment
-    
+
     respond_to do |format|
       format.turbo_stream {
         render turbo_stream: turbo_stream.replace(
@@ -111,7 +111,7 @@ class CommentsController < ApplicationController
 
   def cancel_edit
     authorize @comment
-    
+
     respond_to do |format|
       format.turbo_stream {
         render turbo_stream: turbo_stream.replace(

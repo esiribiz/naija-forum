@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'devise/models'
+require "devise/models"
 
 module Devise
   module Models
@@ -29,15 +29,15 @@ module Devise
         # Security questions relationship
         has_many :security_questions, dependent: :destroy
         has_many :security_question_attempts, dependent: :destroy
-        
+
         # Allow users to accept security question updates with their account info
         attr_accessor :security_question_answer, :security_question_id
-        
+
         # Allow nested attributes for security questions
-        accepts_nested_attributes_for :security_questions, 
-                                     allow_destroy: true, 
+        accepts_nested_attributes_for :security_questions,
+                                     allow_destroy: true,
                                      reject_if: :all_blank
-        
+
         # Validate security questions
         validate :validate_security_questions, if: :require_security_questions?
         validate :validate_security_questions_answered, on: :update, if: :security_questions_required?
@@ -61,7 +61,7 @@ module Devise
 
       # Check if user needs to answer security questions based on timeout
       def security_questions_required?
-        last_security_question_at.nil? || 
+        last_security_question_at.nil? ||
         last_security_question_at < Devise.min_security_question_age.ago
       end
 
@@ -88,7 +88,7 @@ module Devise
         return false unless question
 
         correct = question.answer == answer
-        
+
         # Record this attempt
         security_question_attempts.create(
           question: question.question,
@@ -105,7 +105,7 @@ module Devise
 
       # Get a random security question for this user
       def random_security_question
-        security_questions.order('RANDOM()').first
+        security_questions.order("RANDOM()").first
       end
 
       # Get a random sample of security questions to display
@@ -121,7 +121,7 @@ module Devise
       def validate_security_questions
         # Skip validation if we're in the test environment
         return if Rails.env.test?
-        
+
         if security_questions.select(&:persisted?).count < self.class.security_question_count
           errors.add(:security_questions, "must have at least #{self.class.security_question_count} questions")
         end
@@ -131,7 +131,7 @@ module Devise
         # Skip validation if we're in the test environment
         return if Rails.env.test?
         return if security_questions_answered?
-        
+
         errors.add(:base, "You must set up at least three security questions")
       end
 
@@ -152,10 +152,10 @@ module Devise
         # Get a user with a valid security question answer
         def find_with_security_question(question_id, answer, conditions = {})
           user = find_by(conditions)
-          
+
           return unless user
           return unless user.valid_security_question_answer?(question_id, answer)
-          
+
           user
         end
       end
@@ -164,4 +164,4 @@ module Devise
 end
 
 # Add the module to Devise
-Devise.add_module :security_questionable, model: 'devise/models/security_questionable'
+Devise.add_module :security_questionable, model: "devise/models/security_questionable"

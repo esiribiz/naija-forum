@@ -40,7 +40,7 @@ class Comment < ApplicationRecord
     Notification.notify(
       recipient: post.user,
       actor: user,
-      action: 'commented',
+      action: "commented",
       notifiable: self
     )
   end
@@ -52,7 +52,7 @@ class Comment < ApplicationRecord
     Notification.notify(
       recipient: parent.user,
       actor: user,
-      action: 'replied',
+      action: "replied",
       notifiable: self
     )
   end

@@ -12,16 +12,16 @@ class ContentIndexingJob < ApplicationJob
   # @return [void]
   def perform(content_id, content_type)
     Rails.logger.info "Indexing #{content_type} with ID #{content_id}"
-    
+
     # Find the corresponding model based on content_type
     case content_type.to_s.downcase
-    when 'post'
+    when "post"
       content = Post.find(content_id)
-    when 'comment'
+    when "comment"
       content = Comment.find(content_id)
-    when 'category'
+    when "category"
       content = Category.find(content_id)
-    when 'tag'
+    when "tag"
       content = Tag.find(content_id)
     else
       Rails.logger.error "Unknown content type: #{content_type}"
@@ -30,7 +30,7 @@ class ContentIndexingJob < ApplicationJob
 
     # Index the content using the search service
     index_content(content, content_type)
-    
+
     Rails.logger.info "Successfully indexed #{content_type} with ID #{content_id}"
   rescue StandardError => e
     Rails.logger.error "Error indexing #{content_type} with ID #{content_id}: #{e.message}"
@@ -52,10 +52,10 @@ class ContentIndexingJob < ApplicationJob
     # Example implementation with a hypothetical SearchIndexer service
     # Replace this with your actual search indexing service
     search_indexer = SearchIndexer.new
-    
+
     # Extract the relevant attributes for indexing based on content type
     attributes = extract_attributes(content, content_type)
-    
+
     # Send to search index
     search_indexer.index(
       id: content.id,
@@ -70,7 +70,7 @@ class ContentIndexingJob < ApplicationJob
   # @return [Hash] Attributes for indexing
   def extract_attributes(content, content_type)
     case content_type.to_s.downcase
-    when 'post'
+    when "post"
       {
         title: content.title,
         body: content.body,
@@ -80,7 +80,7 @@ class ContentIndexingJob < ApplicationJob
         created_at: content.created_at,
         updated_at: content.updated_at
       }
-    when 'comment'
+    when "comment"
       {
         body: content.body,
         author: content.user&.username,
@@ -88,12 +88,12 @@ class ContentIndexingJob < ApplicationJob
         created_at: content.created_at,
         updated_at: content.updated_at
       }
-    when 'category'
+    when "category"
       {
         name: content.name,
         description: content.description
       }
-    when 'tag'
+    when "tag"
       {
         name: content.name
       }

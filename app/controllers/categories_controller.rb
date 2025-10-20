@@ -35,7 +35,7 @@ def create
 authorize @category
 
 if @category.save
-    redirect_to @category, notice: 'Category was successfully created.'
+    redirect_to @category, notice: "Category was successfully created."
 else
     render :new, status: :unprocessable_entity
 end
@@ -45,7 +45,7 @@ end
 def update
 authorize @category
 if @category.update(category_params)
-    redirect_to @category, notice: 'Category was successfully updated.'
+    redirect_to @category, notice: "Category was successfully updated."
 else
     render :edit, status: :unprocessable_entity
 end
@@ -55,7 +55,7 @@ end
 def destroy
 authorize @category
 @category.destroy
-redirect_to categories_url, notice: 'Category was successfully deleted.'
+redirect_to categories_url, notice: "Category was successfully deleted."
 end
 
   private

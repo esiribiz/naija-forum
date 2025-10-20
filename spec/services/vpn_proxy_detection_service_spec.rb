@@ -14,7 +14,7 @@ RSpec.describe VpnProxyDetectionService do
   before do
     # Mock Redis to avoid actual cache operations
     allow(Redis).to receive(:current).and_return(double('Redis').as_null_object)
-    
+
     # Allow private_ip? to work with real IP addresses
     allow_any_instance_of(described_class).to receive(:private_ip?).and_return(false)
     allow_any_instance_of(described_class).to receive(:private_ip?).with(private_ip).and_return(true)
@@ -40,7 +40,7 @@ RSpec.describe VpnProxyDetectionService do
         mock_redis = double('Redis')
         allow(Redis).to receive(:current).and_return(mock_redis)
         allow(mock_redis).to receive(:get).with("vpn_proxy_check:#{normal_ip}").and_return('false')
-        
+
         expect(service.vpn_or_proxy?(normal_ip)).to be false
       end
     end
@@ -49,7 +49,7 @@ RSpec.describe VpnProxyDetectionService do
       before do
         # Ensure cache miss
         allow(Redis.current).to receive(:get).and_return(nil)
-        
+
         # Stub all detection methods to return false by default
         allow_any_instance_of(described_class).to receive(:check_external_apis).and_return(false)
         allow_any_instance_of(described_class).to receive(:check_tor_exit_node).and_return(false)
@@ -80,20 +80,20 @@ RSpec.describe VpnProxyDetectionService do
 
     context 'caching behavior' do
       let(:mock_redis) { double('Redis') }
-      
+
       before do
         allow(Redis).to receive(:current).and_return(mock_redis)
         allow(mock_redis).to receive(:get).and_return(nil)
         allow_any_instance_of(described_class).to receive(:check_external_apis).with(vpn_ip).and_return(true)
       end
-      
+
       it 'caches the result' do
         expect(mock_redis).to receive(:setex).with(
           "vpn_proxy_check:#{vpn_ip}",
           VpnProxyDetectionService::CACHE_EXPIRY[:vpn_result],
           'true'
         )
-        
+
         service.vpn_or_proxy?(vpn_ip)
       end
     end
@@ -119,7 +119,7 @@ RSpec.describe VpnProxyDetectionService do
         mock_redis = double('Redis')
         allow(Redis).to receive(:current).and_return(mock_redis)
         allow(mock_redis).to receive(:get).with("tor_exit_node:#{tor_ip}").and_return('true')
-        
+
         expect(service.tor_exit_node?(tor_ip)).to be true
       end
     end
@@ -143,20 +143,20 @@ RSpec.describe VpnProxyDetectionService do
 
     context 'caching behavior' do
       let(:mock_redis) { double('Redis') }
-      
+
       before do
         allow(Redis).to receive(:current).and_return(mock_redis)
         allow(mock_redis).to receive(:get).and_return(nil)
         allow_any_instance_of(described_class).to receive(:check_tor_exit_node).with(tor_ip).and_return(true)
       end
-      
+
       it 'caches the result' do
         expect(mock_redis).to receive(:setex).with(
           "tor_exit_node:#{tor_ip}",
           VpnProxyDetectionService::CACHE_EXPIRY[:tor_result],
           'true'
         )
-        
+
         service.tor_exit_node?(tor_ip)
       end
     end
@@ -182,7 +182,7 @@ RSpec.describe VpnProxyDetectionService do
         mock_redis = double('Redis')
         allow(Redis).to receive(:current).and_return(mock_redis)
         allow(mock_redis).to receive(:get).with("proxy_check:#{proxy_ip}").and_return('true')
-        
+
         expect(service.proxy?(proxy_ip)).to be true
       end
     end
@@ -191,7 +191,7 @@ RSpec.describe VpnProxyDetectionService do
       before do
         # Ensure cache miss
         allow(Redis.current).to receive(:get).and_return(nil)
-        
+
         # Stub detection methods
         allow_any_instance_of(described_class).to receive(:check_open_proxy).and_return(false)
         allow_any_instance_of(described_class).to receive(:suspicious_proxy_heuristics).and_return(false)
@@ -214,20 +214,20 @@ RSpec.describe VpnProxyDetectionService do
 
     context 'caching behavior' do
       let(:mock_redis) { double('Redis') }
-      
+
       before do
         allow(Redis).to receive(:current).and_return(mock_redis)
         allow(mock_redis).to receive(:get).and_return(nil)
         allow_any_instance_of(described_class).to receive(:check_open_proxy).with(proxy_ip).and_return(true)
       end
-      
+
       it 'caches the result' do
         expect(mock_redis).to receive(:setex).with(
           "proxy_check:#{proxy_ip}",
           VpnProxyDetectionService::CACHE_EXPIRY[:proxy_result],
           'true'
         )
-        
+
         service.proxy?(proxy_ip)
       end
     end
@@ -237,47 +237,47 @@ RSpec.describe VpnProxyDetectionService do
     it 'flushes all caches' do
       mock_redis = double('Redis')
       allow(Redis).to receive(:current).and_return(mock_redis)
-      
+
       expect(mock_redis).to receive(:keys).with("vpn_proxy_check:*").and_return(["vpn_proxy_check:1.2.3.4"])
       expect(mock_redis).to receive(:keys).with("tor_exit_node:*").and_return(["tor_exit_node:5.6.7.8"])
       expect(mock_redis).to receive(:keys).with("proxy_check:*").and_return(["proxy_check:9.10.11.12"])
-      
+
       expect(mock_redis).to receive(:del).with("vpn_proxy_check:1.2.3.4")
       expect(mock_redis).to receive(:del).with("tor_exit_node:5.6.7.8")
       expect(mock_redis).to receive(:del).with("proxy_check:9.10.11.12")
-      
+
       expect(described_class.flush_cache).to be true
     end
   end
 
   describe 'private methods' do
     # We test a few critical private methods to ensure they work as expected
-    
+
     describe '#check_tor_exit_node' do
       let(:tor_exit_list) { "# Tor exit node list\n13.14.15.16\n21.22.23.24" }
-      
+
       before do
         # Stub the HTTP request to the Tor exit list
         stub_request(:get, "https://check.torproject.org/torbulkexitlist").
           to_return(status: 200, body: tor_exit_list)
       end
-      
+
       it 'detects IP in Tor exit list' do
         expect(service.send(:check_tor_exit_node, tor_ip)).to be true
       end
-      
+
       it 'returns false for IP not in Tor exit list' do
         expect(service.send(:check_tor_exit_node, normal_ip)).to be false
       end
-      
+
       it 'handles errors gracefully' do
         stub_request(:get, "https://check.torproject.org/torbulkexitlist").
           to_return(status: 500)
-        
+
         expect(service.send(:check_tor_exit_node, tor_ip)).to be false
       end
     end
-    
+
     describe '#check_datacenter_ip' do
       let(:datacenter_location_data) do
         {
@@ -291,7 +291,7 @@ RSpec.describe VpnProxyDetectionService do
           "isp" => "Amazon AWS"
         }
       end
-      
+
       let(:normal_location_data) do
         {
           "country" => "US",
@@ -304,34 +304,42 @@ RSpec.describe VpnProxyDetectionService do
           "isp" => "AT&T U-verse"
         }
       end
-      
+
       it 'detects datacenter IP by ASN' do
         allow_any_instance_of(described_class).to receive(:get_ip_location_data).
           with(datacenter_ip).and_return(datacenter_location_data)
-        
+
         expect(service.send(:check_datacenter_ip, datacenter_ip)).to be true
       end
-      
+
       it 'returns false for normal IP' do
         allow_any_instance_of(described_class).to receive(:get_ip_location_data).
           with(normal_ip).and_return(normal_location_data)
-        
+
         expect(service.send(:check_datacenter_ip, normal_ip)).to be false
       end
     end
-    
+
     describe '#check_hostname_patterns' do
       it 'detects VPN hostname' do
         allow(Resolv).to receive(:getname).with(vpn_ip).and_return('vpn-server.example.com')
         expect(service.send(:check_hostname_patterns, vpn_ip)).to be true
       end
-      
+
       it 'detects proxy hostname' do
         allow(Resolv).to receive(:getname).with(proxy_ip).and_return('proxy.example.com')
         expect(service.send(:check_hostname_patterns, proxy_ip)).to be true
       end
-      
+
       it 'returns false for normal hostname' do
         allow(Resolv).to receive(:getname).with(normal_ip).and_return('server.example.com')
-        expect(service.send(:check_hostname_patterns
+        expect(service.send(:check_hostname_patterns, normal_ip)).to be false
+      end
 
+      it 'handles DNS resolution errors' do
+        allow(Resolv).to receive(:getname).with(normal_ip).and_raise(Resolv::ResolvError)
+        expect(service.send(:check_hostname_patterns, normal_ip)).to be false
+      end
+    end
+  end
+end

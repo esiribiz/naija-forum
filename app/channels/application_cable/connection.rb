@@ -10,8 +10,8 @@ module ApplicationCable
 
     def find_verified_user
       # Try to get user from Warden (Devise)
-      if env['warden']&.user
-        env['warden'].user
+      if env["warden"]&.user
+        env["warden"].user
       else
         reject_unauthorized_connection
       end

@@ -1,7 +1,8 @@
 en:
   errors:
     messages:
-      taken_in_past: 'was used previously.'
+      taken_in_past: 'was used previously'
+      cannot_reuse_password: 'cannot reuse last 5 passwords'
       equal_to_current_password: 'must be different than the current password.'
       equal_to_email: 'must be different than the email.'
       password_complexity:

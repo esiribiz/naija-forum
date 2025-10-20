@@ -1,18 +1,18 @@
 source "https://rubygems.org"
 
 # Comments and user interactions
-gem 'acts_as_votable', '~> 0.14.0'    # For voting on comments
-gem 'redcarpet', '~> 3.6'             # For markdown support
-gem 'rinku', '~> 2.0'                 # For auto-linking
-gem 'sanitize', '~> 6.0'              # For HTML sanitization
-gem 'loofah', '~> 2.21'              # For HTML processing using Nokogiri
-gem 'noticed', '~> 1.6'               # For notifications
-gem 'kaminari', '~> 1.2'              # For pagination
+gem "acts_as_votable", "~> 0.14.0"    # For voting on comments
+gem "redcarpet", "~> 3.6"             # For markdown support
+gem "rinku", "~> 2.0"                 # For auto-linking
+gem "sanitize", "~> 6.0"              # For HTML sanitization
+gem "loofah", "~> 2.21"              # For HTML processing using Nokogiri
+gem "noticed", "~> 1.6"               # For notifications
+gem "kaminari", "~> 1.2"              # For pagination
 
 # Caching
-gem 'actionpack-page_caching'
-gem 'actionpack-action_caching'
-gem 'redis', '~> 5.0'         # For caching geocoder results and general Redis operations
+gem "actionpack-page_caching"
+gem "actionpack-action_caching"
+gem "redis", "~> 5.0"         # For caching geocoder results and general Redis operations
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.1"
@@ -34,15 +34,15 @@ gem "tailwindcss-rails"
 gem "jbuilder"
 
 # Security
-gem 'rack-attack', '~> 6.7'           # Rate limiting and throttling
-gem 'secure_headers', '~> 6.5'        # Security headers (HSTS, CSP, etc.)
-gem 'rack-cors', '~> 2.0'             # Cross-Origin Resource Sharing (CORS) management
-gem 'redis-objects', '~> 1.7'         # Redis for rate limiting and session storage
-gem 'strong_password', '~> 0.0.10'    # Password strength validation
-gem 'invisible_captcha', '~> 2.1'     # Bot protection without CAPTCHA
-gem 'http-security', '~> 0.1'         # HTTP security utilities
-gem 'bcrypt', '~> 3.1.7'              # Secure password hashing
-gem 'geocoder', '~> 1.8'              # IP-based geolocation and geographic restrictions
+gem "rack-attack", "~> 6.7"           # Rate limiting and throttling
+gem "secure_headers", "~> 6.5"        # Security headers (HSTS, CSP, etc.)
+gem "rack-cors", "~> 2.0"             # Cross-Origin Resource Sharing (CORS) management
+gem "redis-objects", "~> 1.7"         # Redis for rate limiting and session storage
+gem "strong_password", "~> 0.0.10"    # Password strength validation
+gem "invisible_captcha", "~> 2.1"     # Bot protection without CAPTCHA
+gem "http-security", "~> 0.1"         # HTTP security utilities
+gem "bcrypt", "~> 3.1.7"              # Secure password hashing
+gem "geocoder", "~> 1.8"              # IP-based geolocation and geographic restrictions
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ mingw x64_mingw jruby ]
 
@@ -71,17 +71,17 @@ gem "sentry-rails", "~> 5.0"
 gem "sentry-ruby", "~> 5.0"
 
 # Performance and Search Improvements
-gem 'bullet'                      # N+1 query detection
-gem 'pg_search', '~> 2.3'         # PostgreSQL full-text search
-gem 'friendly_id', '~> 5.5'       # SEO-friendly URLs
-gem 'meta-tags', '~> 2.18'        # SEO meta tags
-gem 'sitemap_generator', '~> 6.3' # XML sitemaps
+gem "bullet"                      # N+1 query detection
+gem "pg_search", "~> 2.3"         # PostgreSQL full-text search
+gem "friendly_id", "~> 5.5"       # SEO-friendly URLs
+gem "meta-tags", "~> 2.18"        # SEO meta tags
+gem "sitemap_generator", "~> 6.3" # XML sitemaps
 
 # API Development
-gem 'jsonapi-serializer'          # JSON:API compliant serialization
-gem 'versionist', '~> 2.0'        # API versioning
-gem 'fast_jsonapi'                # Fast JSON serialization
-gem 'pagy', '~> 6.2'              # Fast pagination for APIs
+gem "jsonapi-serializer"          # JSON:API compliant serialization
+gem "versionist", "~> 2.0"        # API versioning
+gem "fast_jsonapi"                # Fast JSON serialization
+gem "pagy", "~> 6.2"              # Fast pagination for APIs
 
 # Analytics and Tracking
 # gem 'ahoy_matey', '~> 5.0'        # User analytics and visit tracking (temporarily disabled)
@@ -99,20 +99,20 @@ gem "brakeman", require: false
 gem "rubocop-rails-omakase", require: false
 
 # Testing
-gem 'rspec-rails'         # Testing framework for Rails
-gem 'factory_bot_rails'   # Fixtures replacement with a more flexible syntax
+gem "rspec-rails"         # Testing framework for Rails
+gem "factory_bot_rails"   # Fixtures replacement with a more flexible syntax
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   # gem "rails_live_reload" # Temporarily disabled due to WebSocket issues
-  
+
   # Performance monitoring
-  gem 'rack-mini-profiler'          # Performance profiling
-  gem 'memory_profiler'             # Memory usage profiling
-  gem 'stackprof'                   # Sampling call-stack profiler
-  gem 'letter_opener'               # Email preview in development
+  gem "rack-mini-profiler"          # Performance profiling
+  gem "memory_profiler"             # Memory usage profiling
+  gem "stackprof"                   # Sampling call-stack profiler
+  gem "letter_opener"               # Email preview in development
 end
 
 group :test do
@@ -121,12 +121,12 @@ gem "capybara"
 gem "selenium-webdriver"
 
 # Additional testing gems
-gem 'faker'                           # Generate fake data for tests
-gem 'shoulda-matchers'                # Additional RSpec matchers
-gem 'database_cleaner-active_record'  # Clean test database between runs
-gem 'timecop'                         # Time travel for testing time-dependent code
+gem "faker"                           # Generate fake data for tests
+gem "shoulda-matchers"                # Additional RSpec matchers
+gem "database_cleaner-active_record"  # Clean test database between runs
+gem "timecop"                         # Time travel for testing time-dependent code
 end
 
 gem "devise", "~> 4.9"
-gem 'devise-security'
+gem "devise-security"
 gem "pundit", "~> 2.3"

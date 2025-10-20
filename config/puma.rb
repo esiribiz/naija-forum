@@ -7,11 +7,11 @@ port ENV.fetch("PORT") { 5000 }
 environment ENV.fetch("RAILS_ENV") { "development" }
 
 # Disable SSL redirect in development
-if ENV['RAILS_ENV'] == 'development'
-  ssl_bind '0.0.0.0', '8443',
-    key: 'config/ssl/server.key',
-    cert: 'config/ssl/server.crt',
-    verify_mode: 'none'
+if ENV["RAILS_ENV"] == "development"
+  ssl_bind "0.0.0.0", "8443",
+    key: "config/ssl/server.key",
+    cert: "config/ssl/server.crt",
+    verify_mode: "none"
 end
 
 # Allow puma to be restarted by `rails restart` command

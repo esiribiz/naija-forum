@@ -13,7 +13,7 @@ class NotificationsController < ApplicationController
                               .page(params[:page])
                               .per(10)
     @unread_count = current_user.notifications.unread.count
-    
+
     respond_to do |format|
       format.html
       format.json { render json: @notifications }
@@ -27,7 +27,7 @@ class NotificationsController < ApplicationController
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "Notification marked as read.") }
         format.json { render json: @notification }
-        format.turbo_stream { 
+        format.turbo_stream {
           render turbo_stream: [
             turbo_stream.replace("notification_#{@notification.id}", partial: "notifications/notification", locals: { notification: @notification }),
             turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
@@ -51,7 +51,7 @@ class NotificationsController < ApplicationController
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "All notifications marked as read.") }
         format.json { head :no_content }
-        format.turbo_stream { 
+        format.turbo_stream {
           render turbo_stream: [
             turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
             turbo_stream.replace("user_notification_badge", partial: "shared/user_notification_badge"),
@@ -75,7 +75,7 @@ class NotificationsController < ApplicationController
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "Notification was successfully deleted.") }
         format.json { head :no_content }
-        format.turbo_stream { 
+        format.turbo_stream {
           render turbo_stream: [
             turbo_stream.remove("notification_#{@notification.id}"),
             turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
@@ -95,19 +95,19 @@ class NotificationsController < ApplicationController
   # DELETE /notifications/clear
   def clear
     authorize :notification, :clear?
-    
+
     Rails.logger.info "Clear notifications attempt for user #{current_user.id}"
     notifications_count = current_user.notifications.count
     Rails.logger.info "User has #{notifications_count} notifications before clearing"
-    
+
     begin
       cleared_count = current_user.notifications.destroy_all.size
       Rails.logger.info "Successfully cleared #{cleared_count} notifications"
-      
+
       respond_to do |format|
         format.html { redirect_to notifications_path, notice: "All notifications cleared successfully." }
         format.json { head :no_content }
-        format.turbo_stream { 
+        format.turbo_stream {
           render turbo_stream: [
             turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
             turbo_stream.replace("user_notification_badge", partial: "shared/user_notification_badge"),
@@ -118,7 +118,7 @@ class NotificationsController < ApplicationController
     rescue => e
       Rails.logger.error "Failed to clear notifications: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
-      
+
       respond_to do |format|
         format.html { redirect_to notifications_path, alert: "Could not clear notifications: #{e.message}" }
         format.json { head :unprocessable_entity }

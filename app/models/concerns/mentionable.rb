@@ -19,4 +19,3 @@ def notify_mentioned_users
     end
 end
 end
-

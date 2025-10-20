@@ -45,7 +45,7 @@
           <div class="flex flex-col sm:flex-row gap-3 sm:justify-between sm:items-center">
             <div class="flex flex-wrap gap-3">
               <% if @notifications.unread.any? %>
-                <%= form_with url: mark_all_as_read_notifications_path, method: :post, local: false, class: "inline-block" do |f| %>
+                <%= form_with url: mark_all_as_read_notifications_path, method: :post, local: true, class: "inline-block" do |f| %>
                   <%= f.submit "Mark All as Read", 
                       class: "gradient-button",
                       data: { 
@@ -55,7 +55,7 @@
                 <% end %>
               <% end %>
               
-              <%= form_with url: clear_notifications_path, method: :delete, local: false, class: "inline-block", 
+              <%= form_with url: clear_notifications_path, method: :delete, local: true, class: "inline-block", 
                   data: { 
                     confirm: "⚠️ This will permanently delete all your notifications. Are you sure?",
                     action: "clear-all"

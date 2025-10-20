@@ -95,9 +95,17 @@ class NotificationsController < ApplicationController
   # DELETE /notifications/clear
   def clear
     authorize :notification, :clear?
-    if current_user.notifications.destroy_all
+    
+    Rails.logger.info "Clear notifications attempt for user #{current_user.id}"
+    notifications_count = current_user.notifications.count
+    Rails.logger.info "User has #{notifications_count} notifications before clearing"
+    
+    begin
+      cleared_count = current_user.notifications.destroy_all.size
+      Rails.logger.info "Successfully cleared #{cleared_count} notifications"
+      
       respond_to do |format|
-        format.html { redirect_to notifications_path, notice: "All notifications cleared." }
+        format.html { redirect_to notifications_path, notice: "All notifications cleared successfully." }
         format.json { head :no_content }
         format.turbo_stream { 
           render turbo_stream: [
@@ -107,9 +115,12 @@ class NotificationsController < ApplicationController
           ]
         }
       end
-    else
+    rescue => e
+      Rails.logger.error "Failed to clear notifications: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      
       respond_to do |format|
-        format.html { redirect_to notifications_path, alert: "Could not clear notifications." }
+        format.html { redirect_to notifications_path, alert: "Could not clear notifications: #{e.message}" }
         format.json { head :unprocessable_entity }
         format.turbo_stream { head :unprocessable_entity }
       end

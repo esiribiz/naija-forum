@@ -14,6 +14,9 @@ export default class extends Controller {
       this.element.style.opacity = 1
     })
     
+    // Add body scroll lock to prevent background scrolling
+    document.body.style.overflow = 'hidden'
+    
     // Set timeout to hide flash after timeout value (default 5 seconds)
     this.timeout = setTimeout(() => {
       this.close()
@@ -26,6 +29,9 @@ export default class extends Controller {
       clearTimeout(this.timeout)
       this.timeout = null
     }
+    
+    // Restore body scroll
+    document.body.style.overflow = ''
     
     // Add fade out effect
     this.element.style.opacity = 0
@@ -42,5 +48,8 @@ export default class extends Controller {
       clearTimeout(this.timeout)
       this.timeout = null
     }
+    
+    // Restore body scroll in case element is removed abruptly
+    document.body.style.overflow = ''
   }
 }

@@ -22,14 +22,17 @@
     <% if notice || alert %>
     <div data-controller="flash" 
         data-flash-timeout-value="5000"
-        class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xl transition-opacity duration-300 ease-in-out"
+        class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[10000] w-full max-w-md transition-all duration-300 ease-in-out px-4"
         data-transition-enter="opacity-0"
         data-transition-enter-start="opacity-0"
         data-transition-enter-end="opacity-100"
         data-transition-leave="opacity-100"
         data-transition-leave-start="opacity-100"
         data-transition-leave-end="opacity-0">
-        <div class="flex items-center p-4 gap-3 rounded-lg shadow-lg border <%= notice ? 'bg-green-50 border-green-200 text-green-800' : 'bg-orange-50 border-orange-200 text-orange-800' %>">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-black bg-opacity-25 transition-opacity duration-300" data-action="click->flash#close"></div>
+        <!-- Flash Message -->
+        <div class="relative flex items-center p-6 gap-3 rounded-xl shadow-2xl border-2 <%= notice ? 'bg-green-50 border-green-300 text-green-800' : 'bg-orange-50 border-orange-300 text-orange-800' %> backdrop-blur-sm">
         <div class="flex-shrink-0">
             <% if notice %>
             <svg class="w-5 h-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">

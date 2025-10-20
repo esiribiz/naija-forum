@@ -9,6 +9,11 @@ export default class extends Controller {
   }
 
   connect() {
+    console.log('TagSearch controller connected')
+    console.log('Input target:', this.inputTarget)
+    console.log('Dropdown target:', this.dropdownTarget)
+    console.log('Category value:', this.categoryValue)
+    
     this.searchTimeout = null
     this.selectedIndex = -1
     
@@ -25,6 +30,7 @@ export default class extends Controller {
 
   search() {
     const query = this.inputTarget.value.trim()
+    console.log('Search triggered with query:', query)
     
     // Clear previous timeout
     if (this.searchTimeout) {
@@ -33,12 +39,14 @@ export default class extends Controller {
     
     // Hide dropdown if query is too short
     if (query.length < this.minLengthValue) {
+      console.log('Query too short, hiding dropdown')
       this.hideDropdown()
       return
     }
     
     // Debounce the search
     this.searchTimeout = setTimeout(() => {
+      console.log('Performing debounced search for:', query)
       this.performSearch(query)
     }, this.debounceDelayValue)
   }
@@ -51,6 +59,8 @@ export default class extends Controller {
         url.searchParams.append('category', this.categoryValue)
       }
       
+      console.log('Fetching from URL:', url.toString())
+      
       const response = await fetch(url.toString(), {
         headers: {
           'Accept': 'application/json',
@@ -58,9 +68,17 @@ export default class extends Controller {
         }
       })
       
-      if (!response.ok) throw new Error('Search failed')
+      console.log('Response status:', response.status)
+      console.log('Response headers:', response.headers)
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Response error:', errorText)
+        throw new Error(`Search failed: ${response.status}`)
+      }
       
       const tags = await response.json()
+      console.log('Received tags:', tags)
       this.displayResults(tags, query)
     } catch (error) {
       console.error('Search error:', error)

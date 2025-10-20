@@ -6,6 +6,13 @@ after_action :verify_policy_scoped, only: :index
 def index
     @tags = policy_scope(Tag).includes(:posts)
     
+    # Handle search
+    if params[:search].present?
+      search_term = params[:search].strip.downcase
+      @tags = @tags.where('LOWER(name) LIKE ? OR LOWER(description) LIKE ?', 
+                         "%#{search_term}%", "%#{search_term}%")
+    end
+    
     # Allow filtering by category
     if params[:category].present? && Tag::CATEGORIES.key?(params[:category])
       @tags = @tags.by_category(params[:category])

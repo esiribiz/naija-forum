@@ -5,12 +5,16 @@ Rails.application.configure do
   config.eager_load = true
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
+
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
-  config.active_storage.service = :tigris
+
+  # Use local storage during asset precompilation, tigris otherwise
+  config.active_storage.service = ENV["SECRET_KEY_BASE_DUMMY"] ? :local : :tigris
+
   config.assume_ssl = true
   config.force_ssl = true
 
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
   config.logger = ActiveSupport::TaggedLogging.logger(STDOUT)
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
   config.silence_healthcheck_path = "/up"
@@ -20,34 +24,33 @@ Rails.application.configure do
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-  # 🔐 HOST AUTHORIZATION — UNCOMMENTED & CONFIGURED
-  config.hosts = [
-    ENV.fetch("APPLICATION_HOST", "your-domain.com"),
-    /.*\.#{Regexp.quote(ENV.fetch("APPLICATION_HOST", "your-domain.com"))}/
-  ]
+  # ✅ FIXED HOST AUTHORIZATION
+  config.hosts.clear
+  config.hosts << "naija-forum-main.fly.dev"        # Fly.io app domain
+  config.hosts << "www.naija-forum-main.fly.dev"
+  config.hosts << "naijaglobalnet.com"              # Your custom domain
+  config.hosts << "www.naijaglobalnet.com"
   config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # ✉️ MAILER
+  # ✉️ MAILER SETTINGS
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { host: ENV.fetch("APPLICATION_HOST", "your-domain.com") }
+  config.action_mailer.default_url_options = { host: "naijaglobalnet.com", protocol: "https" }
 
-  if config.action_mailer.delivery_method == :smtp
-    config.action_mailer.smtp_settings = {
-      user_name: ENV["SMTP_USERNAME"],
-      password: ENV["SMTP_PASSWORD"],
-      address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
-      port: ENV.fetch("SMTP_PORT", 587),
-      domain: ENV.fetch("SMTP_DOMAIN", ENV.fetch("APPLICATION_HOST", "your-domain.com")), # 👈 Added
-      authentication: :plain,
-      enable_starttls_auto: true,
-      open_timeout: 10,
-      read_timeout: 10
-    }
-  end
+  config.action_mailer.smtp_settings = {
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    address: ENV.fetch("SMTP_ADDRESS", "smtp.gmail.com"),
+    port: ENV.fetch("SMTP_PORT", 587),
+    domain: "naijaglobalnet.com",
+    authentication: :plain,
+    enable_starttls_auto: true,
+    open_timeout: 10,
+    read_timeout: 10
+  }
 
   config.i18n.fallbacks = true
   config.active_record.dump_schema_after_migration = false
-  config.active_record.attributes_for_inspect = [ :id ]
+  config.active_record.attributes_for_inspect = [:id]
 end

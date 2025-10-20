@@ -97,6 +97,12 @@ class Admin::PostsController < Admin::BaseController
   end
   
   def toggle_published
+    # Ensure this is only accessed via PATCH method
+    unless request.patch?
+      redirect_to admin_post_path(@post), alert: "Invalid request method. Use the toggle button instead."
+      return
+    end
+    
     @post.update!(published: !@post.published)
     
     status = @post.published? ? 'published' : 'unpublished'
@@ -111,7 +117,7 @@ class Admin::PostsController < Admin::BaseController
       )
     end
     
-    redirect_to admin_posts_path, notice: "Post was successfully #{status}."
+    redirect_to admin_post_path(@post), notice: "Post was successfully #{status}."
   end
 
   private

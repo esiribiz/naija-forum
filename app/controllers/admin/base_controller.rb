@@ -7,6 +7,11 @@ class Admin::BaseController < ApplicationController
   # Skip Pundit verification for admin controllers since they have custom authorization logic
   skip_after_action :verify_policy_scoped, :verify_authorized
   
+  # Error handling for admin interface
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from ActionController::RoutingError, with: :routing_error
+  rescue_from ActionController::MissingExactTemplate, with: :template_not_found
+  
   protected
   
   def ensure_admin_or_moderator
@@ -67,5 +72,21 @@ class Admin::BaseController < ApplicationController
   # Clean up thread-local variables after each request
   def cleanup_thread_locals
     Thread.current[:current_admin_user] = nil
+  end
+  
+  # Error handling methods
+  def record_not_found(exception)
+    Rails.logger.error "Admin record not found: #{exception.message}"
+    redirect_to admin_root_path, alert: 'Record not found. It may have been deleted or you may not have permission to access it.'
+  end
+  
+  def routing_error(exception)
+    Rails.logger.error "Admin routing error: #{exception.message}"
+    redirect_to admin_root_path, alert: 'Page not found. The URL may be incorrect or the feature may not be available.'
+  end
+  
+  def template_not_found(exception)
+    Rails.logger.error "Admin template not found: #{exception.message}"
+    redirect_to admin_root_path, alert: 'This page is not available yet. Please contact support if this persists.'
   end
 end

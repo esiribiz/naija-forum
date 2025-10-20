@@ -130,3 +130,5 @@ end
 gem "devise", "~> 4.9"
 gem "devise-security"
 gem "pundit", "~> 2.3"
+
+gem "dockerfile-rails", ">= 1.7", :group => :development

@@ -1,0 +1,11 @@
+<% if defined?(message) && message.present? %>
+  <div class="flash-message flash-<%= type == 'success' ? 'success' : 'error' %> animate-slide-in">
+    <div class="flex items-center p-4 rounded-lg bg-<%= type == 'success' ? 'green' : 'red' %>-50 border border-<%= type == 'success' ? 'green' : 'red' %>-200 shadow-lg">
+      <i class="fas fa-<%= type == 'success' ? 'check-circle' : 'exclamation-triangle' %> text-<%= type == 'success' ? 'green' : 'red' %>-500 mr-3"></i>
+      <span class="text-<%= type == 'success' ? 'green' : 'red' %>-800 font-medium"><%= message %></span>
+      <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-<%= type == 'success' ? 'green' : 'red' %>-600 hover:text-<%= type == 'success' ? 'green' : 'red' %>-800">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+<% end %>

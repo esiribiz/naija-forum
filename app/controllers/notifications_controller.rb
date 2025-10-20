@@ -27,7 +27,12 @@ class NotificationsController < ApplicationController
       respond_to do |format|
         format.html { redirect_back(fallback_location: notifications_path, notice: "Notification marked as read.") }
         format.json { render json: @notification }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("notification_#{@notification.id}", partial: "notifications/notification", locals: { notification: @notification }) }
+        format.turbo_stream { 
+          render turbo_stream: [
+            turbo_stream.replace("notification_#{@notification.id}", partial: "notifications/notification", locals: { notification: @notification }),
+            turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge")
+          ]
+        }
       end
     else
       respond_to do |format|
@@ -46,7 +51,10 @@ class NotificationsController < ApplicationController
         format.html { redirect_back(fallback_location: notifications_path, notice: "All notifications marked as read.") }
         format.json { head :no_content }
         format.turbo_stream { 
-          redirect_to notifications_path, notice: "All notifications marked as read."
+          render turbo_stream: [
+            turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
+            turbo_stream.update("flash-container", partial: "shared/flash_message", locals: { message: "All notifications marked as read.", type: "success" })
+          ]
         }
       end
     else
@@ -84,7 +92,10 @@ class NotificationsController < ApplicationController
         format.html { redirect_to notifications_path, notice: "All notifications cleared." }
         format.json { head :no_content }
         format.turbo_stream { 
-          redirect_to notifications_path, notice: "All notifications cleared."
+          render turbo_stream: [
+            turbo_stream.replace("admin_notification_badge", partial: "shared/admin_notification_badge"),
+            turbo_stream.update("flash-container", partial: "shared/flash_message", locals: { message: "All notifications cleared.", type: "success" })
+          ]
         }
       end
     else

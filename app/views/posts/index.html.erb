@@ -1,4 +1,21 @@
-<% content_for :title, "All Posts" %>
+<% 
+  page_title = if @tag
+    "Posts tagged with ##{@tag.name}"
+  elsif @tag_category
+    category_name = {
+      'geographic' => 'Geographic Tags',
+      'professional' => 'Professional Tags', 
+      'country_region' => 'Diaspora Tags',
+      'special_project' => 'Special Projects'
+    }[@tag_category] || @tag_category.humanize
+    "Posts in #{category_name}"
+  elsif @category
+    "Posts in #{@category.name}"
+  else
+    "All Posts"
+  end
+%>
+<% content_for :title, page_title %>
 <div class="flex">
   <!-- Main Content -->
   <main class="flex-1 p-6 bg-gray-50">
@@ -9,7 +26,30 @@
       <div class="absolute bottom-0 left-0 w-16 h-16 bg-white opacity-10 rounded-full -ml-4 -mb-4"></div>
       
       <div class="flex justify-between items-center relative z-10">
-        <h1 class="text-2xl font-bold">All Posts</h1>
+        <div>
+          <h1 class="text-2xl font-bold"><%= page_title %></h1>
+          <% if @tag %>
+            <p class="text-green-100 text-sm mt-1">
+              <% case @tag.category %>
+              <% when 'geographic' %>
+                📍 Geographic tag
+              <% when 'professional' %>
+                💼 Professional tag
+              <% when 'country_region' %>
+                🌍 Diaspora tag
+              <% when 'special_project' %>
+                ⭐ Special project tag
+              <% else %>
+                🏷️ General tag
+              <% end %>
+              • <%= pluralize(@posts.count, 'post') %>
+            </p>
+          <% elsif @tag_category %>
+            <p class="text-green-100 text-sm mt-1">
+              <%= pluralize(@posts.count, 'post') %> found
+            </p>
+          <% end %>
+        </div>
         <div class="flex items-center">
           <%= link_to new_post_path, class: "inline-flex items-center px-4 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 transition-colors duration-200 shadow-sm hover:shadow-md" do %>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 mr-2">
@@ -21,6 +61,40 @@
       </div>
     </div>
     
+    <!-- Breadcrumb Navigation for Tag Filtering -->
+    <% if @tag || @tag_category %>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+        <nav class="flex items-center space-x-2 text-sm text-gray-600">
+          <%= link_to posts_path, class: "text-green-600 hover:text-green-800 font-medium" do %>
+            All Posts
+          <% end %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <%= link_to tags_path, class: "text-green-600 hover:text-green-800 font-medium" do %>
+            Tags
+          <% end %>
+          <% if @tag %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="font-medium text-gray-900">#<%= @tag.name %></span>
+          <% elsif @tag_category %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            <span class="font-medium text-gray-900">
+              <%= {
+                'geographic' => 'Geographic Tags',
+                'professional' => 'Professional Tags', 
+                'country_region' => 'Diaspora Tags',
+                'special_project' => 'Special Projects'
+              }[@tag_category] || @tag_category.humanize %>
+            </span>
+          <% end %>
+        </nav>
+      </div>
+    <% end %>
     
     <!-- Posts Grid -->
     <div class="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
@@ -75,7 +149,32 @@
                     <span class="block text-xs text-green-600 font-normal mt-1">🔒 Sign in to read this post</span>
                   <% end %>
                 </h2>
-                <p class="text-gray-700 leading-relaxed"><%= truncate(post.body, length: 180) %></p>
+                <p class="text-gray-700 leading-relaxed mb-3"><%= truncate(post.body, length: 180) %></p>
+                
+                <!-- Tags -->
+                <% if post.tags.any? %>
+                  <div class="flex flex-wrap gap-2 mb-3">
+                    <% post.tags.limit(5).each do |tag| %>
+                      <% 
+                        tag_color = case tag.category
+                                   when 'geographic' then 'bg-blue-100 text-blue-800'
+                                   when 'professional' then 'bg-green-100 text-green-800'
+                                   when 'country_region' then 'bg-purple-100 text-purple-800'
+                                   when 'special_project' then 'bg-yellow-100 text-yellow-800'
+                                   else 'bg-gray-100 text-gray-800'
+                                   end
+                      %>
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= tag_color %> relative z-30">
+                        #<%= tag.name %>
+                      </span>
+                    <% end %>
+                    <% if post.tags.count > 5 %>
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                        +<%= post.tags.count - 5 %> more
+                      </span>
+                    <% end %>
+                  </div>
+                <% end %>
               </div>
               
               <!-- Post Footer -->

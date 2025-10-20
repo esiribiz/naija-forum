@@ -1,0 +1,73 @@
+<% content_for :title, "Tag Suggestions Management" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white shadow rounded-lg mb-8">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center">
+          🏷️ Tag Suggestions
+        </h1>
+        <p class="text-sm text-gray-600 mt-1">
+          Review and manage user-submitted tag suggestions. 
+          <span class="font-semibold text-orange-600"><%= @pending_count %> pending review</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Suggestions List -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+      <% if @tag_suggestions.any? %>
+        <ul class="divide-y divide-gray-200">
+          <% @tag_suggestions.each do |suggestion| %>
+            <li class="<%= suggestion.pending? ? 'bg-orange-50' : 'bg-green-50' %>">
+              <div class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <div class="flex items-center space-x-3">
+                      <h4 class="text-lg font-semibold text-gray-900">#<%= suggestion.name %></h4>
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium <%= suggestion.pending? ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800' %>">
+                        <%= suggestion.pending? ? 'Pending' : 'Approved' %>
+                      </span>
+                    </div>
+                    
+                    <% if suggestion.description.present? %>
+                      <p class="mt-2 text-sm text-gray-600"><%= suggestion.description %></p>
+                    <% end %>
+                    
+                    <div class="mt-2 text-xs text-gray-500">
+                      Suggested by <strong><%= suggestion.user.username %></strong> 
+                      on <%= suggestion.created_at.strftime("%B %d, %Y") %>
+                    </div>
+                  </div>
+                  
+                  <% if suggestion.pending? %>
+                    <div class="flex space-x-2">
+                      <%= link_to approve_admin_tag_suggestion_path(suggestion), 
+                          method: :patch,
+                          data: { confirm: "Approve '#{suggestion.name}'?" },
+                          class: "px-3 py-1 text-xs font-medium rounded text-white bg-green-600 hover:bg-green-700" do %>
+                        ✓ Approve
+                      <% end %>
+                      <%= link_to reject_admin_tag_suggestion_path(suggestion), 
+                          method: :delete,
+                          data: { confirm: "Reject '#{suggestion.name}'?" },
+                          class: "px-3 py-1 text-xs font-medium rounded text-white bg-red-600 hover:bg-red-700" do %>
+                        ✗ Reject
+                      <% end %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="text-center py-12">
+          <h3 class="text-sm font-medium text-gray-900">No tag suggestions</h3>
+          <p class="text-sm text-gray-500">No suggestions found.</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

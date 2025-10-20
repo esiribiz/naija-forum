@@ -1,16 +1,23 @@
-class Tag < ApplicationRecord
-  has_many :post_tags, dependent: :destroy
-  has_many :posts, through: :post_tags
+class ApprovedTag < ApplicationRecord
+  # Relationships
+  has_many :tags, foreign_key: :name, primary_key: :name
+  has_many :posts, through: :tags
 
-  validates :name, presence: true, uniqueness: true
+  # Validations
+  validates :name, presence: true, uniqueness: { case_sensitive: false }
   validates :category, presence: true, inclusion: { in: %w[geographic professional thematic country_region special_project] }
 
-  scope :by_category, ->(category) { where(category: category) }
-  scope :official, -> { where(is_official: true) }
-  scope :featured, -> { where(is_featured: true) }
-  scope :trending, -> { joins(:posts).group("tags.id").order("COUNT(posts.id) DESC") }
+  # Callbacks
+  before_validation :normalize_name
 
-  # Tag categories
+  # Scopes
+  scope :active, -> { where(is_active: true) }
+  scope :inactive, -> { where(is_active: false) }
+  scope :featured, -> { where(is_featured: true) }
+  scope :by_category, ->(category) { where(category: category) }
+  scope :search_by_name, ->(query) { where("LOWER(name) LIKE ?", "%#{query.downcase}%") }
+
+  # Tag categories - same as Tag model for consistency
   CATEGORIES = {
     "geographic" => "Geographic (Nigerian States)",
     "professional" => "Professional & Thematic",
@@ -68,5 +75,19 @@ class Tag < ApplicationRecord
     else
       "bg-gray-100 text-gray-800"
     end
+  end
+
+  def toggle_active!
+    update!(is_active: !is_active?)
+  end
+
+  def toggle_featured!
+    update!(is_featured: !is_featured?)
+  end
+
+  private
+
+  def normalize_name
+    self.name = name.to_s.strip.gsub(/\s+/, " ") if name.present?
   end
 end

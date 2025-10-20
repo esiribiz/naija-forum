@@ -47,9 +47,54 @@ def tag_list
 end
 
 def tag_list=(names)
-    self.tags = names.split(",").map do |name|
-    Tag.find_or_create_by(name: name.strip)
+  self.tags = names.split(",").map do |name|
+    cleaned_name = name.strip
+    next if cleaned_name.blank?
+    
+    # Only allow approved tags
+    approved_tag = ApprovedTag.active.find_by('LOWER(name) = ?', cleaned_name.downcase)
+    
+    if approved_tag
+      # Find or create the Tag record that corresponds to this ApprovedTag
+      Tag.find_or_create_by(
+        name: approved_tag.name,
+        category: approved_tag.category,
+        is_official: true
+      ) do |tag|
+        tag.description = approved_tag.description
+      end
+    else
+      # Create a suggestion for unapproved tags (handled in controller)
+      create_tag_suggestion(cleaned_name) if user.present?
+      nil  # Don't add unapproved tags to the post
     end
+  end.compact
+end
+
+# Store unapproved tag names for suggestion creation
+attr_accessor :unapproved_tags, :user_for_suggestions
+
+def create_tag_suggestion(tag_name)
+  return unless user_for_suggestions
+  
+  # Don't create duplicate suggestions
+  existing_suggestion = TagSuggestion.find_by(
+    name: tag_name,
+    user: user_for_suggestions,
+    approved: false
+  )
+  
+  unless existing_suggestion
+    suggestion = TagSuggestion.create(
+      name: tag_name,
+      user: user_for_suggestions,
+      category: detect_category_for_suggestion(tag_name)
+    )
+    
+    # Store for later notification
+    self.unapproved_tags ||= []
+    self.unapproved_tags << suggestion if suggestion.persisted?
+  end
 end
 
 private
@@ -124,5 +169,16 @@ images.each do |image|
     errors.add(:images, "must be JPEG, PNG, or GIF")
     end
 end
+end
+
+def detect_category_for_suggestion(tag_name)
+  # Check if it matches any predefined categories
+  return 'geographic' if ApprovedTag.geographic_tags.include?(tag_name)
+  return 'professional' if ApprovedTag.professional_tags.include?(tag_name)
+  return 'country_region' if ApprovedTag.country_region_tags.include?(tag_name)
+  return 'special_project' if ApprovedTag.special_project_tags.include?(tag_name)
+  
+  # Default to thematic for user-generated suggestions
+  'thematic'
 end
 end

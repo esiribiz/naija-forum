@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_23_174530) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_20_184500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -85,6 +85,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_23_174530) do
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
     t.index ["visitor_token", "started_at"], name: "index_ahoy_visits_on_visitor_token_and_started_at"
+  end
+
+  create_table "approved_tags", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "category", null: false
+    t.text "description"
+    t.boolean "is_active", default: true, null: false
+    t.boolean "is_featured", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category", "is_active"], name: "index_approved_tags_on_category_and_is_active"
+    t.index ["category"], name: "index_approved_tags_on_category"
+    t.index ["is_active"], name: "index_approved_tags_on_is_active"
+    t.index ["is_featured"], name: "index_approved_tags_on_is_featured"
+    t.index ["name"], name: "index_approved_tags_on_name", unique: true
   end
 
   create_table "categories", force: :cascade do |t|
@@ -369,11 +384,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_23_174530) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "tag_suggestions", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "category"
+    t.text "description"
+    t.bigint "user_id", null: false
+    t.boolean "approved", default: false, null: false
+    t.datetime "approved_at", precision: nil
+    t.bigint "approved_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["approved"], name: "index_tag_suggestions_on_approved"
+    t.index ["approved_by_id"], name: "index_tag_suggestions_on_approved_by_id"
+    t.index ["category"], name: "index_tag_suggestions_on_category"
+    t.index ["name", "approved"], name: "index_tag_suggestions_on_name_and_approved", unique: true
+    t.index ["name"], name: "index_tag_suggestions_on_name"
+    t.index ["user_id", "approved"], name: "index_tag_suggestions_on_user_id_and_approved"
+    t.index ["user_id"], name: "index_tag_suggestions_on_user_id"
+  end
+
   create_table "tags", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "description"
+    t.string "category", default: "thematic", null: false
+    t.boolean "is_official", default: false, null: false
+    t.boolean "is_featured", default: false, null: false
+    t.index ["category"], name: "index_tags_on_category"
+    t.index ["is_featured"], name: "index_tags_on_is_featured"
+    t.index ["is_official"], name: "index_tags_on_is_official"
     t.index ["name"], name: "index_tags_on_name"
   end
 
@@ -457,5 +497,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_23_174530) do
   add_foreign_key "solid_queue_ready_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_recurring_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_scheduled_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
+  add_foreign_key "tag_suggestions", "users"
+  add_foreign_key "tag_suggestions", "users", column: "approved_by_id"
   add_foreign_key "users", "security_questions"
 end

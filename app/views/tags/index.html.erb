@@ -1,71 +1,145 @@
-<% content_for :title, "All Tags" %>
+<% content_for :title, "Explore Tags - Naija Forum" %>
 
 <%= render 'shared/navigation_menu' %>
 
-<!-- Nigerian-themed header with decorative circles -->
-<div class="relative overflow-hidden mb-6 bg-gradient-to-r from-green-600 to-green-700 py-12 px-6 shadow-lg rounded-lg">
-  <!-- Decorative circles -->
-  <div class="absolute top-0 right-0 w-40 h-40 rounded-full bg-white opacity-10 -mt-10 -mr-10"></div>
-  <div class="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-white opacity-10 -mb-10 -ml-10"></div>
-  <div class="absolute top-1/2 left-1/4 w-24 h-24 rounded-full bg-white opacity-10 transform -translate-y-1/2"></div>
+<!-- Enhanced header with filter navigation -->
+<div class="relative overflow-hidden mb-8 bg-gradient-to-br from-green-600 via-green-700 to-green-800 py-16 px-6 shadow-xl rounded-2xl">
+  <!-- Decorative elements -->
+  <div class="absolute top-0 right-0 w-48 h-48 rounded-full bg-white opacity-5 -mt-20 -mr-20"></div>
+  <div class="absolute bottom-0 left-0 w-36 h-36 rounded-full bg-white opacity-10 -mb-15 -ml-15"></div>
+  <div class="absolute top-1/3 left-1/3 w-20 h-20 rounded-full bg-white opacity-10"></div>
   
-  <h1 class="text-5xl font-extrabold text-white mb-2 text-center tracking-wide relative z-10">
-    🔖 All Tags
-  </h1>
-  <p class="text-center text-green-100 text-lg max-w-3xl mx-auto relative z-10">
-    Browse and discover content through our organized tag system
-  </p>
+  <div class="relative z-10 text-center">
+    <h1 class="text-6xl font-extrabold text-white mb-4 tracking-tight">
+      🏷️ Tag Explorer
+    </h1>
+    <p class="text-green-100 text-xl max-w-4xl mx-auto mb-8">
+      Discover discussions organized by location, profession, interests, and community projects
+    </p>
+    
+    <!-- Filter tabs -->
+    <div class="flex flex-wrap justify-center gap-4 mt-8">
+      <%= link_to tags_path, class: "px-6 py-3 #{params[:category].blank? ? 'bg-white text-green-700' : 'bg-green-600 text-white hover:bg-green-500'} rounded-full font-semibold transition duration-200 shadow-md hover:shadow-lg" do %>
+        All Tags
+      <% end %>
+      <% Tag::CATEGORIES.each do |key, name| %>
+        <%= link_to tags_path(category: key), class: "px-6 py-3 #{params[:category] == key ? 'bg-white text-green-700' : 'bg-green-600 text-white hover:bg-green-500'} rounded-full font-semibold transition duration-200 shadow-md hover:shadow-lg" do %>
+          <%= name %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
 </div>
 
-<div class="max-w-6xl mx-auto px-6 pb-16 flex-1 bg-gray-50 min-h-screen rounded-xl shadow-sm">
+<div class="max-w-7xl mx-auto px-6 pb-16 flex-1">
+
+  <!-- Stats banner -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <%= link_to posts_by_tag_category_path('geographic'), class: "bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl text-center shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105" do %>
+      <div class="text-2xl font-bold"><%= Tag.by_category('geographic').count %></div>
+      <div class="text-sm opacity-90">Geographic Tags</div>
+    <% end %>
+    <%= link_to posts_by_tag_category_path('professional'), class: "bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl text-center shadow-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105" do %>
+      <div class="text-2xl font-bold"><%= Tag.by_category('professional').count %></div>
+      <div class="text-sm opacity-90">Professional Tags</div>
+    <% end %>
+    <%= link_to posts_by_tag_category_path('country_region'), class: "bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-xl text-center shadow-lg hover:from-purple-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105" do %>
+      <div class="text-2xl font-bold"><%= Tag.by_category('country_region').count %></div>
+      <div class="text-sm opacity-90">Diaspora Tags</div>
+    <% end %>
+    <%= link_to posts_by_tag_category_path('special_project'), class: "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-4 rounded-xl text-center shadow-lg hover:from-yellow-600 hover:to-yellow-700 transition-all duration-200 transform hover:scale-105" do %>
+      <div class="text-2xl font-bold"><%= Tag.by_category('special_project').count %></div>
+      <div class="text-sm opacity-90">Special Projects</div>
+    <% end %>
+  </div>
 
   <% if @tags.any? %>
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <% @tags.sort_by(&:name).each do |tag| %>
-        <div class="relative bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border-l-4 border-green-500 overflow-hidden transform hover:scale-102 group">
-          <div class="flex justify-between items-start">
-            <h3 class="text-xl font-semibold text-gray-900 mb-2 relative group-hover:text-green-700 transition-colors duration-200">
-              <%= link_to tag_path(tag), class: "inline-block" do %>
-                <span class="inline-block"><%= tag.name %></span>
-                <span class="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-green-500 mt-0.5"></span>
+    <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4">
+      <% @tags.each do |tag| %>
+        <%= link_to posts_by_tag_path(tag.id), class: "block w-full" do %>
+          <div class="relative bg-white p-5 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border-l-4 <%= case tag.category when 'geographic' then 'border-blue-500' when 'professional' then 'border-green-500' when 'country_region' then 'border-purple-500' when 'special_project' then 'border-yellow-500' else 'border-gray-400' end %> overflow-hidden transform hover:scale-105 group cursor-pointer">
+          
+          <!-- Category indicator -->
+          <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center px-2 py-1 <%= tag.respond_to?(:badge_color) ? tag.badge_color : 'bg-gray-100 text-gray-800' %> rounded-full text-xs font-medium">
+              <% if tag.respond_to?(:category) && tag.category.present? %>
+                <% case tag.category %>
+                <% when 'geographic' %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                <% when 'professional' %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6l-8 2M6 18a7.995 7.995 0 004 1c1.226 0 2.4-.276 3.5-.764" />
+                  </svg>
+                <% when 'country_region' %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                <% when 'special_project' %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                <% end %>
               <% end %>
-            </h3>
+              <%= tag.respond_to?(:category_display) ? tag.category_display : 'General' %>
+            </span>
             
-            <!-- Edit action with icon -->
-            <% if user_signed_in? && current_user.admin? %>
-              <%= link_to edit_admin_tag_path(tag), class: "text-amber-500 hover:text-amber-600 transition duration-200 inline-flex items-center" do %>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+            <!-- Official/Featured badges -->
+            <div class="flex gap-1">
+              <% if tag.respond_to?(:is_official) && tag.is_official %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9l-5 4.87L18.18 22 12 18.27 5.82 22 7 13.87 2 9l6.91-.74L12 2z"/>
                 </svg>
               <% end %>
-            <% end %>
+              <% if tag.respond_to?(:is_featured) && tag.is_featured %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              <% end %>
+            </div>
           </div>
           
-          <!-- Tag details -->
-          <div class="mt-3 flex items-center text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
-            </svg>
-            <span><strong><%= tag.posts.count %></strong> <%= tag.posts.count == 1 ? 'post' : 'posts' %></span>
-          </div>
+          <!-- Tag name -->
+          <h3 class="text-lg font-bold text-gray-900 mb-2 group-hover:text-green-700 transition-colors duration-200">
+            #<%= tag.name %>
+          </h3>
           
-          <!-- View button -->
-          <div class="mt-4">
-            <%= link_to tag_path(tag), class: "inline-flex items-center text-green-600 hover:text-green-800 transition-colors duration-200" do %>
-              <span>View tag</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          <!-- Description -->
+          <% if tag.respond_to?(:description) && tag.description.present? %>
+            <p class="text-sm text-gray-600 mb-3 line-clamp-2"><%= tag.description %></p>
+          <% end %>
+          
+          <!-- Stats -->
+          <div class="flex items-center justify-between text-sm text-gray-500">
+            <div class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
               </svg>
+              <%= tag.posts.count %> posts
+            </div>
+            
+            <!-- Admin actions -->
+            <% if user_signed_in? && current_user.admin? %>
+              <div class="flex gap-1" onclick="event.stopPropagation(); event.preventDefault();">
+                <%= link_to edit_tag_path(tag), class: "p-1 text-gray-400 hover:text-blue-600 transition duration-200" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                <% end %>
+              </div>
             <% end %>
           </div>
         </div>
+        <% end %>
       <% end %>
     </div>
     
     <!-- Pagination if it exists -->
     <% if @tags.respond_to?(:total_pages) %>
       <div class="mt-10 flex justify-center">
-        <%= paginate @tags, theme: 'tailwind' %>
+        <%= paginate @tags %>
       </div>
     <% end %>
   <% else %>

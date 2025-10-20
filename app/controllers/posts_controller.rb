@@ -19,7 +19,26 @@ def index
 
 if user_signed_in?
   # Logged-in users: Use policy scope for authorized content
-  if params[:category_id]
+  if params[:tag_id]
+      @tag = Tag.find(params[:tag_id])
+      @posts = policy_scope(Post)
+        .joins(:post_tags)
+        .where(post_tags: { tag_id: @tag.id })
+        .includes(:user, :category, :tags)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(20)
+  elsif params[:tag_category]
+      @tag_category = params[:tag_category]
+      @posts = policy_scope(Post)
+        .joins(:post_tags, :tags)
+        .where(tags: { category: @tag_category })
+        .includes(:user, :category, :tags)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(20)
+        .distinct
+  elsif params[:category_id]
       @category = Category.find(params[:category_id])
       @posts = policy_scope(@category.posts)
       .includes(:user, :category)
@@ -42,7 +61,26 @@ if user_signed_in?
       end
 else
   # Guests: Show all posts but they can't view individual posts without login
-  if params[:category_id]
+  if params[:tag_id]
+      @tag = Tag.find(params[:tag_id])
+      @posts = Post
+        .joins(:post_tags)
+        .where(post_tags: { tag_id: @tag.id })
+        .includes(:user, :category, :tags)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(20)
+  elsif params[:tag_category]
+      @tag_category = params[:tag_category]
+      @posts = Post
+        .joins(:post_tags, :tags)
+        .where(tags: { category: @tag_category })
+        .includes(:user, :category, :tags)
+        .order(created_at: :desc)
+        .page(params[:page])
+        .per(20)
+        .distinct
+  elsif params[:category_id]
       @category = Category.find(params[:category_id])
       @posts = @category.posts
       .includes(:user, :category)
@@ -88,11 +126,12 @@ end
 def create
 @post = current_user.posts.build(post_params)
 authorize @post
-assign_tags(@post)
+@post.user_for_suggestions = current_user  # Set user for tag suggestions
 
     respond_to do |format|
       if @post.save
-        format.html { redirect_to @post, notice: "Post was successfully created." }
+        handle_tag_suggestions(@post)
+        format.html { redirect_to @post, notice: post_creation_notice(@post) }
         format.json { render :show, status: :created, location: @post }
       else
         format.html { render :new, status: :unprocessable_entity }
@@ -104,11 +143,12 @@ assign_tags(@post)
   # PATCH/PUT /posts/1 or /posts/1.json
 def update
 authorize @post
-assign_tags(@post)
+@post.user_for_suggestions = current_user  # Set user for tag suggestions
 
     respond_to do |format|
       if @post.update(post_params)
-        format.html { redirect_to @post, notice: "Post was successfully updated." }
+        handle_tag_suggestions(@post)
+        format.html { redirect_to @post, notice: post_update_notice(@post) }
         format.json { render :show, status: :ok, location: @post }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -241,11 +281,27 @@ respond_to do |format|
 end
 end
 
-  # Assign tags to the post
-  def assign_tags(post)
-    if params[:post][:tag_list].present?
-      tag_names = params[:post][:tag_list].split(",").map(&:strip)
-      post.tags = tag_names.map { |name| Tag.find_or_create_by(name: name) }
+  # Handle tag suggestions after post save
+  def handle_tag_suggestions(post)
+    return unless post.unapproved_tags&.any?
+    
+    flash[:info] = "Some tags were not recognized and have been submitted for review: #{post.unapproved_tags.map(&:name).join(', ')}"
+  end
+  
+  # Generate appropriate success notice based on tag suggestions
+  def post_creation_notice(post)
+    if post.unapproved_tags&.any?
+      "Post was successfully created! Some tags are pending approval."
+    else
+      "Post was successfully created."
+    end
+  end
+  
+  def post_update_notice(post)
+    if post.unapproved_tags&.any?
+      "Post was successfully updated! Some tags are pending approval."
+    else
+      "Post was successfully updated."
     end
   end
 end

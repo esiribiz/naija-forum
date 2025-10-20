@@ -84,7 +84,7 @@
           </div>
 
           <!-- Tags Field -->
-          <div class="space-y-3">
+          <div class="space-y-3" data-controller="tags">
             <label for="post_tag_list" class="block text-sm font-semibold text-gray-900">
               <div class="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,10 +93,48 @@
                 Tags
               </div>
             </label>
-            <input type="text" name="post[tag_list]" id="post_tag_list" value="<%= post.tag_list %>" 
-                   placeholder="e.g., technology, question, discussion"
-                   class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200">
-            <p class="text-xs text-gray-500 mt-1">✨ Separate tags with commas to help others find your post</p>
+            <div class="relative">
+              <input type="text" name="post[tag_list]" id="post_tag_list" value="<%= post.tag_list %>" 
+                     placeholder="Add tags (e.g., Technology, Governance, Lagos, UK, DiasporaLife)"
+                     data-tags-target="input"
+                     data-action="input->tags#filterSuggestions focus->tags#showSuggestions blur->tags#hideSuggestions"
+                     class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200">
+              
+              <!-- Tag Suggestions Dropdown -->
+              <div data-tags-target="suggestions" class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg hidden max-h-60 overflow-y-auto">
+                <div class="p-3">
+                  <h4 class="text-sm font-semibold text-gray-700 mb-2">Suggested Tags</h4>
+                  <div id="tag-suggestions-content" class="space-y-1">
+                    <!-- Dynamic content will be inserted here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Tag Categories Guide -->
+            <div class="mt-3 p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-100 rounded-lg">
+              <p class="text-sm text-gray-700 mb-2">
+                <strong>💡 Tag Categories:</strong> Tags help others find your discussion more easily.
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600">
+                <div class="flex items-center">
+                  <div class="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                  <span><strong>Geographic:</strong> Nigerian states (Lagos, Abuja, etc.)</span>
+                </div>
+                <div class="flex items-center">
+                  <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  <span><strong>Professional:</strong> Technology, Health, Business</span>
+                </div>
+                <div class="flex items-center">
+                  <div class="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                  <span><strong>Diaspora:</strong> Countries abroad (USA, UK, Canada)</span>
+                </div>
+                <div class="flex items-center">
+                  <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                  <span><strong>Special Projects:</strong> #BuildNaija, #DiasporaInvest</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

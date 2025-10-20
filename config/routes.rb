@@ -37,6 +37,24 @@ Rails.application.routes.draw do
     
     resources :categories
     resources :tags
+    
+    resources :approved_tags do
+      member do
+        patch :toggle_active
+        patch :toggle_featured
+      end
+    end
+    
+    resources :tag_suggestions do
+      member do
+        patch :approve
+        delete :reject
+      end
+      collection do
+        patch :bulk_approve
+        delete :bulk_reject
+      end
+    end
   end
 devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'users/registrations' }  # Using custom SessionsController and RegistrationsController
   
@@ -61,7 +79,21 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
     end
   end
 
-  resources :tags, only: [ :index, :show ]
+  resources :tags, only: [ :index, :show, :edit, :update ] do
+    collection do
+      get :suggestions
+    end
+    member do
+      patch :toggle_featured
+      patch :toggle_official
+    end
+  end
+  
+  resources :approved_tags, only: [:index] do
+    collection do
+      get :suggestions
+    end
+  end
 
   resources :notifications, only: [:index, :destroy] do
     member do
@@ -84,6 +116,10 @@ devise_for :users, controllers: { sessions: 'users/sessions', registrations: 'us
   get "search", to: "search#index", as: "search"
   get "latest", to: "posts#latest", as: "latest_posts"
   get "popular", to: "posts#popular", as: "popular_posts"
+  
+  # Tag filtering routes
+  get "posts/tagged/:tag_id", to: "posts#index", as: "posts_by_tag"
+  get "posts/category/:tag_category", to: "posts#index", as: "posts_by_tag_category"
   get "about", to: "pages#about", as: "about"
   get "contact", to: "pages#contact", as: "contact"
   post "contact", to: "pages#submit_contact"

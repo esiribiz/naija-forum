@@ -7,13 +7,22 @@ LABEL fly_launch_runtime="rails"
 
 WORKDIR /rails
 
-# Update RubyGems & install bundler
+# Update gems & install bundler
 RUN gem update --system --no-document && \
-    gem install --no-document bundler
+    gem install -N bundler
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips postgresql-client && \
+    apt-get install --no-install-recommends -y \
+        curl \
+        libjemalloc2 \
+        libvips \
+        postgresql-client \
+        imagemagick \
+        build-essential \
+        libffi-dev \
+        libpq-dev \
+        libyaml-dev && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # ----------------------------
@@ -21,20 +30,17 @@ RUN apt-get update -qq && \
 # ----------------------------
 FROM base AS build
 
-# Install build dependencies
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential libffi-dev libpq-dev libyaml-dev && \
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
-
-# Configure Bundler for production
-RUN bundle config set --local path 'vendor/bundle' && \
-    bundle config set without 'development test'
+# Set Bundler environment variables for reproducible install
+ENV BUNDLE_PATH=/rails/vendor/bundle \
+    BUNDLE_WITHOUT="development:test" \
+    BUNDLE_DEPLOYMENT=true
 
 # Copy gem files & install gems
 COPY Gemfile Gemfile.lock ./
-RUN bundle install --jobs 4 --retry 3 && \
-    rm -rf ~/.bundle && \
-    bundle exec bootsnap precompile --gemfile
+RUN bundle install --jobs 4 --retry 3
+
+# Precompile bootsnap for faster boot
+RUN bundle exec bootsnap precompile --gemfile
 
 # Copy app code
 COPY . .
@@ -48,12 +54,12 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 # ----------------------------
 # Final runtime stage
 # ----------------------------
-FROM base
+FROM base AS runtime
 
-# Install runtime packages
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y imagemagick libvips && \
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+# Set runtime environment variables
+ENV BUNDLE_PATH=/rails/vendor/bundle \
+    RAILS_ENV=production \
+    RACK_ENV=production
 
 # Copy gems & app from build stage
 COPY --from=build /rails/vendor/bundle /rails/vendor/bundle
@@ -62,12 +68,17 @@ COPY --from=build /rails /rails
 # Create non-root user
 RUN groupadd --system --gid 1000 rails && \
     useradd --system --uid 1000 --gid 1000 --create-home --shell /bin/bash rails && \
-    chown -R 1000:1000 /rails/db /rails/log /rails/storage /rails/tmp
+    chown -R 1000:1000 db log storage tmp
 
 USER 1000:1000
+
+WORKDIR /rails
 
 # Entrypoint
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
+# Expose port 80
 EXPOSE 80
+
+# Default command
 CMD ["./bin/thrust", "./bin/rails", "server"]

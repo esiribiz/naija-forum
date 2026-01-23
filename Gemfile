@@ -71,7 +71,7 @@ gem "sentry-rails", "~> 5.0"
 gem "sentry-ruby", "~> 5.0"
 
 # Performance and Search Improvements
-gem "bullet"                      # N+1 query detection
+# gem "bullet"                      # N+1 query detection
 gem "pg_search", "~> 2.3"         # PostgreSQL full-text search
 gem "friendly_id", "~> 5.5"       # SEO-friendly URLs
 gem "meta-tags", "~> 2.18"        # SEO meta tags
@@ -106,6 +106,7 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem "bullet" 
   # gem "rails_live_reload" # Temporarily disabled due to WebSocket issues
 
   # Performance monitoring

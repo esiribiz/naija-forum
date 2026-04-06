@@ -54,7 +54,7 @@ RUN bundle exec bootsnap precompile --gemfile
 COPY . .
 
 # Precompile assets WITHOUT connecting to DB
-RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
+RUN RAILS_ENV=production SECRET_KEY_BASE=dummy RAILS_MASTER_KEY=dummy bundle exec rails assets:precompile
 
 # ----------------------------
 # Final runtime stage
